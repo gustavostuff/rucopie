@@ -1,0 +1,3 @@
+return {
+  background = 'bg.png'
+}

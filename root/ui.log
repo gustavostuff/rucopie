@@ -1,0 +1,14 @@
+File being read:
+return {
+  background = {
+    {'layer_1.png', -60, 0}, -- speed in X and Y (pixels per second)
+    {'layer_2.png',  -15, 0}
+  },
+  darkness = 0.6
+}
+
+ls: cannot access '/root/RetroPie/roms/nes/spli tted dir/testfile.txt/': Not a directory
+AL lib: (EE) ALCplaybackAlsa_mixerProc: Wait timeout... buffer size too low?
+AL lib: (EE) ALCplaybackAlsa_mixerProc: Wait timeout... buffer size too low?
+AL lib: (EE) ALCplaybackAlsa_mixerProc: Wait timeout... buffer size too low?
+AL lib: (EE) ALCplaybackAlsa_mixerProc: Wait timeout... buffer size too low?
