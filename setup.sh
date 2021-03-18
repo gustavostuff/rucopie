@@ -63,6 +63,6 @@ rm setup.sh
 
 separator
 separator
-echo "                     DONE!"
+echo "${green}                 DONE!${default}"
 separator
 separator
