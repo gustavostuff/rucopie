@@ -60,6 +60,11 @@ separator
 echo "Installing now love..."
 ~/RetroPie-Setup/retropie_packages.sh love
 
+separator
+echo "Installing now splashscreen manager..."
+~/RetroPie-Setup/retropie_packages.sh splashscreen
+~/RetroPie-Setup/retropie_packages.sh splashscreens
+
 git clone https://github.com/tavuntu/rucopie-bkp
 cd rucopie-bkp
 separator
