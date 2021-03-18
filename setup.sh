@@ -20,7 +20,7 @@ green="\033[0;32m"
 default="\033[0m"
 
 function separator () {
-  echo "******************************************************************"
+  echo "-------------------------------------------------------------------"
 }
 
 cd ~
@@ -30,7 +30,10 @@ echo "Installing RetroPie dependencies..."
 /boot/dietpi/dietpi-software install 5 6 16 17
 
 separator
-echo -e "${red}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${default}"
+echo ''
+echo -e "${green}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${green}"
+echo ''
+
 /usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 ./retropie_setup.sh
@@ -38,32 +41,16 @@ cd RetroPie-Setup
 cd ~
 separator
 echo "Installing now retroarch..."
-~/RetroPie-Setup/retropie_packages.sh retroarch
+~/RetroPie-Setup/retropie_packages.sh retroarch depends
+~/RetroPie-Setup/retropie_packages.sh retroarch install_bin
 
-separator
-echo "Installing now lr-fceumm..."
-~/RetroPie-Setup/retropie_packages.sh lr-fceumm
-
-separator
-echo "Installing now lr-gambatte..."
-~/RetroPie-Setup/retropie_packages.sh lr-gambatte
-
-separator
-echo "Installing now lr-fbneo..."
-~/RetroPie-Setup/retropie_packages.sh lr-fbneo
-
-separator
-echo "Installing now lr-snes9x..."
-~/RetroPie-Setup/retropie_packages.sh lr-snes9x
-
-separator
-echo "Installing now love..."
-~/RetroPie-Setup/retropie_packages.sh love
-
-separator
-echo "Installing now splashscreen manager..."
-~/RetroPie-Setup/retropie_packages.sh splashscreen
-~/RetroPie-Setup/retropie_packages.sh splashscreens
+for pkg in "$@"
+do
+  separator
+  echo "Installing now $pkg..."
+  ~/RetroPie-Setup/retropie_packages.sh $pkg depends
+  ~/RetroPie-Setup/retropie_packages.sh $pkg install_bin
+done
 
 /usr/bin/git clone https://github.com/tavuntu/rucopie-bkp
 cd rucopie-bkp
