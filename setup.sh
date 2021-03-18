@@ -72,6 +72,7 @@ echo "Installing config files..."
 cp -r * /
 cd ..
 rm -rf rucopie-bkp
+rm setup.sh
 
 separator
 separator
