@@ -47,7 +47,7 @@ echo "Installing now retroarch..."
 for pkg in "$@"
 do
   separator
-  echo 'Installing dependencies for $pkg'
+  echo 'Installing dependencies for $pkg...'
   ~/RetroPie-Setup/retropie_packages.sh $pkg depends
   echo "Installing now $pkg..."
   ~/RetroPie-Setup/retropie_packages.sh $pkg install_bin
