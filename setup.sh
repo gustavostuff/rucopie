@@ -27,11 +27,11 @@ cd ~
 
 separator
 echo "Installing RetroPie dependencies..."
-dietpi-software install 5 6 16 17
+/boot/dietpi/dietpi-software install 5 6 16 17
 
 separator
 echo -e "${red}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${default}"
-git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
+/usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 ./retropie_setup.sh
 
@@ -65,7 +65,7 @@ echo "Installing now splashscreen manager..."
 ~/RetroPie-Setup/retropie_packages.sh splashscreen
 ~/RetroPie-Setup/retropie_packages.sh splashscreens
 
-git clone https://github.com/tavuntu/rucopie-bkp
+/usr/bin/git clone https://github.com/tavuntu/rucopie-bkp
 cd rucopie-bkp
 separator
 echo "Installing config files..."
