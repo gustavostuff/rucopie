@@ -48,7 +48,6 @@ for pkg in "$@"
 do
   separator
   echo "Installing now $pkg..."
-  ~/RetroPie-Setup/retropie_packages.sh $pkg depends
   ~/RetroPie-Setup/retropie_packages.sh $pkg install_bin
 done
 
