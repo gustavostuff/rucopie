@@ -31,7 +31,7 @@ echo "Installing RetroPie dependencies..."
 
 separator
 echo ''
-echo -e "${green}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${green}"
+echo -e "${green}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${default}"
 echo ''
 
 /usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
