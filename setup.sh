@@ -55,7 +55,12 @@ done
 cd rucopie-bkp
 separator
 echo "Installing config files..."
-cp -r * /
+
+cp -r boot/ /
+cp -r opt/ /
+cp -r root/ /
+cp -r var/ /
+
 cd ..
 ln -s /opt/retropie/ports/love/bin/love /usr/bin/
 
