@@ -60,6 +60,7 @@ cp -r boot/ /
 cp -r opt/ /
 cp -r root/ /
 cp -r var/ /
+chmod +x ~/RucoPie/scripts/*
 
 cd ..
 ln -s /opt/retropie/ports/love/bin/love /usr/bin/
