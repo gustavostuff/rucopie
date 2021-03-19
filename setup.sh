@@ -40,11 +40,9 @@ cd RetroPie-Setup
 
 cd ~
 separator
-echo "Installing now retroarch..."
-~/RetroPie-Setup/retropie_packages.sh retroarch depends
-~/RetroPie-Setup/retropie_packages.sh retroarch install_bin
-
-for pkg in "$@"
+echo -e "${green}Installing required packages...${default}"
+declare -a pkgs=("retroarch" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo")
+for pkg in "${pkgs[@]}"
 do
   separator
   echo "Installing dependencies for $pkg..."
