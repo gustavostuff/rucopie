@@ -41,7 +41,7 @@ cd RetroPie-Setup
 cd ~
 separator
 echo -e "${green}Installing required packages...${default}"
-declare -a pkgs=("retroarch" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo")
+declare -a pkgs=("retroarch" "love" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo")
 for pkg in "${pkgs[@]}"
 do
   separator
@@ -57,7 +57,7 @@ separator
 echo "Installing config files..."
 cp -r * /
 cd ..
-rm -rf rucopie-bkp
+ln -s /opt/retropie/ports/love/bin/love /usr/bin/
 
 separator
 separator
