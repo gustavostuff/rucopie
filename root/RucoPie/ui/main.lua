@@ -1,15 +1,17 @@
 local colors = require 'colors'
 local constants = require 'constants'
 local osBridge = require 'os-bridge'
-local listManager = require 'list-manager'
 local utils = require 'utils'
+
+local listManager = require 'list-manager'
 local joystickManager = require 'joystick-manager'
 local themeManager = require 'theme-manager'
+local resolutionManager = require 'resolution-manager'
 
 local optionsTree = require 'options-tree'
 
 _G.debug = false
-_G.screenDebug = true
+_G.screenDebug = false
 love.mouse.setVisible(false)
 
 -- this is recursive, be careful
@@ -76,6 +78,11 @@ function love.load()
   pageSize = constants.PAGE_SIZE -- for lists
   
   utils.debug('\n', '{' .. utils.tableToString(systemsTree) .. '}')
+
+  for _, core in ipairs(constants.cores) do
+    local result = resolutionManager.calculate(core)
+    print('core resolution info >>', result)
+  end
   
   --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
   --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)

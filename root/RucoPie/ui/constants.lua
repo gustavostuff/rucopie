@@ -45,6 +45,12 @@ return {
     snes = 'Super Nintendo',
     ports = 'Ports'
   },
+  cores = {
+    'fceumm',
+    'gambatte',
+    'fbneo',
+    'snes9x'
+  },
   RESTART_LABEL = 'Restart',
   SHUTDOWN_LABEL = 'Shutdown',
   VIDEO_OPTIONS_LABEL = 'Video',

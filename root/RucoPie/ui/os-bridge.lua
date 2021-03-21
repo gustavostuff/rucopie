@@ -46,6 +46,12 @@ osBridge.readFile = function(path)
   return content
 end
 
+osBridge.setResolution = function (core, w, h)
+  local result = osBridge.readFrom(constants.RUCOPIE_DIR .. 'scripts/set_system_resolution.sh "'
+    .. core .. '" "' .. w .. '" "' .. h .. '"')
+  return result
+end
+
 osBridge.fileExists = function(path)
   local result = osBridge.readFrom(constants.RUCOPIE_DIR .. 'scripts/file_exists.sh "' .. path .. '"')
   return result:find('true')

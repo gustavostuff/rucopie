@@ -30,6 +30,6 @@ echo "Executing retroarch with: core = $core, rom = $path"
 
 /opt/retropie/emulators/retroarch/bin/retroarch -L \
 /opt/retropie/libretrocores/lr-"$core"/"$core"_libretro.so \
---config ~/.config/retroarch/cores/"$core".cfg "$path" \
+--config /opt/retropie/configs/all/retroarch/cores/"$core".cfg "$path" \
 /
 
