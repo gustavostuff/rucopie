@@ -4,12 +4,14 @@ local colors = require 'colors'
 local utils = require 'utils'
 
 return {
-  draw = function (listToDisplay, isSystemsList)
+  draw = function (listToDisplay, isSystemsList, pageSize)
     if not listToDisplay then return end
-
-    for i = 1, #listToDisplay.items do
+    local from = 1 + (listToDisplay.page.pageNumber - 1) * pageSize
+    local to = from + pageSize - 1
+    local yPosition = 0
+    for i = from, to do
       local item = listToDisplay.items[i]
-
+      if not item then goto continue end
       love.graphics.setColor(colors.white)
       if isSystemsList then
         if item.isDir and not item.isSystem then
@@ -19,20 +21,22 @@ return {
         love.graphics.setColor(item.color or colors.white)
       end
 
-      
       utils.pp(constants.systemsLabels[item.label] or item.label,
-        math.floor(constants.paddingLeft),
-        math.floor(constants.paddingTop + (i - 1) * love.graphics.getFont():getHeight())
+        constants.PADDING_LEFT,
+        constants.PADDING_TOP + yPosition * love.graphics.getFont():getHeight()
       )
 
-      if i == listToDisplay.index then
+      if yPosition == (listToDisplay.page.gameIndex - 1) then
         love.graphics.setColor(colors.white)
         love.graphics.circle('fill',
-          constants.paddingLeft - 10,
-          math.floor(constants.paddingTop + (i - 1) * love.graphics.getFont():getHeight()) + 5,
-          4
+          constants.PADDING_LEFT - 10,
+          math.floor(constants.PADDING_TOP + yPosition * love.graphics.getFont():getHeight()) + 5,
+          5
         )
       end
+      yPosition = yPosition + 1
+
+      ::continue::
     end
   end
 }

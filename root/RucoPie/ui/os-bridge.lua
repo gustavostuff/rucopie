@@ -29,7 +29,7 @@ osBridge.runGame = function (system, path)
   local cmd = 'nohup sh -c "' .. retroarch .. ' && ' .. backToUI .. '" > /dev/null &';
   utils.debug('>> cmd to run retroarch and go back:', cmd)
   io.popen(cmd)
-  quit() -- love app is closed but opened after retroarch closes
+  love.event.quit() -- love app is closed but opened after retroarch closes
 end
 
 -- next 2 functions are used for files with no spaces in between the name

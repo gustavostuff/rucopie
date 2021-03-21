@@ -9,7 +9,7 @@ local themeManager = require 'theme-manager'
 local optionsTree = require 'options-tree'
 
 _G.debug = false
-_G.screenDebug = false
+_G.screenDebug = true
 love.mouse.setVisible(false)
 
 -- this is recursive, be careful
@@ -18,7 +18,6 @@ local function createSystemsTree(path, parentList, level)
   path = path or constants.ROMS_DIR
   local rawList = osBridge.readFrom('ls "' .. path .. '"')
   local list, parentList = utils.split(rawList, '\n'), parentList or { index = 1, items = {} }
-  
   if level == 1 then parentList.isRoot = true end
   
   for i = 1, #list do
@@ -31,10 +30,12 @@ local function createSystemsTree(path, parentList, level)
         items = {},
         index = 1,
         isDir = true,
-        isSystem = level == 1
+        isSystem = level == 1,
+        page = utils.initPage()
       }
       createSystemsTree(path .. item .. '/', childList, level + 1)
       table.insert(parentList.items, childList)
+      parentList.page = utils.initPage()
     else
       utils.debug('Is a file: ' .. path .. item)
       table.insert(parentList.items, { label = item })
@@ -72,11 +73,13 @@ function love.load()
     [screens.options] = {}
   }
   currentScreen = screens.systems
+  pageSize = constants.PAGE_SIZE -- for lists
   
   utils.debug('\n', '{' .. utils.tableToString(systemsTree) .. '}')
   
   --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
-  font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
+  --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
+  font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
   font:setFilter('nearest', 'nearest')
   love.graphics.setFont(font)
   love.graphics.setBackgroundColor(colors.purple)
@@ -103,10 +106,10 @@ function love.draw()
   themeManager:drawCurrentTheme()
   
   love.graphics.setColor(colors.white)
-  listManager.draw(listToDisplay, currentScreen == screens.systems)
+  listManager.draw(listToDisplay, currentScreen == screens.systems, pageSize)
   utils.pp(constants.captions[currentScreen],
-    constants.paddingLeft,
-    constants.CANVAS_HEIGHT - constants.paddingBottom - font:getHeight()
+    constants.PADDING_LEFT,
+    constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
   )
 
   if joystickManager.isCurrentlyMapping then
@@ -122,13 +125,29 @@ function love.draw()
   love.graphics.draw(canvas, 0, 0, 0, scaleX, scaleY)
 
   if _G.screenDebug then
+    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.rectangle('fill', 0, 0, 300, 200)
     love.graphics.setColor(colors.white)
+
+    local n = #listToDisplay.items
+    local totalPages = math.ceil(n / pageSize)
+    local itemsInPage = pageSize
+    if listToDisplay.page.pageNumber == totalPages then
+      itemsInPage = pageSize - ((totalPages * pageSize) - n)
+    end
+
     utils.pp(
       'FPS: ' .. love.timer.getFPS() .. '\n' ..
       'Width: ' .. love.graphics.getWidth() .. '\n' ..
       'Height: ' .. love.graphics.getHeight() .. '\n' ..
       'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
-      'Canvas Height: ' .. constants.CANVAS_HEIGHT
+      'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
+      '----------------------------------\n' ..
+      'items in list: ' .. n .. '\n' ..
+      'current page: ' .. listToDisplay.page.pageNumber .. '\n' ..
+      'page size: ' .. pageSize .. '\n' ..
+      'total pages: ' .. totalPages .. '\n' ..
+      'items at current page: ' .. itemsInPage
     )
   end
 end
@@ -140,7 +159,7 @@ end
 
 function handleGoBackAction(value)
   if value == constants.keys.ESCAPE then
-  	quit()
+  	love.event.quit()
   end
   local currentListsStack = listsStack[currentScreen]
   local currentPathStack = pathStack[currentScreen]
@@ -156,16 +175,60 @@ function handleGoBackAction(value)
 end
 
 function handleGoDownAction()
+  local n = #listToDisplay.items
+  local totalPages = math.ceil(n / pageSize)
+  -- internal index
   listToDisplay.index = listToDisplay.index + 1
-  if listToDisplay.index > #listToDisplay.items then
+  listToDisplay.page.gameIndex = listToDisplay.page.gameIndex + 1
+
+  if listToDisplay.index > n then
     listToDisplay.index = 1
+  end
+
+  -- handle last page
+  local itemsInPage = pageSize
+  if listToDisplay.page.pageNumber == totalPages then
+    itemsInPage = pageSize - ((totalPages * pageSize) - n)
+  end
+
+  -- index to display
+  if listToDisplay.page.gameIndex > itemsInPage then
+    listToDisplay.page.gameIndex = 1
+    listToDisplay.page.pageNumber = listToDisplay.page.pageNumber + 1
+
+    -- going beyond the last page
+    if listToDisplay.page.pageNumber > totalPages then
+      listToDisplay.page.pageNumber = 1
+    end
   end
 end
 
 function handleGoUpAction()
+  local n = #listToDisplay.items
+  local totalPages = math.ceil(n / pageSize)
+  -- internal index
   listToDisplay.index = listToDisplay.index - 1
+  listToDisplay.page.gameIndex = listToDisplay.page.gameIndex - 1
+
   if listToDisplay.index < 1 then
-    listToDisplay.index = #listToDisplay.items
+    listToDisplay.index = n
+  end
+
+  -- index to display
+  if listToDisplay.page.gameIndex < 1 then
+    -- handle first page
+    local itemsInPage = pageSize
+    if listToDisplay.page.pageNumber == 1 then
+      itemsInPage = pageSize - ((totalPages * pageSize) - n)
+    end
+    
+    listToDisplay.page.gameIndex = itemsInPage
+    listToDisplay.page.pageNumber = listToDisplay.page.pageNumber - 1
+
+    -- going beyond the last page
+    if listToDisplay.page.pageNumber < 1 then
+      listToDisplay.page.pageNumber = totalPages
+    end
   end
 end
 
@@ -265,8 +328,4 @@ function love.joystickhat(joystick, hat, direction)
   elseif joystickManager:allSet() then
     handleUserInput({ value = direction })
   end
-end
-
-function quit()
-  love.event.quit()
 end

@@ -1,5 +1,6 @@
 local constants = require 'constants'
 local colors = require 'colors'
+local utils = require 'utils'
 
 local function bilinearOptionAction(item)
   item.checkbox = not item.checkbox
@@ -25,6 +26,7 @@ optionsTree = {
           action = bilinearOptionAction
         }
       },
+      page = utils.initPage(),
       index = 1
     },
     { label = constants.RESTART_LABEL, color = colors.yellow },
@@ -34,9 +36,11 @@ optionsTree = {
       items = {
         { label = constants.DEBUG_LABEL, color = colors.orange, action = toggleDebug }
       },
+      page = utils.initPage(),
       index = 1
     }
   },
+  page = utils.initPage(),
   index = 1
 }
 

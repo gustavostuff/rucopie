@@ -1,4 +1,5 @@
 local colors = require 'colors'
+local constants = require 'constants'
 
 local utils = {
   split = function (str, sep)
@@ -78,6 +79,10 @@ utils.pp = function (text, x, y, shadowColor)
 
   love.graphics.setColor(bkpColor)
   love.graphics.print(text, x, y)
+end
+
+utils.initPage = function ()
+  return { pageNumber = 1, gameIndex = 1 }
 end
 
 return utils
