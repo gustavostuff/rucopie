@@ -16,7 +16,7 @@ local joystickManager = {
       index = 1,
       done = false,
       labels = {
-        'A', 'B', 'Start'
+        'A', 'B', 'X', 'Y', 'Select', 'Start', 'L1', 'R1', 'L2', 'R2', 'Hotkey'
       },
       map = {}
     }
@@ -28,7 +28,6 @@ local joystickManager = {
 
 joystickManager.orderOfMapping = { 'hat', 'buttons' }
 
--- this iterates over 1 hat and the buttons, in the same order as above^
 function joystickManager:mapRequestedInput(value)
   local mappingItem = self.generalMapping[self.orderOfMapping[self.generalMappingIndex]]
   if mappingItem.done then return end

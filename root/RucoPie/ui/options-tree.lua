@@ -1,6 +1,7 @@
 local constants = require 'constants'
 local colors = require 'colors'
 local utils = require 'utils'
+local osBridge = require 'os-bridge'
 
 local function bilinearOptionAction(item)
   item.checkbox = not item.checkbox
@@ -9,6 +10,14 @@ local function bilinearOptionAction(item)
   else
     canvas:setFilter('nearest', 'nearest')
   end
+end
+
+local function restartAction()
+  osBridge.restart()
+end
+
+local function shutdownAction()
+  osBridge.shutdown()
 end
 
 local function toggleDebug()
@@ -29,8 +38,8 @@ optionsTree = {
       page = utils.initPage(),
       index = 1
     },
-    { label = constants.RESTART_LABEL, color = colors.yellow },
-    { label = constants.SHUTDOWN_LABEL, color = colors.red },
+    { label = constants.RESTART_LABEL, color = colors.yellow, action = restartAction },
+    { label = constants.SHUTDOWN_LABEL, color = colors.red, action = shutdownAction },
     {
       label = constants.ADVANCED_LABEL,
       items = {

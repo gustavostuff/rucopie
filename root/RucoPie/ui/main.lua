@@ -3,9 +3,9 @@ local constants = require 'constants'
 local osBridge = require 'os-bridge'
 local utils = require 'utils'
 
+local themeManager = require 'theme-manager'
 local listManager = require 'list-manager'
 local joystickManager = require 'joystick-manager'
-local themeManager = require 'theme-manager'
 local resolutionManager = require 'resolution-manager'
 
 local optionsTree = require 'options-tree'
@@ -13,6 +13,32 @@ local optionsTree = require 'options-tree'
 _G.debug = false
 _G.screenDebug = false
 love.mouse.setVisible(false)
+
+local function drawDebug()
+  if _G.screenDebug then
+    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.rectangle('fill', 0, 0, 300, 200)
+    love.graphics.setColor(colors.white)
+
+    local n = #listManager.currentList.items
+    local totalPages = listManager:getTotalPages()
+    local itemsInCurrentPage = listManager:getItemsAtCurrentPage()
+
+    utils.pp(
+      'FPS: ' .. love.timer.getFPS() .. '\n' ..
+      'Width: ' .. love.graphics.getWidth() .. '\n' ..
+      'Height: ' .. love.graphics.getHeight() .. '\n' ..
+      'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
+      'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
+      '----------------------------------\n' ..
+      'items in list: ' .. n .. '\n' ..
+      'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
+      'page size: ' .. listManager.pageSize .. '\n' ..
+      'total pages: ' .. totalPages .. '\n' ..
+      'items at current page: ' .. itemsInCurrentPage
+    )
+  end
+end
 
 -- this is recursive, be careful
 local function createSystemsTree(path, parentList, level)
@@ -55,27 +81,21 @@ local function isAnyHatDirectionPressed()
   )
 end
 
-local function isSubOptionsScreen(item)
-  return item.label == constants.VIDEO_OPTIONS_LABEL or
-         item.label == constants.ADVANCED_LABEL
-end
-
 function love.load()
   systemsTree = createSystemsTree()
-  screens = {
+  _G.screens = {
     systems = 1,
     options = 2
   }
   listsStack = {
-    [screens.systems] = {systemsTree},
-    [screens.options] = {optionsTree}
+    [_G.screens.systems] = {systemsTree},
+    [_G.screens.options] = {optionsTree}
   }
   pathStack = {
-    [screens.systems] = {},
-    [screens.options] = {}
+    [_G.screens.systems] = {},
+    [_G.screens.options] = {}
   }
-  currentScreen = screens.systems
-  pageSize = constants.PAGE_SIZE -- for lists
+  currentScreen = _G.screens.systems
   
   utils.debug('\n', '{' .. utils.tableToString(systemsTree) .. '}')
 
@@ -91,7 +111,7 @@ function love.load()
   love.graphics.setFont(font)
   love.graphics.setBackgroundColor(colors.purple)
   
-  listToDisplay = systemsTree
+  listManager:setCurrentList(systemsTree)
   
   canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
   canvas:setFilter('nearest', 'nearest')
@@ -113,7 +133,7 @@ function love.draw()
   themeManager:drawCurrentTheme()
   
   love.graphics.setColor(colors.white)
-  listManager.draw(listToDisplay, currentScreen == screens.systems, pageSize)
+  listManager:draw(currentScreen == _G.screens.systems)
   utils.pp(constants.captions[currentScreen],
     constants.PADDING_LEFT,
     constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
@@ -131,172 +151,50 @@ function love.draw()
   love.graphics.setColor(colors.white)
   love.graphics.draw(canvas, 0, 0, 0, scaleX, scaleY)
 
-  if _G.screenDebug then
-    love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.rectangle('fill', 0, 0, 300, 200)
-    love.graphics.setColor(colors.white)
-
-    local n = #listToDisplay.items
-    local totalPages = math.ceil(n / pageSize)
-    local itemsInPage = pageSize
-    if listToDisplay.page.pageNumber == totalPages then
-      itemsInPage = pageSize - ((totalPages * pageSize) - n)
-    end
-
-    utils.pp(
-      'FPS: ' .. love.timer.getFPS() .. '\n' ..
-      'Width: ' .. love.graphics.getWidth() .. '\n' ..
-      'Height: ' .. love.graphics.getHeight() .. '\n' ..
-      'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
-      'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
-      '----------------------------------\n' ..
-      'items in list: ' .. n .. '\n' ..
-      'current page: ' .. listToDisplay.page.pageNumber .. '\n' ..
-      'page size: ' .. pageSize .. '\n' ..
-      'total pages: ' .. totalPages .. '\n' ..
-      'items at current page: ' .. itemsInPage
-    )
-  end
+  drawDebug()
 end
-
 
 ---------------
 -- events
 ---------------
 
-function handleGoBackAction(value)
-  if value == constants.keys.ESCAPE then
-  	love.event.quit()
-  end
-  local currentListsStack = listsStack[currentScreen]
-  local currentPathStack = pathStack[currentScreen]
-
-  if #currentListsStack > 1 then
-    table.remove(currentListsStack)
-    table.remove(currentPathStack)
-    listToDisplay = currentListsStack[#currentListsStack]
-    if currentListsStack == listsStack[screens.systems] and #currentListsStack == 1 then
-      _G.systemSelected = nil
-    end
-  end
-end
-
-function handleGoDownAction()
-  local n = #listToDisplay.items
-  local totalPages = math.ceil(n / pageSize)
-  -- internal index
-  listToDisplay.index = listToDisplay.index + 1
-  listToDisplay.page.gameIndex = listToDisplay.page.gameIndex + 1
-
-  if listToDisplay.index > n then
-    listToDisplay.index = 1
-  end
-
-  -- handle last page
-  local itemsInPage = pageSize
-  if listToDisplay.page.pageNumber == totalPages then
-    itemsInPage = pageSize - ((totalPages * pageSize) - n)
-  end
-
-  -- index to display
-  if listToDisplay.page.gameIndex > itemsInPage then
-    listToDisplay.page.gameIndex = 1
-    listToDisplay.page.pageNumber = listToDisplay.page.pageNumber + 1
-
-    -- going beyond the last page
-    if listToDisplay.page.pageNumber > totalPages then
-      listToDisplay.page.pageNumber = 1
-    end
-  end
-end
-
-function handleGoUpAction()
-  local n = #listToDisplay.items
-  local totalPages = math.ceil(n / pageSize)
-  -- internal index
-  listToDisplay.index = listToDisplay.index - 1
-  listToDisplay.page.gameIndex = listToDisplay.page.gameIndex - 1
-
-  if listToDisplay.index < 1 then
-    listToDisplay.index = n
-  end
-
-  -- index to display
-  if listToDisplay.page.gameIndex < 1 then
-    -- handle first page
-    local itemsInPage = pageSize
-    if listToDisplay.page.pageNumber == 1 then
-      itemsInPage = pageSize - ((totalPages * pageSize) - n)
-    end
-    
-    listToDisplay.page.gameIndex = itemsInPage
-    listToDisplay.page.pageNumber = listToDisplay.page.pageNumber - 1
-
-    -- going beyond the last page
-    if listToDisplay.page.pageNumber < 1 then
-      listToDisplay.page.pageNumber = totalPages
-    end
-  end
-end
-
-function handleForwardAction()
-  local item = utils.getSelectedItem()
-  local currentListsStack = listsStack[currentScreen]
-  local currentPathStack = pathStack[currentScreen]
-
-  if currentScreen == screens.systems then
-    if item.isDir then
-      table.insert(currentListsStack, item)
-      table.insert(currentPathStack, item.label)
-      if item.isSystem then -- set selected system (gb, nes, etc.)
-        _G.systemSelected = item.label
-      end
-      listToDisplay = item
-    else 
-      local romPath = utils.join('/', pathStack[screens.systems]) .. '/' .. item.label
-      osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
-    end
-  elseif currentScreen == screens.options then
-    if item.action then
-      item.action(item)
-    else
-      if item.label == constants.RESTART_LABEL then osBridge.restart() end
-      if item.label == constants.SHUTDOWN_LABEL then osBridge.shutdown() end
-      if isSubOptionsScreen(item) then
-        table.insert(currentListsStack, item)
-        table.insert(currentPathStack, item.label)
-        listToDisplay = item
-      end
-    end
-  end
-end
-
 function handleUserInput(data)
   local value = data.value
+  local item = listManager:getSelectedItem()
+
+  -- debug
+  if value == joystickManager:getButton('Hotkey') then love.event.quit() end
   
   if value == constants.keys.ESCAPE or value == joystickManager:getButton('B') then
-    handleGoBackAction(value)
+    listManager:back(value, listsStack, pathStack, currentScreen)
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then
     switchScreen()
   elseif value == constants.keys.DOWN or value == joystickManager:getHat('Down') then
-    handleGoDownAction()
+    listManager:down()
   elseif value == constants.keys.UP or value == joystickManager:getHat('Up') then
-    handleGoUpAction()
+    listManager:up()
+  elseif value == constants.keys.LEFT or value == joystickManager:getHat('Left') then
+    listManager:left()
+  elseif value == constants.keys.RIGHT or value == joystickManager:getHat('Right') then
+    listManager:right()
   elseif value == constants.keys.ENTER  or value == joystickManager:getButton('A') then
-    handleForwardAction()
+    listManager:performAction(listsStack, pathStack, item.action or function()
+      local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.label
+      osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
+    end)
   end
 end
 
 function switchScreen()
-  if currentScreen == screens.systems then
-    currentScreen = screens.options
-    local list = listsStack[screens.options]
-    listToDisplay = list[#list]
-  elseif currentScreen == screens.options then
-    currentScreen = screens.systems
-    local list = listsStack[screens.systems]
-    listToDisplay = list[#list]
+  local list
+  if currentScreen == _G.screens.systems then
+    currentScreen = _G.screens.options
+    list = listsStack[_G.screens.options]
+  elseif currentScreen == _G.screens.options then
+    currentScreen = _G.screens.systems
+    list = listsStack[_G.screens.systems]
   end
+  listManager.currentList = list[#list]
 end
 
 function love.keypressed(k)

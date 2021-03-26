@@ -32,10 +32,10 @@ local function initBackgrounds(data, folder)
 end
 
 function themeManager:update(dt)
-  if not self.currentTheme then return end
+  if not _G.currentTheme then return end
 
   dt = love.timer.getDelta()
-  for _, bg in ipairs(self.currentTheme.backgrounds) do
+  for _, bg in ipairs(_G.currentTheme.backgrounds) do
     local _, _, w, h = bg.quad:getViewport()
     local xDirection, yDirection = 1, 1
 
@@ -65,17 +65,17 @@ function themeManager:loadTheme(folder)
   local theme = {}
   theme.backgrounds = initBackgrounds(dataFromFile, folder)
   theme.darkness = dataFromFile.darkness or 0.5
-  self.currentTheme = theme
+  _G.currentTheme = theme
 end
 
 function themeManager:drawCurrentTheme()
   love.graphics.setColor(colors.white)  
 
-  local bgs = self.currentTheme.backgrounds
+  local bgs = _G.currentTheme.backgrounds
   for i = #bgs, 1, -1 do
     love.graphics.draw(bgs[i].img, bgs[i].quad, 0, 0, 0, 1, 1)
   end
-  love.graphics.setColor(0, 0, 0, self.currentTheme.darkness)
+  love.graphics.setColor(0, 0, 0, _G.currentTheme.darkness)
   love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 end
 

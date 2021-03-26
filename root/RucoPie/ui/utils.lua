@@ -17,10 +17,6 @@ local utils = {
        str = str .. delimiter .. list[i] 
     end
     return str
- end,
-
-  getSelectedItem = function ()
-    return listToDisplay.items[listToDisplay.index]
   end,
 
   debug = function (...)
@@ -82,7 +78,7 @@ utils.pp = function (text, x, y, shadowColor)
 end
 
 utils.initPage = function ()
-  return { pageNumber = 1, gameIndex = 1 }
+  return { pageNumber = 1, indexAtCurrentPage = 1 }
 end
 
 return utils

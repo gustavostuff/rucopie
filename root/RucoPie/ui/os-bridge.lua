@@ -13,10 +13,10 @@ end
 
 osBridge.generateList = function (folder)
   local rawList = osBridge.readFrom('ls ' .. constants.ROMS_DIR .. folder)
-  local list, listToDisplay = utils.split(rawList, '\n'), { index = 1, items = {} }
+  local list, currentList = utils.split(rawList, '\n'), { index = 1, items = {} }
   
   for i = 1, #list do
-    table.insert(listToDisplay.items, { label = list[i] })
+    table.insert(currentList.items, { label = list[i] })
   end
 end
 

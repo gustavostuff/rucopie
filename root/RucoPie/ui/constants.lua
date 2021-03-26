@@ -1,8 +1,8 @@
 local colors = require 'colors'
 
 return {
-  CANVAS_WIDTH = 320,
-  CANVAS_HEIGHT = 180,
+  CANVAS_WIDTH = 640 / 2,
+  CANVAS_HEIGHT = 360 / 2,
   PAGE_SIZE = 8,
   PADDING_LEFT = 24,
   PADDING_RIGHT = 24,
