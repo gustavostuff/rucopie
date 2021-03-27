@@ -2,9 +2,13 @@
 local constants = require 'constants'
 local colors = require 'colors'
 local utils = require 'utils'
+local themeManager = require 'theme-manager'
 
 local listManager = {}
 listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
+
+local pointer = love.graphics.newImage('assets/img/default-pointer.png')
+pointer:setFilter('nearest', 'nearest')
 
 function listManager:setCurrentList(list)
   self.currentList = list
@@ -42,6 +46,7 @@ function listManager:draw(isSystemsList)
   local from = 1 + (list.page.pageNumber - 1) * self.pageSize
   local to = from + self.pageSize - 1
   local yPosition = 0
+  local lineHeight = love.graphics.getFont():getHeight() + 1
   for i = from, to do
     local item = list.items[i]
     if not item then goto continue end
@@ -56,15 +61,17 @@ function listManager:draw(isSystemsList)
 
     utils.pp(constants.systemsLabels[item.label] or item.label,
       constants.PADDING_LEFT,
-      constants.PADDING_TOP + yPosition * love.graphics.getFont():getHeight()
+      constants.PADDING_TOP + yPosition * lineHeight
     )
 
     if yPosition == (list.page.indexAtCurrentPage - 1) then
       love.graphics.setColor(colors.white)
-      love.graphics.circle('fill',
-        constants.PADDING_LEFT - 10,
-        math.floor(constants.PADDING_TOP + yPosition * love.graphics.getFont():getHeight()) + 5,
-        5
+      love.graphics.draw(pointer,
+        constants.PADDING_LEFT - pointer:getWidth(),
+        math.floor(
+          constants.PADDING_TOP +
+          yPosition * lineHeight
+        )
       )
     end
     yPosition = yPosition + 1

@@ -11,15 +11,6 @@ osBridge.readFrom = function(cmd)
   return result
 end
 
-osBridge.generateList = function (folder)
-  local rawList = osBridge.readFrom('ls ' .. constants.ROMS_DIR .. folder)
-  local list, currentList = utils.split(rawList, '\n'), { index = 1, items = {} }
-  
-  for i = 1, #list do
-    table.insert(currentList.items, { label = list[i] })
-  end
-end
-
 osBridge.runGame = function (system, path)
   local base = constants.RUCOPIE_DIR .. 'scripts/'
 

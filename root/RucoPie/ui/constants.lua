@@ -3,12 +3,13 @@ local colors = require 'colors'
 return {
   CANVAS_WIDTH = 640 / 2,
   CANVAS_HEIGHT = 360 / 2,
-  PAGE_SIZE = 8,
+  PAGE_SIZE = 12,
   PADDING_LEFT = 24,
   PADDING_RIGHT = 24,
   PADDING_TOP = 16,
   PADDING_BOTTOM = 16,
   RUCOPIE_DIR = '/root/RucoPie/',
+  THEMES_DIR = '/root/RucoPie/ui/assets/themes/',
   JOYSTICK_CONFIG_PATH = 'config/joystick.lua',
   ROMS_DIR = '/root/RetroPie/roms/',
   keys = {
@@ -56,5 +57,6 @@ return {
   VIDEO_OPTIONS_LABEL = 'Video',
   BILINEAR_LABEL = 'Bilinear',
   DEBUG_LABEL = 'Debug mode',
-  ADVANCED_LABEL = 'Advanced'
+  ADVANCED_LABEL = 'Advanced',
+  THEMES_LABEL = 'Themes',
 }

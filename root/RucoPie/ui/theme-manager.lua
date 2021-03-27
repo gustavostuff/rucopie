@@ -17,7 +17,8 @@ local function initBackgrounds(data, folder)
     local item = data.background[i]
     local img = love.graphics.newImage('assets/themes/'.. folder .. '/img/' .. item[1])
     img:setWrap('repeat', 'repeat')
-    --img:setFilter('nearest', 'linear')
+    -- help needed, when using this filter, there's some ugly tearing effects:
+    --img:setFilter('nearest', 'nearest')
     table.insert(bgs, {
       img = img,
       quad = love.graphics.newQuad(0, 0, constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT,
@@ -52,19 +53,24 @@ function themeManager:update(dt)
     end
 
     -- move quad viewport
-    bg.quad:setViewport(math.floor(bg.dispX), math.floor(bg.dispY), w, h)
-    --bg.quad:setViewport(bg.dispX, bg.dispY, w, h)
+    -- help needed, when setting using floor, layers movement becomes non-smooth after changing themes
+    --bg.quad:setViewport(math.floor(bg.dispX), math.floor(bg.dispY), w, h)
+    
+    -- this is a workaround but it's not correct (will show perfect pixels with aliasing)
+    bg.quad:setViewport(bg.dispX, bg.dispY, w, h)
   end
 end
 
-function themeManager:loadTheme(folder)
+function themeManager:setTheme(folder)
   local escapedFolder = folder:gsub(' ', '\\ ')
   local data = osBridge.readFile('ui/assets/themes/' .. escapedFolder .. '/theme.lua')
   local dataFromFile = loadstring(data)()
 
   local theme = {}
   theme.backgrounds = initBackgrounds(dataFromFile, folder)
-  theme.darkness = dataFromFile.darkness or 0.5
+  theme.opacity = dataFromFile.opacity or 0.5
+
+  self.currentThemeName = folder
   _G.currentTheme = theme
 end
 
@@ -75,10 +81,10 @@ function themeManager:drawCurrentTheme()
   for i = #bgs, 1, -1 do
     love.graphics.draw(bgs[i].img, bgs[i].quad, 0, 0, 0, 1, 1)
   end
-  love.graphics.setColor(0, 0, 0, _G.currentTheme.darkness)
+  love.graphics.setColor(0, 0, 0, _G.currentTheme.opacity)
   love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 end
 
-themeManager:loadTheme('Super Mario World Scroll') -- default theme
+themeManager:setTheme('Super Mario Scroll') -- default theme
 
 return themeManager

@@ -1,3 +1,0 @@
-return {
-  background = 'bg.png'
-}

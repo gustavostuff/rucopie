@@ -106,7 +106,8 @@ function love.load()
   
   --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
   --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
-  font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
+  --font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
+  font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
   font:setFilter('nearest', 'nearest')
   love.graphics.setFont(font)
   love.graphics.setBackgroundColor(colors.purple)
@@ -134,7 +135,8 @@ function love.draw()
   
   love.graphics.setColor(colors.white)
   listManager:draw(currentScreen == _G.screens.systems)
-  utils.pp(constants.captions[currentScreen],
+  local caption = listManager.currentList.caption or constants.captions[currentScreen]
+  utils.pp(caption,
     constants.PADDING_LEFT,
     constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
   )
@@ -169,14 +171,14 @@ function handleUserInput(data)
     listManager:back(value, listsStack, pathStack, currentScreen)
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then
     switchScreen()
-  elseif value == constants.keys.DOWN or value == joystickManager:getHat('Down') then
-    listManager:down()
-  elseif value == constants.keys.UP or value == joystickManager:getHat('Up') then
-    listManager:up()
   elseif value == constants.keys.LEFT or value == joystickManager:getHat('Left') then
     listManager:left()
   elseif value == constants.keys.RIGHT or value == joystickManager:getHat('Right') then
     listManager:right()
+  elseif value == constants.keys.UP or value == joystickManager:getHat('Up') then
+    listManager:up()
+  elseif value == constants.keys.DOWN or value == joystickManager:getHat('Down') then
+    listManager:down()
   elseif value == constants.keys.ENTER  or value == joystickManager:getButton('A') then
     listManager:performAction(listsStack, pathStack, item.action or function()
       local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.label
