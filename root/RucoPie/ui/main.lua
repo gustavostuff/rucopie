@@ -7,6 +7,7 @@ local themeManager = require 'theme-manager'
 local listManager = require 'list-manager'
 local joystickManager = require 'joystick-manager'
 local resolutionManager = require 'resolution-manager'
+local threadManager = require 'thread-manager'
 
 local optionsTree = require 'options-tree'
 
@@ -73,20 +74,7 @@ local function createSystemsTree(path, parentList, level)
   return parentList
 end
 
-local function isAnyHatDirectionPressed()
-  if not _G.currentJoystick then return end
-  
-  return (
-    _G.currentJoystick:getHat(1) ~= 'c' -- any non 'idle' state
-  )
-end
-
-function love.load()
-  systemsTree = createSystemsTree()
-  _G.screens = {
-    systems = 1,
-    options = 2
-  }
+local function initNavigationStacks()
   listsStack = {
     [_G.screens.systems] = {systemsTree},
     [_G.screens.options] = {optionsTree}
@@ -95,13 +83,47 @@ function love.load()
     [_G.screens.systems] = {},
     [_G.screens.options] = {}
   }
+end
+
+local function setRefreshedGameList()
+  listsStack[_G.screens.systems] = {systemsTree}
+  pathStack[_G.screens.systems] = {}
+  listManager:setCurrentList(systemsTree)
   currentScreen = _G.screens.systems
-  
-  utils.debug('\n', '{' .. utils.tableToString(systemsTree) .. '}')
+end
+
+local function loadGameList()
+  if osBridge.fileExists(constants.RUCOPIE_DIR .. 'cache/games.lua') then
+    systemsTree = loadstring(osBridge.readFile('cache/games.lua'))()
+    setRefreshedGameList()
+    utils.debug('Systems tree from cache:\n', '{' .. utils.tableToString(systemsTree) .. '}')
+  else
+    _G.refreshSystemsTree()
+  end
+end
+
+_G.refreshSystemsTree = function ()
+  loadingGames = true
+  threadManager:run('refresh-systems.lua', function(value)
+    systemsTree = loadstring(value)()
+    setRefreshedGameList()
+    loadingGames = false
+    utils.debug('Systems tree genearted:\n', '{' .. utils.tableToString(systemsTree) .. '}')
+  end)
+end
+
+function love.load()
+  _G.screens = {
+    systems = 1,
+    options = 2
+  }
+  currentScreen = _G.screens.systems
+  initNavigationStacks()
+  loadGameList()
+
 
   for _, core in ipairs(constants.cores) do
     local result = resolutionManager.calculate(core)
-    print('core resolution info >>', result)
   end
   
   --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
@@ -112,7 +134,6 @@ function love.load()
   love.graphics.setFont(font)
   love.graphics.setBackgroundColor(colors.purple)
   
-  listManager:setCurrentList(systemsTree)
   
   canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
   canvas:setFilter('nearest', 'nearest')
@@ -122,6 +143,7 @@ end
 
 function love.update(dt)
   themeManager:update(dt)
+  threadManager:update(dt)
 end
 
 function love.draw()
@@ -134,12 +156,14 @@ function love.draw()
   themeManager:drawCurrentTheme()
   
   love.graphics.setColor(colors.white)
-  listManager:draw(currentScreen == _G.screens.systems)
-  local caption = listManager.currentList.caption or constants.captions[currentScreen]
-  utils.pp(caption,
-    constants.PADDING_LEFT,
-    constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
-  )
+  if listManager.currentList then
+    listManager:draw(currentScreen == _G.screens.systems)
+    local caption = listManager.currentList.caption or constants.captions[currentScreen]
+    utils.pp(caption,
+      constants.PADDING_LEFT,
+      constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
+    )
+  end
 
   if joystickManager.isCurrentlyMapping then
     local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
@@ -147,6 +171,10 @@ function love.draw()
       math.floor(constants.CANVAS_WIDTH / 2 - font:getWidth(text) / 2),
       math.floor(constants.CANVAS_HEIGHT / 2 - font:getHeight() / 2)
     )
+  end
+
+  if loadingGames then
+    utils.pp('Loading games...')
   end
 
   love.graphics.setCanvas()
@@ -161,12 +189,17 @@ end
 ---------------
 
 function handleUserInput(data)
-  local value = data.value
-  local item = listManager:getSelectedItem()
-
   -- debug
-  if value == joystickManager:getButton('Hotkey') then love.event.quit() end
+  local value = data.value
+  if value == joystickManager:getButton('Hotkey') or value == constants.keys.ESCAPE then
+    love.event.quit()
+  end
+
+  if loadingGames then return end
   
+  local item = listManager:getSelectedItem()
+  if not item then return end
+
   if value == constants.keys.ESCAPE or value == joystickManager:getButton('B') then
     listManager:back(value, listsStack, pathStack, currentScreen)
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then

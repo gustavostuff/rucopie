@@ -26,6 +26,22 @@ local utils = {
   end
 }
 
+local function escapeValue(value)
+  if 'string' == type(value) then value = value:gsub("'", "\\'") end
+  return value
+end
+
+local function formatKey(key)
+  if type(key) == 'number' or
+     type(key) == 'boolean' then
+      key = '[' .. key .. ']'
+  else -- string or others
+    key = '[\'' .. key .. '\']'
+  end
+
+  return key
+end
+
 -- based on http://lua-users.org/wiki/TableSerialization
 -- caution, this won't work on any arbitrary table
 utils.tableToString = function (tt, indent, done)
@@ -37,19 +53,21 @@ utils.tableToString = function (tt, indent, done)
       table.insert(sb, string.rep (' ', indent)) -- indent it
       if type (value) == 'table' and not done [value] then
         done [value] = true
-        table.insert(sb, key .. ' = {\n');
+        table.insert(sb, formatKey(key) .. ' = {\n');
         table.insert(sb, utils.tableToString(value, indent + 2, done))
         table.insert(sb, string.rep (' ', indent)) -- indent it
         table.insert(sb, '},\n');
       elseif "number" == type(key) then
-        table.insert(sb, string.format("\'%s\',\n", tostring(value)))
+        table.insert(sb, string.format("\'%s\',\n", tostring(escapeValue(value))))
       else
         local valueFotmat = "'%s'"
         if type(value) == 'number' or type(value) == 'boolean' then
           valueFotmat = "%s"
         end
+      
+        local v = tostring(escapeValue(value))
         table.insert(sb, string.format(
-            '%s = ' .. valueFotmat .. ',\n', tostring (key), tostring(value)))
+            '%s = ' .. valueFotmat .. ',\n', tostring (formatKey(key)), v))
       end
     end
     return table.concat(sb)

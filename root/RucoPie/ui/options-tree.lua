@@ -52,6 +52,10 @@ local function toggleDebug()
   _G.screenDebug = not _G.screenDebug
 end
 
+local function refreshRomsAction()
+  _G.refreshSystemsTree()
+end
+
 optionsTree = {
   items = {
     {
@@ -66,6 +70,7 @@ optionsTree = {
       page = utils.initPage(),
       index = 1
     },
+    { label = constants.REFRESH_ROMS_LABEL, action = refreshRomsAction },
     initThemesList(),
     { label = constants.RESTART_LABEL, color = colors.yellow, action = restartAction },
     { label = constants.SHUTDOWN_LABEL, color = colors.red, action = shutdownAction },

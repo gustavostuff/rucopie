@@ -59,4 +59,5 @@ return {
   DEBUG_LABEL = 'Debug mode',
   ADVANCED_LABEL = 'Advanced',
   THEMES_LABEL = 'Themes',
+  REFRESH_ROMS_LABEL = 'Refresh game list'
 }

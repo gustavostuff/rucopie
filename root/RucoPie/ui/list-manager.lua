@@ -25,10 +25,9 @@ function listManager:getItemsAtCurrentPage()
 end
 
 function listManager:getSelectedItem()
+  if not self.currentList then return end
   local list = self.currentList
-  local item = list.items[list.index]
-  if not item then error('No item at index ' .. list.index) end
-  return item
+  return list.items[list.index]
 end
 
 function listManager:getCommon()
@@ -42,7 +41,7 @@ end
 function listManager:draw(isSystemsList)
   local list = self.currentList
 
-  if not list then return end
+  if not list or not list.page then return end
   local from = 1 + (list.page.pageNumber - 1) * self.pageSize
   local to = from + self.pageSize - 1
   local yPosition = 0
