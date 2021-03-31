@@ -76,8 +76,9 @@ utils.tableToString = function (tt, indent, done)
   end
 end
 
-utils.pp = function (text, x, y, fgColor, shadowColor)
+utils.pp = function (text, x, y, data)
   x, y = x or 0, y or 0
+  data = data or {}
   local shadowText = text
   if type(text) == 'table' then -- colored text table
     shadowText = ''
@@ -86,11 +87,23 @@ utils.pp = function (text, x, y, fgColor, shadowColor)
     end
   end
 
-  love.graphics.setColor(shadowColor or colors.black)
-  love.graphics.print(shadowText, x - 1, y + 1)
+  love.graphics.setColor(data.shadowColor or colors.black)
+  love.graphics.print(shadowText, math.floor(x - 1), math.floor(y + 1))
 
-  love.graphics.setColor(fgColor or colors.white)
-  love.graphics.print(text, x, y)
+  love.graphics.setColor(data.fgColor or colors.white)
+  love.graphics.print(text, math.floor(x), math.floor(y))
+end
+
+utils.drawWithShadow = function (img, x, y, data)
+  x = x or 0
+  y = y or 0
+  data = data or {}
+
+  love.graphics.setColor(data.shadowColor or colors.black)
+  love.graphics.draw(img, math.floor(x - 1), math.floor(y + 1))
+
+  love.graphics.setColor(data.fgColor or colors.white)
+  love.graphics.draw(img, math.floor(x), math.floor(y))
 end
 
 utils.initPage = function ()

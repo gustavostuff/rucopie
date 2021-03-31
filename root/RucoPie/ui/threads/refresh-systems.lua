@@ -6,37 +6,45 @@ local channel = ({...})[1]
 local totalGames = 0
 
 local function createSystemsTree(path, parentList, level)
-  level = level or 1
   path = path or constants.ROMS_DIR
-  local rawList = osBridge.readFrom('ls "' .. path .. '"')
-  local list, parentList = utils.split(rawList, '\n'), parentList or { index = 1, items = {} }
-  if level == 1 then parentList.isRoot = true end
+  parentList = parentList or { index = 1, items = {}, isRoot = true }
+  level = level or 1
+
+  local elements = {}
+  for file in lfs.dir(path) do
+    table.insert(elements, file)
+  end
+  -- alphabeticall order
+  table.sort(elements)
   
-  for i = 1, #list do
-    local item = list[i]
-    
-    if osBridge.isDirectory(path .. item) then
-      local childList = {
-        label = item,
-        items = {},
-        index = 1,
-        isDir = true,
-        isSystem = level == 1,
-        page = utils.initPage()
-      }
-      createSystemsTree(path .. item .. '/', childList, level + 1)
-      table.insert(parentList.items, childList)
-      parentList.page = utils.initPage()
-    else
-      totalGames = totalGames + 1
-      table.insert(parentList.items, { label = item })
+  for _, file in ipairs(elements) do
+    if file ~= "." and file ~= ".." then
+      local fullPath = path .. '/' .. file
+      
+      if osBridge.isDirectory(fullPath) then
+        local childList = {
+          label = file,
+          items = {},
+          index = 1,
+          isDir = true,
+          isSystem = level == 1,
+          page = utils.initPage()
+        }
+        createSystemsTree(fullPath .. '/', childList, level + 1)
+        table.insert(parentList.items, childList)
+        parentList.page = utils.initPage()
+      else
+        totalGames = totalGames + 1
+        table.insert(parentList.items, { label = file })
+      end
     end
   end
-  
+
   return parentList
 end
 
 local tree = createSystemsTree()
+tree.totalGames = totalGames
 local stringTree = 'return { ' .. utils.tableToString(tree) .. '}'
 osBridge.saveFile(stringTree, 'cache/games-tree.lua')
 

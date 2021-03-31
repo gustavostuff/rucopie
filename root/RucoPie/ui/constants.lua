@@ -58,7 +58,7 @@ return {
   SHUTDOWN_LABEL = 'Shutdown',
   VIDEO_OPTIONS_LABEL = 'Video',
   BILINEAR_LABEL = 'Bilinear',
-  DEBUG_LABEL = 'Debug mode',
+  DEBUG_LABEL = 'Show debug info',
   ADVANCED_LABEL = 'Advanced',
   THEMES_LABEL = 'Themes',
   REFRESH_ROMS_LABEL = 'Refresh game list'

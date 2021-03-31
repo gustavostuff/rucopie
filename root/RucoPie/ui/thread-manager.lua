@@ -12,7 +12,7 @@ function threadManager:run(file, cb, times, data)
 
   local threadInfo = {
     name = name,
-    cb = cb,
+    cb = cb or (function() end),
     times = times,
     timesCounter = 0,
   }

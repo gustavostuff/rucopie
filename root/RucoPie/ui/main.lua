@@ -19,30 +19,38 @@ love.mouse.setVisible(false)
 totalGames = 0
 
 local function drawDebug()
+  love.graphics.setFont(debugFont)
   if _G.screenDebug then
     love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.rectangle('fill', 0, 0, 300, 200)
+    love.graphics.rectangle('fill', 0, 0,
+      love.graphics.getWidth(),
+      love.graphics.getHeight()
+    )
     love.graphics.setColor(colors.white)
 
     local n = #listManager.currentList.items
     local totalPages = listManager:getTotalPages()
     local itemsInCurrentPage = listManager:getItemsAtCurrentPage()
+    local text = 'FPS: ' .. love.timer.getFPS() .. '\n' ..
+    'Width: ' .. love.graphics.getWidth() .. '\n' ..
+    'Height: ' .. love.graphics.getHeight() .. '\n' ..
+    'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
+    'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
+    '----------------------------------\n' ..
+    'items in list: ' .. n .. '\n' ..
+    'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
+    'page size: ' .. listManager.pageSize .. '\n' ..
+    'total pages: ' .. totalPages .. '\n' ..
+    'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
+    'items at current page: ' .. itemsInCurrentPage
 
-    utils.pp(
-      'FPS: ' .. love.timer.getFPS() .. '\n' ..
-      'Width: ' .. love.graphics.getWidth() .. '\n' ..
-      'Height: ' .. love.graphics.getHeight() .. '\n' ..
-      'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
-      'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
-      '----------------------------------\n' ..
-      'items in list: ' .. n .. '\n' ..
-      'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
-      'page size: ' .. listManager.pageSize .. '\n' ..
-      'total pages: ' .. totalPages .. '\n' ..
-      'total games (whole system): ' .. totalGames .. '\n' ..
-      'items at current page: ' .. itemsInCurrentPage
+    utils.pp(text,
+      love.graphics.getWidth() - debugFont:getWidth(text), 0,
+      { shadowColor = { 1, 1, 1, 0 } }
     )
   end
+
+  love.graphics.setFont(font)
 end
 
 local function initNavigationStacks()
@@ -70,6 +78,42 @@ local function loadGameList()
     utils.debug('Systems tree from cache:\n', '{' .. utils.tableToString(_G.systemsTree) .. '}')
   else
     _G.refreshSystemsTree()
+  end
+end
+
+local function drawListAndCaption()
+  love.graphics.setColor(colors.white)
+  if listManager.currentList then
+    listManager:draw(currentScreen == _G.screens.systems)
+    local caption = listManager.currentList.caption or constants.captions[currentScreen]
+    utils.pp(caption,
+      constants.PADDING_LEFT,
+      constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
+    )
+  end
+end
+
+local function drawJoystickMapping()
+  if joystickManager.isCurrentlyMapping then
+    local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
+    utils.pp(text,
+      math.floor(constants.CANVAS_WIDTH / 2 - font:getWidth(text) / 2),
+      math.floor(constants.CANVAS_HEIGHT / 2 - font:getHeight() / 2)
+    )
+  end
+end
+
+local function drawMessagesForAsyncTaks()
+  if loadingGames then
+    utils.pp('Loading games...')
+  end
+
+  if _G.shuttingDown then
+    utils.pp('Shutting down...')
+  end
+
+  if _G.restarting then
+    utils.pp('Restarting...')
   end
 end
 
@@ -101,6 +145,7 @@ function love.load()
   --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
   --font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
   font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
+  debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
   font:setFilter('nearest', 'nearest')
   love.graphics.setFont(font)
   love.graphics.setBackgroundColor(colors.purple)
@@ -125,28 +170,9 @@ function love.draw()
   love.graphics.rectangle('fill', 0, 0, constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
 
   themeManager:drawCurrentTheme()
-  
-  love.graphics.setColor(colors.white)
-  if listManager.currentList then
-    listManager:draw(currentScreen == _G.screens.systems)
-    local caption = listManager.currentList.caption or constants.captions[currentScreen]
-    utils.pp(caption,
-      constants.PADDING_LEFT,
-      constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
-    )
-  end
-
-  if joystickManager.isCurrentlyMapping then
-    local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
-    utils.pp(text,
-      math.floor(constants.CANVAS_WIDTH / 2 - font:getWidth(text) / 2),
-      math.floor(constants.CANVAS_HEIGHT / 2 - font:getHeight() / 2)
-    )
-  end
-
-  if loadingGames then
-    utils.pp('Loading games...')
-  end
+  drawListAndCaption()
+  drawJoystickMapping()
+  drawMessagesForAsyncTaks()
 
   love.graphics.setCanvas()
   love.graphics.setColor(colors.white)

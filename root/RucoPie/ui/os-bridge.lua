@@ -67,7 +67,7 @@ osBridge.shutdown = function ()
 end
 
 osBridge.isDirectory = function (path)
-  local attr = lfs.attributes (path)
+  local attr = lfs.attributes(path)
   return attr.mode == 'directory'
 end
 

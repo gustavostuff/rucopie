@@ -3,6 +3,7 @@ local constants = require 'constants'
 local colors = require 'colors'
 local utils = require 'utils'
 local themeManager = require 'theme-manager'
+local images = require 'images'
 
 local listManager = {}
 listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
@@ -49,29 +50,33 @@ function listManager:draw(isSystemsList)
   for i = from, to do
     local item = list.items[i]
     if not item then goto continue end
-    local color = colors.white
-    if isSystemsList then
-      if item.isDir and not item.isSystem then
-        color = colors.blue
-      end
-    else
-      color = item.color or colors.white
-    end
 
+    color = item.color or list.color or colors.white
+    local icon
+    if item.isDir and not item.isSystem then
+      color = colors.blue
+      icon = images.icons.folder
+    end
+    local icondDisplacement = 0
+    if icon then
+      love.graphics.setColor(colors.white)
+      icondDisplacement = icon:getWidth() + 5
+      utils.drawWithShadow(icon,
+        constants.PADDING_LEFT,
+        constants.PADDING_TOP + yPosition * lineHeight
+      )
+    end
     utils.pp(constants.systemsLabels[item.label] or item.label,
-      constants.PADDING_LEFT,
+      constants.PADDING_LEFT + icondDisplacement,
       constants.PADDING_TOP + yPosition * lineHeight,
-      color
+      { fgColor = color }
     )
 
     if yPosition == (list.page.indexAtCurrentPage - 1) then
       love.graphics.setColor(colors.white)
-      love.graphics.draw(pointer,
+      utils.drawWithShadow(pointer,
         constants.PADDING_LEFT - pointer:getWidth(),
-        math.floor(
-          constants.PADDING_TOP +
-          yPosition * lineHeight
-        )
+        constants.PADDING_TOP + yPosition * lineHeight
       )
     end
     yPosition = yPosition + 1

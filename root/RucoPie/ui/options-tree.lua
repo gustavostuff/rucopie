@@ -41,10 +41,12 @@ local function initThemesList()
 end
 
 local function restartAction()
+  _G.restarting = true
   osBridge.restart()
 end
 
 local function shutdownAction()
+  _G.shuttingDown = true
   osBridge.shutdown()
 end
 
