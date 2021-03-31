@@ -13,7 +13,7 @@ RucoPie aims to be a fast, pixel-perfect, not Emulationstation-based, easy to us
   * WQHD (2560x1440, Raspberry Pi 4 only)
   * 4K (3840x2160, Raspberry Pi 4 only)
 
-If you have a screen with a resolution of (for instance) 1366x768, you won't get a pixel-perfect UI right away, but tweaks for this are also planned in the form of "custom resolutions". So here's some screenshots for the current state of the UI, lots of things are still missing:
+If you have a screen with a resolution of (for instance) 1366x768, all games will still look pixel-perfect, but you won't get a pixel-perfect UI right away. Workarounds for this are also planned in the form of "custom resolutions". Here's some screenshots for the current state of the UI, lots of things are still missing:
 
 ![](https://i.postimg.cc/15Sm8X76/screenshot-1617225121.png)
 ![](https://i.postimg.cc/dVtJ9XYV/screenshot-1617225131.png)
