@@ -10,7 +10,7 @@ case $1 in
   snes)
     core="snes9x"
     ;;
-  gb)
+  gb|gbc)
     core="gambatte"
     ;;
   neogeo)

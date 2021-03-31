@@ -49,18 +49,19 @@ function listManager:draw(isSystemsList)
   for i = from, to do
     local item = list.items[i]
     if not item then goto continue end
-    love.graphics.setColor(colors.white)
+    local color = colors.white
     if isSystemsList then
       if item.isDir and not item.isSystem then
-        love.graphics.setColor(colors.blue)
+        color = colors.blue
       end
     else
-      love.graphics.setColor(item.color or colors.white)
+      color = item.color or colors.white
     end
 
     utils.pp(constants.systemsLabels[item.label] or item.label,
       constants.PADDING_LEFT,
-      constants.PADDING_TOP + yPosition * lineHeight
+      constants.PADDING_TOP + yPosition * lineHeight,
+      color
     )
 
     if yPosition == (list.page.indexAtCurrentPage - 1) then

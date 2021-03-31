@@ -6,7 +6,8 @@ local threadManager = {
 }
 
 -- file is relative to ~/RucoPie/ui/threads/
-function threadManager:run(file, cb, times)
+-- data must be a plain table
+function threadManager:run(file, cb, times, data)
   times = times or -1
 
   local threadInfo = {
@@ -16,8 +17,8 @@ function threadManager:run(file, cb, times)
     timesCounter = 0,
   }
   threadInfo.channel = 'channel-' .. self.index
-  threadInfo.thread = love.thread.newThread('threads/' .. file)
-  threadInfo.thread:start(threadInfo.channel)
+  threadInfo.thread = love.thread.newThread('threads/' .. file .. '.lua')
+  threadInfo.thread:start(threadInfo.channel, data)
   self.list[self.index] = threadInfo
   self.index = self.index + 1
 end

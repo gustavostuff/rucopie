@@ -1,6 +1,9 @@
 local constants = require '../constants'
 local osBridge = require '../os-bridge'
 local utils = require '../utils'
+local lfs = require 'lfs'
+local channel = ({...})[1]
+local totalGames = 0
 
 local function createSystemsTree(path, parentList, level)
   level = level or 1
@@ -25,6 +28,7 @@ local function createSystemsTree(path, parentList, level)
       table.insert(parentList.items, childList)
       parentList.page = utils.initPage()
     else
+      totalGames = totalGames + 1
       table.insert(parentList.items, { label = item })
     end
   end
@@ -34,5 +38,11 @@ end
 
 local tree = createSystemsTree()
 local stringTree = 'return { ' .. utils.tableToString(tree) .. '}'
-osBridge.saveFile(stringTree, 'cache/games.lua')
-love.thread.getChannel(...):push(stringTree)
+osBridge.saveFile(stringTree, 'cache/games-tree.lua')
+
+constants.tree = loadstring(stringTree)()
+
+love.thread.getChannel(channel):push({
+  stringTree = stringTree,
+  totalGames = totalGames
+})

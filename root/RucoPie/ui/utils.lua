@@ -76,10 +76,8 @@ utils.tableToString = function (tt, indent, done)
   end
 end
 
-utils.pp = function (text, x, y, shadowColor)
+utils.pp = function (text, x, y, fgColor, shadowColor)
   x, y = x or 0, y or 0
-  local bkpColor = {love.graphics.getColor()}
-  shadowColor = shadowColor or colors.black
   local shadowText = text
   if type(text) == 'table' then -- colored text table
     shadowText = ''
@@ -88,10 +86,10 @@ utils.pp = function (text, x, y, shadowColor)
     end
   end
 
-  love.graphics.setColor(shadowColor)
+  love.graphics.setColor(shadowColor or colors.black)
   love.graphics.print(shadowText, x - 1, y + 1)
 
-  love.graphics.setColor(bkpColor)
+  love.graphics.setColor(fgColor or colors.white)
   love.graphics.print(text, x, y)
 end
 

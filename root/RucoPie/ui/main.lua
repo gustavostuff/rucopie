@@ -11,9 +11,12 @@ local threadManager = require 'thread-manager'
 
 local optionsTree = require 'options-tree'
 
-_G.debug = false
+-- debug
+_G.debug = true
 _G.screenDebug = false
 love.mouse.setVisible(false)
+
+totalGames = 0
 
 local function drawDebug()
   if _G.screenDebug then
@@ -36,47 +39,15 @@ local function drawDebug()
       'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
       'page size: ' .. listManager.pageSize .. '\n' ..
       'total pages: ' .. totalPages .. '\n' ..
+      'total games (whole system): ' .. totalGames .. '\n' ..
       'items at current page: ' .. itemsInCurrentPage
     )
   end
 end
 
--- this is recursive, be careful
-local function createSystemsTree(path, parentList, level)
-  level = level or 1
-  path = path or constants.ROMS_DIR
-  local rawList = osBridge.readFrom('ls "' .. path .. '"')
-  local list, parentList = utils.split(rawList, '\n'), parentList or { index = 1, items = {} }
-  if level == 1 then parentList.isRoot = true end
-  
-  for i = 1, #list do
-    local item = list[i]
-    
-    if osBridge.isDirectory(path .. item) then
-      utils.debug('Is a directory: ' .. path .. item)
-      local childList = {
-        label = item,
-        items = {},
-        index = 1,
-        isDir = true,
-        isSystem = level == 1,
-        page = utils.initPage()
-      }
-      createSystemsTree(path .. item .. '/', childList, level + 1)
-      table.insert(parentList.items, childList)
-      parentList.page = utils.initPage()
-    else
-      utils.debug('Is a file: ' .. path .. item)
-      table.insert(parentList.items, { label = item })
-    end
-  end
-  
-  return parentList
-end
-
 local function initNavigationStacks()
   listsStack = {
-    [_G.screens.systems] = {systemsTree},
+    [_G.screens.systems] = {_G.systemsTree},
     [_G.screens.options] = {optionsTree}
   }
   pathStack = {
@@ -86,17 +57,17 @@ local function initNavigationStacks()
 end
 
 local function setRefreshedGameList()
-  listsStack[_G.screens.systems] = {systemsTree}
+  listsStack[_G.screens.systems] = {_G.systemsTree}
   pathStack[_G.screens.systems] = {}
-  listManager:setCurrentList(systemsTree)
+  listManager:setCurrentList(_G.systemsTree)
   currentScreen = _G.screens.systems
 end
 
 local function loadGameList()
-  if osBridge.fileExists(constants.RUCOPIE_DIR .. 'cache/games.lua') then
-    systemsTree = loadstring(osBridge.readFile('cache/games.lua'))()
+  if osBridge.fileExists(constants.RUCOPIE_DIR .. 'cache/games-tree.lua') then
+    _G.systemsTree = loadstring(osBridge.readFile('cache/games-tree.lua'))()
     setRefreshedGameList()
-    utils.debug('Systems tree from cache:\n', '{' .. utils.tableToString(systemsTree) .. '}')
+    utils.debug('Systems tree from cache:\n', '{' .. utils.tableToString(_G.systemsTree) .. '}')
   else
     _G.refreshSystemsTree()
   end
@@ -104,11 +75,11 @@ end
 
 _G.refreshSystemsTree = function ()
   loadingGames = true
-  threadManager:run('refresh-systems.lua', function(value)
-    systemsTree = loadstring(value)()
+  threadManager:run('refresh-systems', function(data)
+    _G.systemsTree = loadstring(data.stringTree)()
+    totalGames = data.totalGames
     setRefreshedGameList()
     loadingGames = false
-    utils.debug('Systems tree genearted:\n', '{' .. utils.tableToString(systemsTree) .. '}')
   end)
 end
 

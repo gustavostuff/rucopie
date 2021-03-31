@@ -62,8 +62,7 @@ function themeManager:update(dt)
 end
 
 function themeManager:setTheme(folder)
-  local escapedFolder = folder:gsub(' ', '\\ ')
-  local data = osBridge.readFile('ui/assets/themes/' .. escapedFolder .. '/theme.lua')
+  local data = osBridge.readFile('ui/assets/themes/' .. folder .. '/theme.lua')
   local dataFromFile = loadstring(data)()
 
   local theme = {}

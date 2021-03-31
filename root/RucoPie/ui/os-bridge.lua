@@ -1,5 +1,6 @@
 local utils = require 'utils'
 local constants = require 'constants'
+local lfs = require 'lfs'
 
 local osBridge = {}
 
@@ -27,13 +28,18 @@ end
 osBridge.saveFile = function(content, path)
   -- this is synchronus, love app will be blocked:
   utils.debug('Saving file with content:\n' .. content)
-  os.execute('echo "' .. content .. '" > ' .. constants.RUCOPIE_DIR .. path)
+  local file = io.open(constants.RUCOPIE_DIR .. path, 'w')
+  file:write(content)
+  file:close()
 end
 
 osBridge.readFile = function(path)
   -- this is synchronus, love app will be blocked:
-  local content = osBridge.readFrom('cat ' .. constants.RUCOPIE_DIR .. path)
+  
+  local file = assert(io.open(constants.RUCOPIE_DIR .. path, "rb"))
+  local content = file:read("*all")
   utils.debug('File being read:\n' .. content)
+  file:close()
   return content
 end
 
@@ -44,8 +50,12 @@ osBridge.setResolution = function (core, w, h)
 end
 
 osBridge.fileExists = function(path)
-  local result = osBridge.readFrom(constants.RUCOPIE_DIR .. 'scripts/file_exists.sh "' .. path .. '"')
-  return result:find('true')
+  local file = io.open(path, 'r')
+  if file ~= nil then
+    io.close(file)
+    return true
+  end
+  return false
 end
 
 osBridge.restart = function ()
@@ -57,17 +67,8 @@ osBridge.shutdown = function ()
 end
 
 osBridge.isDirectory = function (path)
-  local result = osBridge.readFrom(constants.RUCOPIE_DIR .. 'scripts/is_dir.sh "' .. path .. '"')
-  if result:find('file') then
-    utils.debug('*DIR ' .. path)
-    return true
-  elseif result:find('directory') then
-    utils.debug('>> FILE ' .. path)
-    return false
-  else
-    utils.debug('** NOT VALID >> ' .. path)
-    return false
-  end
+  local attr = lfs.attributes (path)
+  return attr.mode == 'directory'
 end
 
 return osBridge
