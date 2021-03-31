@@ -7,9 +7,41 @@ local images = require 'images'
 
 local listManager = {}
 listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
+listManager.listBounds = {
+  x = 24,
+  y = 24,
+  w = constants.CANVAS_WIDTH - 100,
+  h = constants.CANVAS_HEIGHT - 48
+}
 
 local pointer = love.graphics.newImage('assets/img/default-pointer.png')
 pointer:setFilter('nearest', 'nearest')
+
+function listManager:getListStencil()
+  return function ()
+    local rec = self.listBounds
+    love.graphics.rectangle('fill', rec.x, rec.y, rec.w, rec.h)
+  end
+end
+
+function listManager:getListingCommons()
+  local list = self.currentList
+
+  local from = 1 + (list.page.pageNumber - 1) * self.pageSize
+  local to = from + self.pageSize - 1
+  local yPosition = 0
+  local lineHeight = love.graphics.getFont():getHeight() + 1
+
+  return list, from, to, yPosition, lineHeight
+end
+
+function listManager:getMovementCommon()
+  local list = self.currentList
+  local n = #list.items
+  local totalPages = math.ceil(n / self.pageSize)
+
+  return list, n, totalPages
+end
 
 function listManager:setCurrentList(list)
   self.currentList = list
@@ -21,7 +53,7 @@ end
 
 function listManager:getItemsAtCurrentPage()
   local totalPages = self:getTotalPages()
-  local _, n, _ = self:getCommon()
+  local _, n, _ = self:getMovementCommon()
   return self.pageSize - ((totalPages * self.pageSize) - n)
 end
 
@@ -31,28 +63,19 @@ function listManager:getSelectedItem()
   return list.items[list.index]
 end
 
-function listManager:getCommon()
-  local list = self.currentList
-  local n = #list.items
-  local totalPages = math.ceil(n / self.pageSize)
-
-  return list, n, totalPages
-end
-
 function listManager:draw(isSystemsList)
-  local list = self.currentList
+  local list, from, to, yPosition, lineHeight = self:getListingCommons()
 
-  if not list or not list.page then return end
-  local from = 1 + (list.page.pageNumber - 1) * self.pageSize
-  local to = from + self.pageSize - 1
-  local yPosition = 0
-  local lineHeight = love.graphics.getFont():getHeight() + 1
+  love.graphics.stencil(self:getListStencil(), 'replace', 1) 
+  love.graphics.setStencilTest('greater', 0)
+
   for i = from, to do
     local item = list.items[i]
     if not item then goto continue end
-
-    color = item.color or list.color or colors.white
+    
     local icon
+    local currentX = (item.x or 0)
+    local color = item.color or list.color or colors.white
     if item.isDir and not item.isSystem then
       color = colors.blue
       icon = images.icons.folder
@@ -62,27 +85,29 @@ function listManager:draw(isSystemsList)
       love.graphics.setColor(colors.white)
       icondDisplacement = icon:getWidth() + 5
       utils.drawWithShadow(icon,
-        constants.PADDING_LEFT,
-        constants.PADDING_TOP + yPosition * lineHeight
+        self.listBounds.x + currentX,
+        self.listBounds.y + yPosition * lineHeight
       )
     end
     utils.pp(constants.systemsLabels[item.label] or item.label,
-      constants.PADDING_LEFT + icondDisplacement,
-      constants.PADDING_TOP + yPosition * lineHeight,
+      self.listBounds.x + icondDisplacement + currentX,
+      self.listBounds.y + yPosition * lineHeight,
       { fgColor = color }
     )
 
     if yPosition == (list.page.indexAtCurrentPage - 1) then
       love.graphics.setColor(colors.white)
       utils.drawWithShadow(pointer,
-        constants.PADDING_LEFT - pointer:getWidth(),
-        constants.PADDING_TOP + yPosition * lineHeight
+        self.listBounds.x - pointer:getWidth(),
+        self.listBounds.y + yPosition * lineHeight
       )
     end
     yPosition = yPosition + 1
 
     ::continue::
   end
+
+  love.graphics.setStencilTest()
 end
 
 function listManager:back(value, listsStack, pathStack, currentScreen)
@@ -100,7 +125,7 @@ function listManager:back(value, listsStack, pathStack, currentScreen)
 end
 
 function listManager:handleLastPage()
-  local list, n, totalPages = self:getCommon()
+  local list, n, totalPages = self:getMovementCommon()
   local itemsAtCurrentPage = self:getItemsAtCurrentPage()
   if list.page.pageNumber == totalPages then
     if list.page.indexAtCurrentPage > itemsAtCurrentPage then
@@ -111,7 +136,7 @@ function listManager:handleLastPage()
 end
 
 function listManager:left()
-  local list, n, totalPages = self:getCommon()
+  local list, n, totalPages = self:getMovementCommon()
   if totalPages == 1 then return end
 
   list.index = list.index - self.pageSize
@@ -124,7 +149,7 @@ function listManager:left()
 end
 
 function listManager:right()
-  local list, n, totalPages = self:getCommon()
+  local list, n, totalPages = self:getMovementCommon()
   if totalPages == 1 then return end
 
   list.index = list.index + self.pageSize
@@ -140,7 +165,7 @@ function listManager:right()
 end
 
 function listManager:up()
-  local list, n, totalPages = self:getCommon()
+  local list, n, totalPages = self:getMovementCommon()
   -- internal index
   list.index = list.index - 1
   list.page.indexAtCurrentPage = list.page.indexAtCurrentPage - 1
@@ -168,7 +193,7 @@ function listManager:up()
 end
 
 function listManager:down()
-  local list, n, totalPages = self:getCommon()
+  local list, n, totalPages = self:getMovementCommon()
   -- internal index
   list.index = list.index + 1
   list.page.indexAtCurrentPage = list.page.indexAtCurrentPage + 1

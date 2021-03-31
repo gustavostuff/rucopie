@@ -1,3 +1,5 @@
+love.filesystem.setIdentity('ruco-pie')
+
 local colors = require 'colors'
 local constants = require 'constants'
 local osBridge = require 'os-bridge'
@@ -15,8 +17,6 @@ local optionsTree = require 'options-tree'
 _G.debug = true
 _G.screenDebug = false
 love.mouse.setVisible(false)
-
-totalGames = 0
 
 local function drawDebug()
   love.graphics.setFont(debugFont)
@@ -42,7 +42,9 @@ local function drawDebug()
     'page size: ' .. listManager.pageSize .. '\n' ..
     'total pages: ' .. totalPages .. '\n' ..
     'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
-    'items at current page: ' .. itemsInCurrentPage
+    'items at current page: ' .. itemsInCurrentPage .. '\n' ..
+    '----------------------------------\n' ..
+    'character width (monospaced font should be used): ' .. characterW
 
     utils.pp(text,
       love.graphics.getWidth() - debugFont:getWidth(text), 0,
@@ -81,14 +83,21 @@ local function loadGameList()
   end
 end
 
+local function initCanvas()
+  canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+  canvas:setFilter('nearest', 'nearest')
+  scaleX = love.graphics.getWidth() / constants.CANVAS_WIDTH
+  scaleY = love.graphics.getHeight() / constants.CANVAS_HEIGHT
+end
+
 local function drawListAndCaption()
   love.graphics.setColor(colors.white)
   if listManager.currentList then
     listManager:draw(currentScreen == _G.screens.systems)
     local caption = listManager.currentList.caption or constants.captions[currentScreen]
     utils.pp(caption,
-      constants.PADDING_LEFT,
-      constants.CANVAS_HEIGHT - constants.PADDING_BOTTOM - font:getHeight()
+      listManager.listBounds.x,
+      listManager.listBounds.x + listManager.listBounds.h
     )
   end
 end
@@ -117,17 +126,30 @@ local function drawMessagesForAsyncTaks()
   end
 end
 
+local function initFontsAndStuff()
+  --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
+  --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
+  --font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
+
+  font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
+  debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
+  font:setFilter('nearest', 'nearest')
+  love.graphics.setFont(font)
+  love.graphics.setBackgroundColor(colors.purple)
+  characterW = font:getWidth('A')
+end
+
 _G.refreshSystemsTree = function ()
   loadingGames = true
   threadManager:run('refresh-systems', function(data)
     _G.systemsTree = loadstring(data.stringTree)()
-    totalGames = data.totalGames
     setRefreshedGameList()
     loadingGames = false
-  end)
+  end, { characterW = characterW })
 end
 
 function love.load()
+  initFontsAndStuff()
   _G.screens = {
     systems = 1,
     options = 2
@@ -135,26 +157,10 @@ function love.load()
   currentScreen = _G.screens.systems
   initNavigationStacks()
   loadGameList()
-
-
   for _, core in ipairs(constants.cores) do
     local result = resolutionManager.calculate(core)
   end
-  
-  --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
-  --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
-  --font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
-  font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
-  debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
-  font:setFilter('nearest', 'nearest')
-  love.graphics.setFont(font)
-  love.graphics.setBackgroundColor(colors.purple)
-  
-  
-  canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
-  canvas:setFilter('nearest', 'nearest')
-  scaleX = love.graphics.getWidth() / constants.CANVAS_WIDTH
-  scaleY = love.graphics.getHeight() / constants.CANVAS_HEIGHT
+  initCanvas()
 end
 
 function love.update(dt)
@@ -163,7 +169,7 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setCanvas(canvas)
+  love.graphics.setCanvas{canvas, stencil = true}
   love.graphics.clear()
  
   love.graphics.setColor(colors.purple)
@@ -191,6 +197,10 @@ function handleUserInput(data)
   if value == joystickManager:getButton('Hotkey') or value == constants.keys.ESCAPE then
     love.event.quit()
   end
+  if value == joystickManager:getButton('R1') then
+    love.graphics.captureScreenshot('screenshot_' .. tostring(os.time()) .. '.png')
+  end
+  --end of debug
 
   if loadingGames then return end
   

@@ -7,7 +7,8 @@ local threadManager = {
 
 -- file is relative to ~/RucoPie/ui/threads/
 -- data must be a plain table
-function threadManager:run(file, cb, times, data)
+function threadManager:run(file, cb, data, times)
+  data = data or {}
   times = times or -1
 
   local threadInfo = {

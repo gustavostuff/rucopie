@@ -1,15 +1,12 @@
 local colors = require 'colors'
 
 return {
-  CANVAS_WIDTH = 640 / 2,
-  CANVAS_HEIGHT = 360 / 2,
-  -- CANVAS_WIDTH = 800 / 2,
-  -- CANVAS_HEIGHT = 450 / 2,
+  CANVAS_WIDTH = 320,
+  CANVAS_HEIGHT = 180,
+  -- CANVAS_WIDTH = 400,
+  -- CANVAS_HEIGHT = 225,
+  MAX_LINE_WIDTH = 220,
   PAGE_SIZE = 12,
-  PADDING_LEFT = 24,
-  PADDING_RIGHT = 24,
-  PADDING_TOP = 16,
-  PADDING_BOTTOM = 16,
   RUCOPIE_DIR = '/root/RucoPie/',
   THEMES_DIR = '/root/RucoPie/ui/assets/themes/',
   JOYSTICK_CONFIG_PATH = 'config/joystick.lua',
@@ -19,6 +16,7 @@ return {
     UP = 'up',
     DOWN = 'down',
     ESCAPE = 'escape',
+    P = 'p',
     F1 = 'f1'
   },
   captions = {

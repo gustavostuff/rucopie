@@ -1,9 +1,19 @@
+require 'love.graphics'
+
 local constants = require '../constants'
 local osBridge = require '../os-bridge'
 local utils = require '../utils'
 local lfs = require 'lfs'
 local channel = ({...})[1]
+local data = ({...})[2]
 local totalGames = 0
+
+local function clipLargeLine(item)
+  if (#item.label * data.characterW) > constants.MAX_LINE_WIDTH then
+    item.x = -3
+    item.clipped = true
+  end
+end
 
 local function createSystemsTree(path, parentList, level)
   path = path or constants.ROMS_DIR
@@ -20,9 +30,10 @@ local function createSystemsTree(path, parentList, level)
   for _, file in ipairs(elements) do
     if file ~= "." and file ~= ".." then
       local fullPath = path .. '/' .. file
-      
+      local elementToInsert
+
       if osBridge.isDirectory(fullPath) then
-        local childList = {
+        elementToInsert = {
           label = file,
           items = {},
           index = 1,
@@ -30,13 +41,17 @@ local function createSystemsTree(path, parentList, level)
           isSystem = level == 1,
           page = utils.initPage()
         }
-        createSystemsTree(fullPath .. '/', childList, level + 1)
-        table.insert(parentList.items, childList)
+        createSystemsTree(fullPath .. '/', elementToInsert, level + 1)
+        clipLargeLine(elementToInsert)
+        table.insert(parentList.items, elementToInsert)
         parentList.page = utils.initPage()
       else
         totalGames = totalGames + 1
-        table.insert(parentList.items, { label = file })
+        elementToInsert = { label = file }
+        clipLargeLine(elementToInsert)
+        table.insert(parentList.items, elementToInsert)
       end
+
     end
   end
 
@@ -47,8 +62,6 @@ local tree = createSystemsTree()
 tree.totalGames = totalGames
 local stringTree = 'return { ' .. utils.tableToString(tree) .. '}'
 osBridge.saveFile(stringTree, 'cache/games-tree.lua')
-
-constants.tree = loadstring(stringTree)()
 
 love.thread.getChannel(channel):push({
   stringTree = stringTree,
