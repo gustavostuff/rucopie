@@ -7,7 +7,7 @@ RucoPie aims to be a fast, pixel-perfect, not Emulationstation-based, easy to us
 ## Features
 
 * Independently of your screen's physical resolution, all games will be automatically scaled to fill as much screen area as possible and, at the same time, keep a correct aspect ratio and a [pixel-perfect](https://i.postimg.cc/8P0VhbT2/Super-Mario-Land-World-Rev-A-210331-225028.png) output (options for stretching, bilinear filtering and other tweaks are planned).
-* Fast, Open Source, Eye-candy, pixel-perfect UI that will work right away in any resolution that is a multiple of 640x360. That said, it should look alright in:
+* Fast, Open Source, eye-candy, pixel-perfect UI that will work right away in any resolution that is a multiple of 640x360. That said, it should look alright in:
   * HD (1280x720)
   * Full HD (1920x1080)
   * WQHD (2560x1440, Raspberry Pi 4 only)
