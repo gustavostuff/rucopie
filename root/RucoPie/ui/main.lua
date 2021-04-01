@@ -161,6 +161,12 @@ _G.refreshSystemsTree = function ()
   end, { characterW = characterW })
 end
 
+---------------------------------------------
+---------------------------------------------
+--  Three main callbacks:
+---------------------------------------------
+---------------------------------------------
+
 function love.load()
   initFontsAndStuff()
   _G.screens = {

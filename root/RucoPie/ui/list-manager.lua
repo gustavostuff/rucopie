@@ -10,15 +10,15 @@ listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constan
 listManager.listBounds = {
   x = 24,
   y = 24,
-  w = constants.CANVAS_WIDTH - 100,
+  w = constants.CANVAS_WIDTH - 200,
   h = constants.CANVAS_HEIGHT - 48
 }
 
 local pointer = love.graphics.newImage('assets/img/default-pointer.png')
 pointer:setFilter('nearest', 'nearest')
 
-function listManager:getListStencil()
-  local rec = self.listBounds
+local function getListStencil()
+  local rec = listManager.listBounds
   return function ()
     love.graphics.rectangle('fill', rec.x, rec.y, rec.w, rec.h)
   end
@@ -66,7 +66,7 @@ end
 function listManager:draw(isSystemsList)
   local list, from, to, yPosition, lineHeight = self:getListingCommons()
 
-  love.graphics.stencil(self:getListStencil(), 'replace', 1) 
+  love.graphics.stencil(getListStencil(), 'replace', 1) 
   love.graphics.setStencilTest('greater', 0)
 
   for i = from, to do

@@ -10,9 +10,9 @@ local colors = {
   orange = {0.875, 0.443, 0.149},
 }
 
--- for i = 1, #colors do
---   local c = colors[i]
---   colors[i] = { c[1] * 255, c[2] * 255, c[3] * 255 }
+-- tweak for older versions of LOVE
+-- for k, c in pairs(colors) do
+--   colors[k] = { c[1] * 255, c[2] * 255, c[3] * 255 }
 -- end
 
 return colors

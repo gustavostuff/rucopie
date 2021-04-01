@@ -30,6 +30,11 @@ echo "Installing RetroPie dependencies..."
 /boot/dietpi/dietpi-software install 5 6 16 17
 
 separator
+echo "Installing needed extra Lua stuff..."
+apt-get install luarocks
+/usr/bin/luarocks install luafilesystem
+
+separator
 echo ''
 echo -e "${green}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${default}"
 echo ''
