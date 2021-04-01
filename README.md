@@ -34,3 +34,5 @@ Things to do/fix:
 * Add animated boot screen
 * Add music
 * Add no copyright roms
+* Bluetooth joystick support
+* Locale/Country settings
