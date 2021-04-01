@@ -18,8 +18,8 @@ local pointer = love.graphics.newImage('assets/img/default-pointer.png')
 pointer:setFilter('nearest', 'nearest')
 
 function listManager:getListStencil()
+  local rec = self.listBounds
   return function ()
-    local rec = self.listBounds
     love.graphics.rectangle('fill', rec.x, rec.y, rec.w, rec.h)
   end
 end

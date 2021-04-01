@@ -2,7 +2,7 @@
 
 # :warning: Experimental project, not usable yet.
 
-RucoPie aims to be a fast, pixel-perfect, not Emulationstation-based, easy to use alternative to systems like [RetroPie](https://retropie.org.uk/), [Lakka](https://www.lakka.tv/) or [Recallbox](https://www.recalbox.com/). It targets Raspberry Pi 3 and 4 devices, and it was insprired by [RGB-Pi](https://www.rgb-pi.com/) (with a big difference: this doesn't target CRT's so, if you like that, please check RGB-Pi instead :smiley:)
+RucoPie aims to be a fast, pixel-perfect, not Emulationstation-based, easy to use alternative to systems like [RetroPie](https://retropie.org.uk/), [Lakka](https://www.lakka.tv/) or [Recallbox](https://www.recalbox.com/). It targets Raspberry Pi 3 and 4 devices, and it was insprired by [RGB-Pi](https://www.rgb-pi.com/) (with a big difference: this is not for CRT TVs, if you like that, please check RGB-Pi instead :smiley:)
 
 ## Features
 

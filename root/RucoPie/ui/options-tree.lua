@@ -58,6 +58,10 @@ local function refreshRomsAction()
   _G.refreshSystemsTree()
 end
 
+local function recalculateCoresResolutionAction()
+  _G.calculateCoresResolution()
+end
+
 optionsTree = {
   items = {
     {
@@ -79,7 +83,9 @@ optionsTree = {
     {
       label = constants.ADVANCED_LABEL,
       items = {
-        { label = constants.DEBUG_LABEL, color = colors.orange, action = toggleDebug }
+        { label = constants.DEBUG_LABEL, color = colors.orange, action = toggleDebug },
+        -- debug
+        { label = 'refresh resolutions', action = recalculateCoresResolutionAction }
       },
       page = utils.initPage(),
       index = 1

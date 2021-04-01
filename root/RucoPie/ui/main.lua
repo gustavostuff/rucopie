@@ -1,4 +1,5 @@
 love.filesystem.setIdentity('ruco-pie')
+love.graphics.setBlendMode('alpha')
 
 local colors = require 'colors'
 local constants = require 'constants'
@@ -32,19 +33,19 @@ local function drawDebug()
     local totalPages = listManager:getTotalPages()
     local itemsInCurrentPage = listManager:getItemsAtCurrentPage()
     local text = 'FPS: ' .. love.timer.getFPS() .. '\n' ..
-    'Width: ' .. love.graphics.getWidth() .. '\n' ..
-    'Height: ' .. love.graphics.getHeight() .. '\n' ..
-    'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
-    'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
-    '----------------------------------\n' ..
-    'items in list: ' .. n .. '\n' ..
-    'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
-    'page size: ' .. listManager.pageSize .. '\n' ..
-    'total pages: ' .. totalPages .. '\n' ..
-    'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
-    'items at current page: ' .. itemsInCurrentPage .. '\n' ..
-    '----------------------------------\n' ..
-    'character width (monospaced font should be used): ' .. characterW
+      'Width: ' .. love.graphics.getWidth() .. '\n' ..
+      'Height: ' .. love.graphics.getHeight() .. '\n' ..
+      'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
+      'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
+      '----------------------------------\n' ..
+      'items in list: ' .. n .. '\n' ..
+      'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
+      'page size: ' .. listManager.pageSize .. '\n' ..
+      'total pages: ' .. totalPages .. '\n' ..
+      'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
+      'items at current page: ' .. itemsInCurrentPage .. '\n' ..
+      '----------------------------------\n' ..
+      'character width (monospaced font should be used): ' .. characterW .. ' '
 
     utils.pp(text,
       love.graphics.getWidth() - debugFont:getWidth(text), 0,
@@ -139,6 +140,18 @@ local function initFontsAndStuff()
   characterW = font:getWidth('A')
 end
 
+---------------------------------------------
+---------------------------------------------
+-- Global functions:
+---------------------------------------------
+---------------------------------------------
+
+_G.calculateCoresResolution = function ()
+  for _, core in ipairs(constants.cores) do
+    resolutionManager.calculate(core)
+  end
+end
+
 _G.refreshSystemsTree = function ()
   loadingGames = true
   threadManager:run('refresh-systems', function(data)
@@ -157,9 +170,7 @@ function love.load()
   currentScreen = _G.screens.systems
   initNavigationStacks()
   loadGameList()
-  for _, core in ipairs(constants.cores) do
-    local result = resolutionManager.calculate(core)
-  end
+  _G.calculateCoresResolution()
   initCanvas()
 end
 
