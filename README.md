@@ -36,3 +36,4 @@ Things to do/fix:
 * Add no copyright roms
 * Bluetooth joystick support
 * Locale/Country settings
+* Skip button while mapping joystick for UI
