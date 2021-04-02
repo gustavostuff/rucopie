@@ -4,6 +4,9 @@ failed_status=1
 
 core=""
 case $1 in
+  atari2600)
+    core="stella2014"
+    ;;
   nes)
     core="fceumm"
     ;;

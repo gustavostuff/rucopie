@@ -41,7 +41,7 @@ cd RetroPie-Setup
 cd ~
 separator
 echo -e "${green}Installing required packages...${default}"
-declare -a pkgs=("retroarch" "love" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo")
+declare -a pkgs=("retroarch" "love" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo" "lr-stella2014")
 for pkg in "${pkgs[@]}"
 do
   separator

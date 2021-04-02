@@ -1,10 +1,12 @@
 local osBridge = require 'os-bridge'
 local resolutionManager = {}
+-- resolutions provided by retroarch cores:
 local resolutions =  {
   gambatte = { w = 160, h = 144 },
   fceumm = { w = 256, h = 224 },
   snes9x = { w = 256, h = 224 },
-  fbneo = { w = 304, h = 224 }
+  fbneo = { w = 304, h = 224 },
+  stella2014 = { w = 320, h = 210 },
 }
 
 function resolutionManager.calculate(core)

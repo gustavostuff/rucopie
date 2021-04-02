@@ -44,13 +44,15 @@ return {
     neogeo = 'Neo Geo',
     nes = 'Nintendo',
     snes = 'Super Nintendo',
-    ports = 'Ports'
+    ports = 'Ports',
+    atari2600 = 'Atari 2600'
   },
   cores = {
     'fceumm',
     'gambatte',
     'fbneo',
-    'snes9x'
+    'snes9x',
+    'stella2014'
   },
   RESTART_LABEL = 'Restart',
   SHUTDOWN_LABEL = 'Shutdown',
