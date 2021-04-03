@@ -5,28 +5,40 @@ local osBridge = require 'os-bridge'
 local themeManager = require 'theme-manager'
 
 local function bilinearOptionAction(item)
-  item.checkbox = not item.checkbox
-  if item.checkbox then
+  item.value = not item.value
+  if item.value then
     canvas:setFilter('linear', 'linear')
   else
     canvas:setFilter('nearest', 'nearest')
   end
 end
 
+local function inGameBilinearAction(item)
+  item.value = not item.value
+  if item.value then
+  else
+  end
+end
+
 local function initThemesList()
   local rawList = osBridge.readFrom('ls ' .. constants.THEMES_DIR)
   local list, displayList = utils.split(rawList, '\n'), {
-    label = constants.THEMES_LABEL,
+    displayLabel = utils.getDisplayLabel('Themes'),
+    internalLabel = 'Themes',
     index = 1,
     items = {},
     page = utils.initPage()
   }
 
   for i = 1, #list do
-    table.insert(displayList.items, {
-      label = list[i],
-      action = function() themeManager:setTheme(list[i]) end
-    })
+    local themeItem = {
+      internalLabel = list[i],
+      displayLabel = utils.getDisplayLabel(list[i])
+    }
+    themeItem.action = function()
+      themeManager:setTheme(themeItem.internalLabel)
+    end
+    table.insert(displayList.items, themeItem)
   end
 
   displayList.caption = {
@@ -65,27 +77,57 @@ end
 optionsTree = {
   items = {
     {
-      label = constants.VIDEO_OPTIONS_LABEL,
+      displayLabel = utils.getDisplayLabel('Video'),
+      internalLabel = 'Video',
       items = {
         {
-          label = constants.BILINEAR_LABEL,
-          checkbox = false,
+          displayLabel = utils.getDisplayLabel('Bilinear UI'),
+          internalLabel = 'Bilinear UI',
+          checkbox = true,
+          value = false,
           action = bilinearOptionAction
+        },
+        {
+          displayLabel = utils.getDisplayLabel('In-Game Bilinear'),
+          internalLabel = 'In-Game Bilinear',
+          checkbox = true,
+          value = false,
+          action = inGameBilinearAction
         }
       },
       page = utils.initPage(),
       index = 1
+    }, {
+      displayLabel = utils.getDisplayLabel('Refresh Game List'),
+      internalLabel = 'Refresh Game List',
+      action = refreshRomsAction,
     },
-    { label = constants.REFRESH_ROMS_LABEL, action = refreshRomsAction },
     initThemesList(),
-    { label = constants.RESTART_LABEL, color = colors.yellow, action = restartAction },
-    { label = constants.SHUTDOWN_LABEL, color = colors.red, action = shutdownAction },
     {
-      label = constants.ADVANCED_LABEL,
+      displayLabel = utils.getDisplayLabel('Restart'),
+      internalLabel = 'Restart',
+      color = colors.yellow,
+      action = restartAction
+    }, {
+      displayLabel = utils.getDisplayLabel('Shutdown'),
+      internalLabel = 'Shutdown',
+      color = colors.red,
+      action = shutdownAction
+    }, {
+      displayLabel = utils.getDisplayLabel('Advanced'),
+      internalLabel = 'Advanced',
       items = {
-        { label = constants.DEBUG_LABEL, color = colors.orange, action = toggleDebug },
-        -- debug
-        { label = 'refresh resolutions', action = recalculateCoresResolutionAction }
+        {
+          displayLabel = utils.getDisplayLabel('Show debug info'),
+          internalLabel = 'Show debug info',
+          color = colors.orange,
+          action = toggleDebug
+        }, {
+          -- debug
+          displayLabel = utils.getDisplayLabel('Refresh resolutions'),
+          internalLabel = 'Refresh Resolutions',
+          action = recalculateCoresResolutionAction
+        }
       },
       page = utils.initPage(),
       index = 1

@@ -5,7 +5,8 @@ return {
   CANVAS_HEIGHT = 180,
   -- CANVAS_WIDTH = 400,
   -- CANVAS_HEIGHT = 225,
-  MAX_LINE_WIDTH = 220,
+  MAX_LINE_WIDTH = 220, -- pixels
+  MAX_LINE_CHARACTERS = 30,
   PAGE_SIZE = 12,
   RUCOPIE_DIR = '/root/RucoPie/',
   THEMES_DIR = '/root/RucoPie/ui/assets/themes/',
@@ -54,12 +55,19 @@ return {
     'snes9x',
     'stella2014'
   },
-  RESTART_LABEL = 'Restart',
-  SHUTDOWN_LABEL = 'Shutdown',
-  VIDEO_OPTIONS_LABEL = 'Video',
-  BILINEAR_LABEL = 'Bilinear',
-  DEBUG_LABEL = 'Show debug info',
-  ADVANCED_LABEL = 'Advanced',
-  THEMES_LABEL = 'Themes',
-  REFRESH_ROMS_LABEL = 'Refresh game list'
+  extensionsToRemove = {
+    'zip'
+  },
+  filesToDisplay = {
+    'zip',
+    'png',
+    'jpg',
+    'jpeg',
+    'gif',
+    'mp4',
+    'ogg',
+    'ogv',
+    'mov',
+    '3gp'
+  }
 }

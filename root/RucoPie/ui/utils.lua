@@ -106,6 +106,13 @@ utils.drawWithShadow = function (img, x, y, data)
   love.graphics.draw(img, math.floor(x), math.floor(y))
 end
 
+utils.getDisplayLabel = function (line)
+  for i, ext in ipairs(constants.extensionsToRemove) do
+    line = line:gsub('.' .. ext .. '$', '')
+  end
+  return line
+end
+
 utils.initPage = function ()
   return { pageNumber = 1, indexAtCurrentPage = 1 }
 end

@@ -62,8 +62,13 @@ cp -r root/ /
 cp -r var/ /
 chmod +x ~/RucoPie/scripts/*
 
+echo "Creating global link for love..."
 cd ..
 ln -s /opt/retropie/ports/love/bin/love /usr/bin/
+
+echo "Installing extra Lua stuff..."
+apt-get install luarocks
+luarocks install luafilesystem
 
 separator
 separator

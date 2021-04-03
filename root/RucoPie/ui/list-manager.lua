@@ -5,14 +5,21 @@ local utils = require 'utils'
 local themeManager = require 'theme-manager'
 local images = require 'images'
 
-local listManager = {}
+local listManager = {
+  -- for lines that are too large to fit
+  clippedLineX = 0
+}
+local lineHeight = _G.font:getHeight() + 1
+
 listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
 listManager.listBounds = {
   x = 24,
   y = 24,
-  w = constants.CANVAS_WIDTH - 200,
+  w = constants.CANVAS_WIDTH - 120,
   h = constants.CANVAS_HEIGHT - 48
 }
+listManager.rightSideX = listManager.listBounds.x + listManager.listBounds.w
+listManager.rightSideY = listManager.listBounds.y
 
 local pointer = love.graphics.newImage('assets/img/default-pointer.png')
 pointer:setFilter('nearest', 'nearest')
@@ -24,23 +31,95 @@ local function getListStencil()
   end
 end
 
+-- bounce line left and right
+function listManager:moveClippedLine(x)
+  self.clippetTextTween = _G.flux.to(
+    self, 2, { clippedLineX = x })
+  :oncomplete(function ()
+    if self.clippedLineX < 0 then
+      self:moveClippedLine(0)
+    else
+      self:moveClippedLine(-self.offsetAmount)
+    end
+  end):ease('linear'):delay(0.5)
+end
+
+function listManager:resetClippedLine()
+  local item = self:getSelectedItem()
+  if not item.clipped then return end
+
+  if self.clippetTextTween then
+    self.clippetTextTween:stop()
+    self.clippedLineX = 0
+  end
+  self.offsetAmount = _G.font:getWidth(item.internalLabel) - self.listBounds.w
+  self:moveClippedLine(-self.offsetAmount)
+end
+
 function listManager:getListingCommons()
   local list = self.currentList
 
   local from = 1 + (list.page.pageNumber - 1) * self.pageSize
   local to = from + self.pageSize - 1
-  local yPosition = 0
-  local lineHeight = love.graphics.getFont():getHeight() + 1
+  local y = 0
 
-  return list, from, to, yPosition, lineHeight
+  return list, from, to, y
 end
 
-function listManager:getMovementCommon()
+function listManager:getPaginationCommons()
   local list = self.currentList
   local n = #list.items
   local totalPages = math.ceil(n / self.pageSize)
 
   return list, n, totalPages
+end
+
+function listManager:drawIconAndGetOffset(icon, x, y)
+  local iconOffset = 0
+  if icon then
+    love.graphics.setColor(colors.white)
+    iconOffset = icon:getWidth() + 5
+    utils.drawWithShadow(icon,
+      self.listBounds.x + x,
+      self.listBounds.y + y * lineHeight
+    )
+  end
+
+  return iconOffset
+end
+
+function listManager:printItemText(item, iconOffset, x, y, color)
+  local list, _, _, _ = self:getListingCommons()
+  local label = constants.systemsLabels[item.internalLabel] or item.displayLabel
+  label = label or '<label not set>'
+
+  utils.pp(label,
+    self.listBounds.x + iconOffset + x,
+    self.listBounds.y + y * lineHeight,
+    { fgColor = color or item.color or list.color or colors.white }
+  )
+end
+
+function listManager:drawListPointer(y, pointer)
+  local list, _, _, _ = self:getListingCommons()
+  if y == (list.page.indexAtCurrentPage - 1) then
+    love.graphics.setColor(colors.white)
+    utils.drawWithShadow(pointer,
+      self.listBounds.x - pointer:getWidth(),
+      self.listBounds.y + y * lineHeight
+    )
+  end
+end
+
+function listManager:drawLineExtras(item, y)
+  if item.checkbox then
+    local icon = images.icons.checkboxOff
+    if item.value then icon = images.icons.checkboxOn end
+    utils.drawWithShadow(icon,
+      self.rightSideX,
+      self.rightSideY + y * lineHeight
+    )
+  end
 end
 
 function listManager:setCurrentList(list)
@@ -53,7 +132,7 @@ end
 
 function listManager:getItemsAtCurrentPage()
   local totalPages = self:getTotalPages()
-  local _, n, _ = self:getMovementCommon()
+  local _, n, _ = self:getPaginationCommons()
   return self.pageSize - ((totalPages * self.pageSize) - n)
 end
 
@@ -63,8 +142,20 @@ function listManager:getSelectedItem()
   return list.items[list.index]
 end
 
-function listManager:draw(isSystemsList)
-  local list, from, to, yPosition, lineHeight = self:getListingCommons()
+function listManager:update(dt)
+  _G.flux.update(dt)
+end
+
+function listManager:draw()
+  local list, from, to, y = self:getListingCommons()
+
+  love.graphics.setColor(colors.black)
+  love.graphics.rectangle('line',
+    self.listBounds.x,
+    self.listBounds.y,
+    self.listBounds.w,
+    self.listBounds.h
+  )
 
   love.graphics.stencil(getListStencil(), 'replace', 1) 
   love.graphics.setStencilTest('greater', 0)
@@ -74,35 +165,22 @@ function listManager:draw(isSystemsList)
     if not item then goto continue end
     
     local icon
-    local currentX = (item.x or 0)
-    local color = item.color or list.color or colors.white
-    if item.isDir and not item.isSystem then
-      color = colors.blue
-      icon = images.icons.folder
-    end
-    local icondDisplacement = 0
-    if icon then
-      love.graphics.setColor(colors.white)
-      icondDisplacement = icon:getWidth() + 5
-      utils.drawWithShadow(icon,
-        self.listBounds.x + currentX,
-        self.listBounds.y + yPosition * lineHeight
-      )
-    end
-    utils.pp(constants.systemsLabels[item.label] or item.label,
-      self.listBounds.x + icondDisplacement + currentX,
-      self.listBounds.y + yPosition * lineHeight,
-      { fgColor = color }
-    )
+    local x = ( -- move selected line only (if clipped)
+      y == (list.page.indexAtCurrentPage - 1) and
+      item.clipped and
+      self.clippedLineX
+    ) or 0
 
-    if yPosition == (list.page.indexAtCurrentPage - 1) then
-      love.graphics.setColor(colors.white)
-      utils.drawWithShadow(pointer,
-        self.listBounds.x - pointer:getWidth(),
-        self.listBounds.y + yPosition * lineHeight
-      )
+    local color = item.color or list.color or colors.white
+    if item.isDir then
+      icon = images.icons.folder
+      color = colors.blue
     end
-    yPosition = yPosition + 1
+    local iconOffset = self:drawIconAndGetOffset(icon, x, y)
+    self:printItemText(item, iconOffset, x, y, color)
+    self:drawListPointer(y, pointer)
+    self:drawLineExtras(item, y)
+    y = y + 1
 
     ::continue::
   end
@@ -125,7 +203,7 @@ function listManager:back(value, listsStack, pathStack, currentScreen)
 end
 
 function listManager:handleLastPage()
-  local list, n, totalPages = self:getMovementCommon()
+  local list, n, totalPages = self:getPaginationCommons()
   local itemsAtCurrentPage = self:getItemsAtCurrentPage()
   if list.page.pageNumber == totalPages then
     if list.page.indexAtCurrentPage > itemsAtCurrentPage then
@@ -136,7 +214,7 @@ function listManager:handleLastPage()
 end
 
 function listManager:left()
-  local list, n, totalPages = self:getMovementCommon()
+  local list, n, totalPages = self:getPaginationCommons()
   if totalPages == 1 then return end
 
   list.index = list.index - self.pageSize
@@ -146,10 +224,11 @@ function listManager:left()
     list.page.pageNumber = totalPages
   end
   self:handleLastPage()
+  self:resetClippedLine()
 end
 
 function listManager:right()
-  local list, n, totalPages = self:getMovementCommon()
+  local list, n, totalPages = self:getPaginationCommons()
   if totalPages == 1 then return end
 
   list.index = list.index + self.pageSize
@@ -162,10 +241,11 @@ function listManager:right()
     list.page.pageNumber = 1
   end
   self:handleLastPage()
+  self:resetClippedLine()
 end
 
 function listManager:up()
-  local list, n, totalPages = self:getMovementCommon()
+  local list, n, totalPages = self:getPaginationCommons()
   -- internal index
   list.index = list.index - 1
   list.page.indexAtCurrentPage = list.page.indexAtCurrentPage - 1
@@ -190,10 +270,11 @@ function listManager:up()
       list.page.pageNumber = totalPages
     end
   end
+  self:resetClippedLine()
 end
 
 function listManager:down()
-  local list, n, totalPages = self:getMovementCommon()
+  local list, n, totalPages = self:getPaginationCommons()
   -- internal index
   list.index = list.index + 1
   list.page.indexAtCurrentPage = list.page.indexAtCurrentPage + 1
@@ -218,6 +299,7 @@ function listManager:down()
       list.page.pageNumber = 1
     end
   end
+  self:resetClippedLine()
 end
 
 function listManager:performAction(listsStack, pathStack, cb)
@@ -227,11 +309,12 @@ function listManager:performAction(listsStack, pathStack, cb)
 
   if item.items and #item.items > 0 then
     table.insert(currentListsStack, item)
-    table.insert(currentPathStack, item.label)
+    table.insert(currentPathStack, item.internalLabel)
     if item.isSystem then -- set selected system (gb, nes, etc.)
-      _G.systemSelected = item.label
+      _G.systemSelected = item.internalLabel
     end
     self.currentList = item
+    self:resetClippedLine()
   else 
     cb(item)
   end

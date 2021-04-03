@@ -4,6 +4,8 @@ local iconsFolder = imgFolder .. 'icons/'
 local images = {
   icons = {
     folder = love.graphics.newImage(iconsFolder .. 'folder.png'),
+    checkboxOff = love.graphics.newImage(iconsFolder .. 'checkbox-off.png'),
+    checkboxOn = love.graphics.newImage(iconsFolder .. 'checkbox-on.png'),
     cog = love.graphics.newImage(iconsFolder .. 'cog.png')
   }
 }

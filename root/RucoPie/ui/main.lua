@@ -1,6 +1,12 @@
 love.filesystem.setIdentity('ruco-pie')
 love.graphics.setBlendMode('alpha')
 
+_G.flux = require "lib/flux"
+_G.debug = true
+_G.screenDebug = false
+_G.font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
+_G.debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
+
 local colors = require 'colors'
 local constants = require 'constants'
 local osBridge = require 'os-bridge'
@@ -14,13 +20,12 @@ local threadManager = require 'thread-manager'
 
 local optionsTree = require 'options-tree'
 
--- debug
-_G.debug = true
-_G.screenDebug = false
 love.mouse.setVisible(false)
+love.graphics.setLineStyle('rough')
+love.graphics.setLineWidth(1)
 
 local function drawDebug()
-  love.graphics.setFont(debugFont)
+  love.graphics.setFont(_G.debugFont)
   if _G.screenDebug then
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.rectangle('fill', 0, 0,
@@ -48,12 +53,12 @@ local function drawDebug()
       'character width (monospaced font should be used): ' .. characterW .. ' '
 
     utils.pp(text,
-      love.graphics.getWidth() - debugFont:getWidth(text), 0,
+      love.graphics.getWidth() - _G.debugFont:getWidth(text), 0,
       { shadowColor = { 1, 1, 1, 0 } }
     )
   end
 
-  love.graphics.setFont(font)
+  love.graphics.setFont(_G.font)
 end
 
 local function initNavigationStacks()
@@ -94,7 +99,7 @@ end
 local function drawListAndCaption()
   love.graphics.setColor(colors.white)
   if listManager.currentList then
-    listManager:draw(currentScreen == _G.screens.systems)
+    listManager:draw()
     local caption = listManager.currentList.caption or constants.captions[currentScreen]
     utils.pp(caption,
       listManager.listBounds.x,
@@ -107,8 +112,8 @@ local function drawJoystickMapping()
   if joystickManager.isCurrentlyMapping then
     local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
     utils.pp(text,
-      math.floor(constants.CANVAS_WIDTH / 2 - font:getWidth(text) / 2),
-      math.floor(constants.CANVAS_HEIGHT / 2 - font:getHeight() / 2)
+      math.floor(constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2),
+      math.floor(constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2)
     )
   end
 end
@@ -128,16 +133,10 @@ local function drawMessagesForAsyncTaks()
 end
 
 local function initFontsAndStuff()
-  --font = love.graphics.newFont('assets/fonts/pixelated/pixelated.ttf', 10)
-  --font = love.graphics.newFont('assets/fonts/proggy/proggy.ttf', 16)
-  --font = love.graphics.newFont('assets/fonts/rgbpi/quarlow-normal-number.ttf', 16)
-
-  font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
-  debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
-  font:setFilter('nearest', 'nearest')
-  love.graphics.setFont(font)
+  _G.font:setFilter('nearest', 'nearest')
+  love.graphics.setFont(_G.font)
   love.graphics.setBackgroundColor(colors.purple)
-  characterW = font:getWidth('A')
+  characterW = _G.font:getWidth('A')
 end
 
 ---------------------------------------------
@@ -183,6 +182,7 @@ end
 function love.update(dt)
   themeManager:update(dt)
   threadManager:update(dt)
+  listManager:update(dt)
 end
 
 function love.draw()
@@ -238,7 +238,7 @@ function handleUserInput(data)
     listManager:down()
   elseif value == constants.keys.ENTER  or value == joystickManager:getButton('A') then
     listManager:performAction(listsStack, pathStack, item.action or function()
-      local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.label
+      local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.internalLabel
       osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
     end)
   end

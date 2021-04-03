@@ -9,8 +9,7 @@ local data = ({...})[2]
 local totalGames = 0
 
 local function clipLargeLine(item)
-  if (#item.label * data.characterW) > constants.MAX_LINE_WIDTH then
-    item.x = -3
+  if (#item.displayLabel * data.characterW) > constants.MAX_LINE_WIDTH then
     item.clipped = true
   end
 end
@@ -34,7 +33,8 @@ local function createSystemsTree(path, parentList, level)
 
       if osBridge.isDirectory(fullPath) then
         elementToInsert = {
-          label = file,
+          displayLabel = utils.getDisplayLabel(file),
+          internalLabel = file,
           items = {},
           index = 1,
           isDir = true,
@@ -47,11 +47,13 @@ local function createSystemsTree(path, parentList, level)
         parentList.page = utils.initPage()
       else
         totalGames = totalGames + 1
-        elementToInsert = { label = file }
+        elementToInsert = {
+          displayLabel = utils.getDisplayLabel(file),
+          internalLabel = file
+        }
         clipLargeLine(elementToInsert)
         table.insert(parentList.items, elementToInsert)
       end
-
     end
   end
 
