@@ -1,16 +1,16 @@
 
 #!/bin/bash
 
-source "/root/RucoPie/scripts/commons.sh"
+separator="********************************************"
 cd ~
 
-colorEcho "green" "$separator"
+echo "$separator"
 echo "Installing RetroPie dependencies..."
 /boot/dietpi/dietpi-software install 5 6 16 17
 
-colorEcho "green" "$separator"
+echo "$separator"
 echo ''
-echo -e "${green}Executing RetroPie Setup (answer yes to user ownership messages and then exit)...${default}"
+echo "Executing RetroPie Setup (answer yes to user ownership messages and then exit)..."
 echo ''
 
 /usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
@@ -18,12 +18,12 @@ cd RetroPie-Setup
 ./retropie_setup.sh
 
 cd ~
-colorEcho "green" "$separator"
+echo "$separator"
 echo -e "${green}Installing required packages...${default}"
 declare -a pkgs=("retroarch" "love" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo" "lr-stella2014")
 for pkg in "${pkgs[@]}"
 do
-  colorEcho "green" "$separator"
+  echo "$separator"
   echo "Installing dependencies for $pkg..."
   ~/RetroPie-Setup/retropie_packages.sh $pkg depends
   echo "Installing now $pkg..."
@@ -32,7 +32,7 @@ done
 
 /usr/bin/git clone https://github.com/tavuntu/rucopie-bkp
 cd rucopie-bkp
-colorEcho "green" "$separator"
+echo "$separator"
 echo "Installing config files..."
 
 cp -r boot/ /
@@ -49,6 +49,6 @@ echo "Installing extra Lua stuff..."
 apt-get install luarocks
 luarocks install luafilesystem
 
-colorEcho "green" "$separator"
-colorEcho "green" "Done!"
-colorEcho "green" "$separator"
+echo "$separator"
+echo "Done!"
+echo "$separator"
