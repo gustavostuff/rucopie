@@ -46,7 +46,7 @@ cd ..
 ln -s /opt/retropie/ports/love/bin/love /usr/bin/
 
 echo "Installing extra Lua stuff..."
-apt-get install luarocks
+apt-get --assume-yes install luarocks
 luarocks install luafilesystem
 
 echo "$separator"
