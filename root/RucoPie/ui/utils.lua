@@ -88,10 +88,22 @@ utils.pp = function (text, x, y, data)
   end
 
   love.graphics.setColor(data.shadowColor or colors.black)
-  love.graphics.print(shadowText, math.floor(x - 1), math.floor(y + 1))
+
+  local sd = { -- shadow directions
+    {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+  }
+  if data.cell then
+    for _, d in ipairs(sd) do
+      love.graphics.print(shadowText, x + d[1], y + d[2])
+    end
+  else
+    --love.graphics.print(shadowText, math.floor(x - 1), math.floor(y + 1))
+    love.graphics.print(shadowText, x + sd[6][1], y + sd[6][2])
+  end
 
   love.graphics.setColor(data.fgColor or colors.white)
-  love.graphics.print(text, math.floor(x), math.floor(y))
+  --love.graphics.print(text, math.floor(x), math.floor(y))
+  love.graphics.print(text, x, y)
 end
 
 utils.drawWithShadow = function (img, x, y, data)

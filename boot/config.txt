@@ -25,9 +25,9 @@ framebuffer_height=540
 #sdtv_mode=0
 
 # Uncomment to force a specific HDMI mode (this will force VGA).
-#hdmi_cvt=1280 720 60 6
-#hdmi_group=2
-#hdmi_mode=87
+hdmi_cvt=800 450 60 6
+hdmi_group=2
+hdmi_mode=87
 
 # Uncomment to force an HDMI mode rather than DVI. This can make audio work in DMT (computer monitor) modes.
 hdmi_drive=2
@@ -91,4 +91,3 @@ initial_turbo=20
 #arm_freq_min=300
 #core_freq_min=250
 #sdram_freq_min=400
-dtoverlay=disable-wifi

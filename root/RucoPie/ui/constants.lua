@@ -8,6 +8,7 @@ return {
   MAX_LINE_WIDTH = 220, -- pixels
   MAX_LINE_CHARACTERS = 30,
   PAGE_SIZE = 12,
+  POINTER_SEPARATION = 4,
   RUCOPIE_DIR = '/root/RucoPie/',
   THEMES_DIR = '/root/RucoPie/ui/assets/themes/',
   JOYSTICK_CONFIG_PATH = 'config/joystick.lua',
@@ -22,20 +23,14 @@ return {
   },
   captions = {
     [1] = {
-      colors.green, 'A:',
-      colors.white, 'OK',
-      colors.red, '  B:',
-      colors.white, 'Back',
-      colors.blue, '  Start:',
-      colors.white, 'Options'
+      colors.green, 'A: OK',
+      colors.red, '  B: Back',
+      colors.blue, '  Start: Options'
     },
     [2] = {
-      colors.green, 'A:',
-      colors.white, 'OK',
-      colors.red, '  B:',
-      colors.white, 'Back',
-      colors.blue, '  Start:',
-      colors.white, 'Systems'
+      colors.green, 'A: OK',
+      colors.red, '  B: Back',
+      colors.blue, '  Start: Systems'
     },
   },
   systemsLabels = {

@@ -1,3 +1,3 @@
 #!/bin/bash
-printf "%q" "$1"
 
+printf "%q" "$1"

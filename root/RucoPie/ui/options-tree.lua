@@ -15,8 +15,8 @@ end
 
 local function inGameBilinearAction(item)
   item.value = not item.value
-  if item.value then
-  else
+  for _, core in ipairs(constants.cores) do
+    osBridge.updateConfig(core, 'soft_filter_enable', item.value)
   end
 end
 
@@ -42,12 +42,9 @@ local function initThemesList()
   end
 
   displayList.caption = {
-    colors.green, 'A:',
-    colors.white, 'Set theme',
-    colors.red, '  B:',
-    colors.white, 'Back',
-    colors.blue, '  Start:',
-    colors.white, 'Systems'
+    colors.green, 'A: Set theme',
+    colors.red, '  B: Back',
+    colors.blue, '  Start: Systems'
   }
   return displayList
 end

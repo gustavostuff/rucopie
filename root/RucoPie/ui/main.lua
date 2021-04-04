@@ -24,7 +24,7 @@ love.mouse.setVisible(false)
 love.graphics.setLineStyle('rough')
 love.graphics.setLineWidth(1)
 
-local function drawDebug()
+local function printDebug()
   love.graphics.setFont(_G.debugFont)
   if _G.screenDebug then
     love.graphics.setColor(0, 0, 0, 0.5)
@@ -91,7 +91,13 @@ end
 
 local function initCanvas()
   canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+  stencilCanvas = love.graphics.newCanvas(
+    constants.CANVAS_WIDTH,
+    constants.CANVAS_HEIGHT,
+    { format ='stencil8' }
+  )
   canvas:setFilter('nearest', 'nearest')
+  stencilCanvas:setFilter('nearest', 'nearest')
   scaleX = love.graphics.getWidth() / constants.CANVAS_WIDTH
   scaleY = love.graphics.getHeight() / constants.CANVAS_HEIGHT
 end
@@ -136,7 +142,7 @@ local function initFontsAndStuff()
   _G.font:setFilter('nearest', 'nearest')
   love.graphics.setFont(_G.font)
   love.graphics.setBackgroundColor(colors.purple)
-  characterW = _G.font:getWidth('A')
+  characterW = _G.font:getWidth('A') -- monospaced font
 end
 
 ---------------------------------------------
@@ -157,7 +163,10 @@ _G.refreshSystemsTree = function ()
     _G.systemsTree = loadstring(data.stringTree)()
     setRefreshedGameList()
     loadingGames = false
-  end, { characterW = characterW })
+  end, {
+    characterW = characterW,
+    maxLineWidth = listManager.listBounds.w
+  })
 end
 
 ---------------------------------------------
@@ -167,6 +176,17 @@ end
 ---------------------------------------------
 
 function love.load()
+  utils.debug('Renderer info:')
+  utils.debug('  ', love.graphics.getRendererInfo())
+  utils.debug('Canvas formats:')
+  for k,v in pairs(love.graphics.getCanvasFormats()) do
+    if tostring(v) == 'true' then
+      utils.debug('  Supported: ' .. k)
+    else
+      utils.debug('  NOT Supported: ' .. k)
+    end
+  end
+
   initFontsAndStuff()
   _G.screens = {
     systems = 1,
@@ -186,7 +206,10 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setCanvas{canvas, stencil = true}
+  love.graphics.setCanvas({
+    canvas,
+    depthstencil = stencilCanvas
+  })
   love.graphics.clear()
  
   love.graphics.setColor(colors.purple)
@@ -201,7 +224,7 @@ function love.draw()
   love.graphics.setColor(colors.white)
   love.graphics.draw(canvas, 0, 0, 0, scaleX, scaleY)
 
-  drawDebug()
+  printDebug()
 end
 
 ---------------

@@ -4,11 +4,9 @@ local colors = require 'colors'
 local utils = require 'utils'
 local themeManager = require 'theme-manager'
 local images = require 'images'
+local timer = require 'timer'
 
-local listManager = {
-  -- for lines that are too large to fit
-  clippedLineX = 0
-}
+local listManager = {}
 local lineHeight = _G.font:getHeight() + 1
 
 listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
@@ -21,9 +19,6 @@ listManager.listBounds = {
 listManager.rightSideX = listManager.listBounds.x + listManager.listBounds.w
 listManager.rightSideY = listManager.listBounds.y
 
-local pointer = love.graphics.newImage('assets/img/default-pointer.png')
-pointer:setFilter('nearest', 'nearest')
-
 local function getListStencil()
   local rec = listManager.listBounds
   return function ()
@@ -31,29 +26,42 @@ local function getListStencil()
   end
 end
 
+-- for lines that are too large to fit
+local clippedLineX = 0
+local clippedLineSpeed = 60
+local clippedLineDirection = -1
+local clippedLineOffset = 0
+local clippedLineReturnDelay = 0.5
+
 -- bounce line left and right
-function listManager:moveClippedLine(x)
-  self.clippetTextTween = _G.flux.to(
-    self, 2, { clippedLineX = x })
-  :oncomplete(function ()
-    if self.clippedLineX < 0 then
-      self:moveClippedLine(0)
-    else
-      self:moveClippedLine(-self.offsetAmount)
-    end
-  end):ease('linear'):delay(0.5)
-end
+-- function listManager:moveClippedLine(x)
+--   self.clippetTextTween = _G.flux.to(
+--     self, 2, { clippedLineX = x })
+--   :oncomplete(function ()
+--     if clippedLineX < 0 then
+--       self:moveClippedLine(0)
+--     else
+--       self:moveClippedLine(-self.clippedLineOffset)
+--     end
+--   end):ease('linear'):delay(0.5)
+-- end
 
 function listManager:resetClippedLine()
   local item = self:getSelectedItem()
   if not item.clipped then return end
+  clippedLineOffset = _G.font:getWidth(item.displayLabel) - self.listBounds.w
 
-  if self.clippetTextTween then
-    self.clippetTextTween:stop()
-    self.clippedLineX = 0
-  end
-  self.offsetAmount = _G.font:getWidth(item.internalLabel) - self.listBounds.w
-  self:moveClippedLine(-self.offsetAmount)
+  -- if self.clippetTextTween then
+  --   self.clippetTextTween:stop()
+  --   clippedLineX = 0
+  -- end
+
+  -- self:moveClippedLine(-self.clippedLineOffset)
+
+  clippedLineX = 0
+  clippedLineDirection = -1
+  self.moveClippedLine = false
+  timer.new('moveClippedLine', clippedLineReturnDelay, 1)
 end
 
 function listManager:getListingCommons()
@@ -88,24 +96,29 @@ function listManager:drawIconAndGetOffset(icon, x, y)
   return iconOffset
 end
 
-function listManager:printItemText(item, iconOffset, x, y, color)
+function listManager:printItemText(item, iconOffset, x, y)
   local list, _, _, _ = self:getListingCommons()
   local label = constants.systemsLabels[item.internalLabel] or item.displayLabel
+  local color = (item.isDir and colors.blue) or
+    (item.color or list.color or colors.white)
   label = label or '<label not set>'
 
   utils.pp(label,
     self.listBounds.x + iconOffset + x,
     self.listBounds.y + y * lineHeight,
-    { fgColor = color or item.color or list.color or colors.white }
+    { fgColor = color }
   )
+
 end
 
-function listManager:drawListPointer(y, pointer)
+function listManager:drawListPointer(y)
   local list, _, _, _ = self:getListingCommons()
+  local p = images.icons.defaultPointer
+  local offset = p:getWidth() + constants.POINTER_SEPARATION
   if y == (list.page.indexAtCurrentPage - 1) then
     love.graphics.setColor(colors.white)
-    utils.drawWithShadow(pointer,
-      self.listBounds.x - pointer:getWidth(),
+    utils.drawWithShadow(images.icons.defaultPointer,
+      self.listBounds.x - offset,
       self.listBounds.y + y * lineHeight
     )
   end
@@ -142,14 +155,40 @@ function listManager:getSelectedItem()
   return list.items[list.index]
 end
 
+function listManager:invertClippedLineMovement()
+  clippedLineDirection = clippedLineDirection * -1
+  self.moveClippedLine = false
+  timer.new('moveClippedLine', clippedLineReturnDelay)
+end
+
 function listManager:update(dt)
-  _G.flux.update(dt)
+  --_G.flux.update(dt)
+  if timer.isTimeTo('moveClippedLine', dt) then
+    self.moveClippedLine = true
+  end
+
+  if self.moveClippedLine then
+    local s = clippedLineSpeed
+    local d = clippedLineDirection
+    clippedLineX = clippedLineX + dt * s * d
+  
+    if clippedLineX < -clippedLineOffset then
+      clippedLineX = -clippedLineOffset
+      self:invertClippedLineMovement()
+    end
+  
+    if clippedLineX > 0 then
+      clippedLineX = 0
+      self:invertClippedLineMovement()
+    end
+  end
 end
 
 function listManager:draw()
   local list, from, to, y = self:getListingCommons()
 
-  love.graphics.setColor(colors.black)
+  -- debug
+  love.graphics.setColor(0, 0, 0, 0.25)
   love.graphics.rectangle('line',
     self.listBounds.x,
     self.listBounds.y,
@@ -168,17 +207,14 @@ function listManager:draw()
     local x = ( -- move selected line only (if clipped)
       y == (list.page.indexAtCurrentPage - 1) and
       item.clipped and
-      self.clippedLineX
+      clippedLineX
     ) or 0
 
     local color = item.color or list.color or colors.white
-    if item.isDir then
-      icon = images.icons.folder
-      color = colors.blue
-    end
+    if item.isDir then icon = images.icons.folder end
     local iconOffset = self:drawIconAndGetOffset(icon, x, y)
-    self:printItemText(item, iconOffset, x, y, color)
-    self:drawListPointer(y, pointer)
+    self:printItemText(item, iconOffset, x, y)
+    self:drawListPointer(y)
     self:drawLineExtras(item, y)
     y = y + 1
 

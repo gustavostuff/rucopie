@@ -38,3 +38,4 @@ Things to do/fix:
 * Bluetooth joystick support
 * Locale/Country settings
 * Skip button while mapping joystick for UI
+* Change the terminal banner

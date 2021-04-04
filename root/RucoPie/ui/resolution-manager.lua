@@ -20,11 +20,10 @@ function resolutionManager.calculate(core)
     yResolution = yOriginal * scale
   until yResolution >= love.graphics.getHeight()
 
-  local result = osBridge.setResolution(
-    core,
-    xOriginal * (scale - 1),
-    yOriginal * (scale - 1)
-  )
+  local result = osBridge.udpateConfigs(core, {
+    custom_viewport_width = xOriginal * (scale - 1),
+    custom_viewport_height = yOriginal * (scale - 1)
+  })
   return result
 end
 

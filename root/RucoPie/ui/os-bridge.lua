@@ -18,10 +18,26 @@ osBridge.runGame = function (system, path)
   path = osBridge.readFrom(base .. 'normalize.sh "' .. path .. '"')
   local retroarch = base .. 'run_game.sh ' .. system .. ' ' .. path
   local backToUI = base .. 'start_ui.sh';
-  local cmd = 'nohup sh -c "' .. retroarch .. ' && ' .. backToUI .. '" > /dev/null &';
+  local cmd = 'nohup sh -c "' .. retroarch .. ' && ' .. backToUI .. '" > /root/retroarch.log &';
   utils.debug('>> cmd to run retroarch and go back:', cmd)
   io.popen(cmd)
   love.event.quit() -- love app is closed but opened after retroarch closes
+end
+
+osBridge.updateConfig = function (core, configName, value)
+  local result = osBridge.readFrom(
+    constants.RUCOPIE_DIR .. 'scripts/update_retroarch_config.sh "'
+      .. core .. '" "'
+      .. configName .. '" "'
+      .. tostring(value) .. '"'
+    )
+  return result
+end
+
+osBridge.udpateConfigs = function (core, configs)
+  for configName, value in pairs(configs) do
+    osBridge.updateConfig(core, configName, value)
+  end
 end
 
 -- next 2 functions are used for files with no spaces in between the name

@@ -9,7 +9,7 @@ local data = ({...})[2]
 local totalGames = 0
 
 local function clipLargeLine(item)
-  if (#item.displayLabel * data.characterW) > constants.MAX_LINE_WIDTH then
+  if (#item.displayLabel * data.characterW) >= data.maxLineWidth then
     item.clipped = true
   end
 end
