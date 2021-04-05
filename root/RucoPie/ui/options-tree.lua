@@ -16,7 +16,7 @@ end
 local function inGameBilinearAction(item)
   item.value = not item.value
   for _, core in ipairs(constants.cores) do
-    osBridge.updateConfig(core, 'soft_filter_enable', item.value)
+    osBridge.updateConfig(core, 'video_smooth', item.value)
   end
 end
 
@@ -93,7 +93,13 @@ optionsTree = {
         }
       },
       page = utils.initPage(),
-      index = 1
+      index = 1,
+      caption = {
+        colors.green, 'A: Select',
+        colors.red, '  B: Back',
+        colors.orange, '  X: Preview',
+        colors.blue, '  Start: Systems'
+      }
     }, {
       displayLabel = utils.getDisplayLabel('Refresh Game List'),
       internalLabel = 'Refresh Game List',

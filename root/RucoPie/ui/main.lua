@@ -1,11 +1,33 @@
 love.filesystem.setIdentity('ruco-pie')
 love.graphics.setBlendMode('alpha')
 
+local availableCores = {
+  'fceumm',
+  'gambatte',
+  'fbneo',
+  'snes9x',
+  'stella2014'
+}
+
 _G.flux = require "lib/flux"
 _G.debug = true
 _G.screenDebug = false
 _G.font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
 _G.debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
+_G.videoModePreviews = {
+  ['gbc'] = {
+    scale = 7,
+    img = love.graphics.newImage('assets/img/video-mode-previews/gbc.png')    
+  }
+}
+_G.videoModePreviews['gbc'].img:setFilter('nearest', 'nearest')
+
+-- for _, core in ipairs(availableCores) then
+--   local item = {}
+--   item.scale = 1
+--   item.img = love.graphics.newImage('assets/img/mode-previews/' .. core .. '.png')
+--   _G.videoModePreviews = item
+-- end
 
 local colors = require 'colors'
 local constants = require 'constants'
@@ -138,6 +160,25 @@ local function drawMessagesForAsyncTaks()
   end
 end
 
+local function drawVideoModePreviews()
+  if _G.currentJoystick and _G.currentJoystick:isDown(joystickManager:getButton('X')) and
+  listManager.currentList.internalLabel == 'Video'  
+  then
+    local item = _G.videoModePreviews['gbc']
+    love.graphics.setColor(colors.black)
+    love.graphics.rectangle('fill',
+      0, 0, love.graphics.getWidth(), love.graphics.getHeight()
+    )
+
+    love.graphics.setColor(colors.white)
+    utils.drawCentered(item.img,
+      love.graphics.getWidth() / 2,
+      love.graphics.getHeight() / 2, 
+      { scale = item.scale }
+    )
+  end
+end
+
 local function initFontsAndStuff()
   _G.font:setFilter('nearest', 'nearest')
   love.graphics.setFont(_G.font)
@@ -153,7 +194,8 @@ end
 
 _G.calculateCoresResolution = function ()
   for _, core in ipairs(constants.cores) do
-    resolutionManager.calculate(core)
+    local _, scale = resolutionManager.calculate(core)
+    --_G.videoModePreviews[core].scale = scale
   end
 end
 
@@ -224,6 +266,8 @@ function love.draw()
   love.graphics.setColor(colors.white)
   love.graphics.draw(canvas, 0, 0, 0, scaleX, scaleY)
 
+  love.graphics.setColor(colors.white)
+  drawVideoModePreviews()
   printDebug()
 end
 
@@ -289,6 +333,7 @@ function love.joystickadded(joystick)
     utils.debug('Joystick config file found.')
     joystickManager.generalMapping = loadstring(osBridge.readFile(constants.JOYSTICK_CONFIG_PATH))()
     osBridge.configLoaded = true
+    _G.currentJoystick = joystick
   else
     _G.currentJoystick = joystick
     joystickManager.isCurrentlyMapping = true

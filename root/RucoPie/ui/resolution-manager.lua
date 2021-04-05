@@ -9,6 +9,8 @@ local resolutions =  {
   stella2014 = { w = 320, h = 210 },
 }
 
+
+-- sets optimal resolutions for this core
 function resolutionManager.calculate(core)
   local xResolution, yResolution = resolutions[core].w, resolutions[core].h
   local xOriginal, yOriginal = resolutions[core].w, resolutions[core].h
@@ -24,7 +26,7 @@ function resolutionManager.calculate(core)
     custom_viewport_width = xOriginal * (scale - 1),
     custom_viewport_height = yOriginal * (scale - 1)
   })
-  return result
+  return result, scale - 1
 end
 
 return resolutionManager

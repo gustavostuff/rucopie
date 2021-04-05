@@ -28,7 +28,7 @@ Things to do/fix:
 
 * Integer coordinates for background to behave smootly
 * filesystem speed (add LFS)  (done)
-* Persist optimal resolutions for cores
+* Persist optimal resolutions for cores and general preferences
 * Wireless conexion screen
 * More video options
 * Add more themes

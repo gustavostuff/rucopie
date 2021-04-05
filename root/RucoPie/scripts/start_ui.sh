@@ -4,7 +4,6 @@ source "/root/RucoPie/scripts/commons.sh"
 
 function start () {
   colorEcho "green" "$separator"
-  colorEcho "green" "Welcome to RucoPie."
 
   if pgrep -x "love" > /dev/null
   then

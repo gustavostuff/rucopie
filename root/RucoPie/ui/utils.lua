@@ -106,6 +106,22 @@ utils.pp = function (text, x, y, data)
   love.graphics.print(text, x, y)
 end
 
+utils.drawCentered = function (drawable, x, y, data)
+  x = x or 0
+  y = y or 0
+  data = data or {}
+
+  love.graphics.draw(drawable,
+    math.floor(x),
+    math.floor(y),
+    0,
+    data.scale or 1,
+    data.scale or 1,
+    math.floor(drawable:getWidth() / 2),
+    math.floor(drawable:getHeight() / 2)
+  )
+end
+
 utils.drawWithShadow = function (img, x, y, data)
   x = x or 0
   y = y or 0
