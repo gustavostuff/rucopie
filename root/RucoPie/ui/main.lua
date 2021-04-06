@@ -72,7 +72,7 @@ local function printDebug()
       'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
       'items at current page: ' .. itemsInCurrentPage .. '\n' ..
       '----------------------------------\n' ..
-      'character width (monospaced font should be used): ' .. characterW .. ' '
+      'character width (monospaced font should be used): ' .. _G.characterW .. ' '
 
     utils.pp(text,
       love.graphics.getWidth() - _G.debugFont:getWidth(text), 0,
@@ -181,9 +181,9 @@ end
 
 local function initFontsAndStuff()
   _G.font:setFilter('nearest', 'nearest')
+  _G.characterW = _G.font:getWidth('A') -- monospaced font
   love.graphics.setFont(_G.font)
   love.graphics.setBackgroundColor(colors.purple)
-  characterW = _G.font:getWidth('A') -- monospaced font
 end
 
 ---------------------------------------------
@@ -206,7 +206,7 @@ _G.refreshSystemsTree = function ()
     setRefreshedGameList()
     loadingGames = false
   end, {
-    characterW = characterW,
+    characterW = _G.characterW,
     maxLineWidth = listManager.listBounds.w
   })
 end

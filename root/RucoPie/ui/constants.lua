@@ -6,7 +6,7 @@ return {
   -- CANVAS_WIDTH = 400,
   -- CANVAS_HEIGHT = 225,
   MAX_LINE_WIDTH = 220, -- pixels
-  MAX_LINE_CHARACTERS = 30,
+  MAX_LINE_CHARACTERS = 33,
   PAGE_SIZE = 12,
   POINTER_SEPARATION = 4,
   RUCOPIE_DIR = '/root/RucoPie/',

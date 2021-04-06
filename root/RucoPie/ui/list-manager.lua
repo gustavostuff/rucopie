@@ -29,9 +29,13 @@ end
 -- for lines that are too large to fit
 local clippedLineX = 0
 local clippedLineSpeed = 60
-local clippedLineDirection = -1
+--local clippedLineDirection = -1
+local clippedLineDirection = 1
 local clippedLineOffset = 0
 local clippedLineReturnDelay = 0.5
+
+local clippedLineCharDelay = 0.1
+local clippedLineCharIndex = 1
 
 -- bounce line left and right
 -- function listManager:moveClippedLine(x)
@@ -47,21 +51,32 @@ local clippedLineReturnDelay = 0.5
 -- end
 
 function listManager:resetClippedLine()
-  local item = self:getSelectedItem()
-  if not item.clipped then return end
-  clippedLineOffset = _G.font:getWidth(item.displayLabel) - self.listBounds.w
+  -- local item = self:getSelectedItem()
+  -- if not item.clipped then return end
+  -- clippedLineOffset = _G.font:getWidth(item.displayLabel) - self.listBounds.w
 
+  -- tweens approach
   -- if self.clippetTextTween then
   --   self.clippetTextTween:stop()
   --   clippedLineX = 0
   -- end
 
   -- self:moveClippedLine(-self.clippedLineOffset)
+  -- end of tweens approach
 
-  clippedLineX = 0
-  clippedLineDirection = -1
+  -- clippedLineX = 0
+  -- clippedLineDirection = -1
+  -- self.moveClippedLine = false
+  -- timer.new('moveClippedLine', clippedLineReturnDelay, 1)
+  -- timer.new('moveClippedLineChar', clippedLineCharDelay, 1)
+
+
+
+  clippedLineCharIndex = 1
+  clippedLineDirection = 1
   self.moveClippedLine = false
   timer.new('moveClippedLine', clippedLineReturnDelay, 1)
+  timer.new('moveClippedLineChar', clippedLineCharDelay)
 end
 
 function listManager:getListingCommons()
@@ -96,14 +111,17 @@ function listManager:drawIconAndGetOffset(icon, x, y)
   return iconOffset
 end
 
-function listManager:printItemText(item, iconOffset, x, y)
+function listManager:printItemText(item, x, y, iconOffset, printOffset)
   local list, _, _, _ = self:getListingCommons()
   local label = constants.systemsLabels[item.internalLabel] or item.displayLabel
   local color = (item.isDir and colors.blue) or
     (item.color or list.color or colors.white)
   label = label or '<label not set>'
 
-  utils.pp(label,
+  local offset_0 = printOffset or 1
+  local offset_1 = printOffset and (printOffset + constants.MAX_LINE_CHARACTERS - 1)
+    or #item.displayLabel
+  utils.pp(label:sub(offset_0, offset_1),
     self.listBounds.x + iconOffset + x,
     self.listBounds.y + y * lineHeight,
     { fgColor = color }
@@ -156,45 +174,73 @@ function listManager:getSelectedItem()
 end
 
 function listManager:invertClippedLineMovement()
+  -- clippedLineDirection = clippedLineDirection * -1
+  -- self.moveClippedLine = false
+  -- timer.new('moveClippedLine', clippedLineReturnDelay)
+
+
   clippedLineDirection = clippedLineDirection * -1
   self.moveClippedLine = false
   timer.new('moveClippedLine', clippedLineReturnDelay)
+  timer.new('moveClippedLineChar', clippedLineCharDelay)
 end
 
 function listManager:update(dt)
-  --_G.flux.update(dt)
   if timer.isTimeTo('moveClippedLine', dt) then
     self.moveClippedLine = true
   end
 
   if self.moveClippedLine then
-    local s = clippedLineSpeed
-    local d = clippedLineDirection
-    clippedLineX = clippedLineX + dt * s * d
-  
-    if clippedLineX < -clippedLineOffset then
-      clippedLineX = -clippedLineOffset
-      self:invertClippedLineMovement()
-    end
-  
-    if clippedLineX > 0 then
-      clippedLineX = 0
-      self:invertClippedLineMovement()
+    if timer.isTimeTo('moveClippedLineChar', dt) then
+      local item = self:getSelectedItem()
+      local d = clippedLineDirection
+      clippedLineCharIndex = clippedLineCharIndex + 1 * d
+
+      local charsDisplayed = #item.displayLabel - (clippedLineCharIndex - 1)
+      if charsDisplayed <= constants.MAX_LINE_CHARACTERS then
+        self:invertClippedLineMovement()
+      end
+
+      if d == -1 and clippedLineCharIndex == 1 then
+        self:invertClippedLineMovement()
+      end
     end
   end
+
+
+  --_G.flux.update(dt)
+  -- if timer.isTimeTo('moveClippedLine', dt) then
+  --   self.moveClippedLine = true
+  -- end
+
+  -- if self.moveClippedLine then
+  --   local s = clippedLineSpeed
+  --   local d = clippedLineDirection
+  --   clippedLineX = clippedLineX + dt * s * d
+  
+  --   if clippedLineX < -clippedLineOffset then
+  --     clippedLineX = -clippedLineOffset
+  --     self:invertClippedLineMovement()
+  --   end
+  
+  --   if clippedLineX > 0 then
+  --     clippedLineX = 0
+  --     self:invertClippedLineMovement()
+  --   end
+  -- end
 end
 
 function listManager:draw()
   local list, from, to, y = self:getListingCommons()
 
   -- debug
-  love.graphics.setColor(0, 0, 0, 0.25)
-  love.graphics.rectangle('line',
-    self.listBounds.x,
-    self.listBounds.y,
-    self.listBounds.w,
-    self.listBounds.h
-  )
+  -- love.graphics.setColor(0, 0, 0, 0.15)
+  -- love.graphics.rectangle('fill',
+  --   self.listBounds.x,
+  --   self.listBounds.y,
+  --   self.listBounds.w,
+  --   self.listBounds.h
+  -- )
 
   love.graphics.stencil(getListStencil(), 'replace', 1) 
   love.graphics.setStencilTest('greater', 0)
@@ -204,16 +250,26 @@ function listManager:draw()
     if not item then goto continue end
     
     local icon
+    -- for stencil working (bug https://github.com/love2d/love/issues/1679)
     local x = ( -- move selected line only (if clipped)
       y == (list.page.indexAtCurrentPage - 1) and
       item.clipped and
       clippedLineX
     ) or 0
+    --
+
+    -- for stencil NOT working (workaround)
+    local printOffset = (
+      y == (list.page.indexAtCurrentPage - 1) and
+      item.clipped and
+      clippedLineCharIndex
+    ) or 1
+    --
 
     local color = item.color or list.color or colors.white
     if item.isDir then icon = images.icons.folder end
     local iconOffset = self:drawIconAndGetOffset(icon, x, y)
-    self:printItemText(item, iconOffset, x, y)
+    self:printItemText(item, x, y, iconOffset, printOffset)
     self:drawListPointer(y)
     self:drawLineExtras(item, y)
     y = y + 1
