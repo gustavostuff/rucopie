@@ -186,13 +186,15 @@ function listManager:invertClippedLineMovement()
 end
 
 function listManager:update(dt)
+  local item = self:getSelectedItem()
+  if not item then return end
+
   if timer.isTimeTo('moveClippedLine', dt) then
     self.moveClippedLine = true
   end
 
   if self.moveClippedLine then
     if timer.isTimeTo('moveClippedLineChar', dt) then
-      local item = self:getSelectedItem()
       local d = clippedLineDirection
       clippedLineCharIndex = clippedLineCharIndex + 1 * d
 
@@ -241,10 +243,14 @@ function listManager:draw()
     self.listBounds.w,
     self.listBounds.h
   )
+  if #list.items == 0 then
+    self:printItemText({ displayLabel = '<empty folder>' }, 0, y, 0, 1)
+    return
+  end
 
   love.graphics.stencil(getListStencil(), 'replace', 1) 
   love.graphics.setStencilTest('greater', 0)
-
+  
   for i = from, to do
     local item = list.items[i]
     if not item then goto continue end
@@ -280,9 +286,9 @@ function listManager:draw()
   love.graphics.setStencilTest()
 end
 
-function listManager:back(value, listsStack, pathStack, currentScreen)
-  local currentListsStack = listsStack[currentScreen]
-  local currentPathStack = pathStack[currentScreen]
+function listManager:back(value, listsStack, pathStack, screen)
+  local currentListsStack = listsStack[screen]
+  local currentPathStack = pathStack[screen]
 
   if #currentListsStack > 1 then
     table.remove(currentListsStack)
@@ -394,12 +400,12 @@ function listManager:down()
   self:resetClippedLine()
 end
 
-function listManager:performAction(listsStack, pathStack, cb)
+function listManager:performAction(listsStack, pathStack, cb, screen)
   local item = self:getSelectedItem()
-  local currentListsStack = listsStack[currentScreen]
-  local currentPathStack = pathStack[currentScreen]
+  local currentListsStack = listsStack[screen]
+  local currentPathStack = pathStack[screen]
 
-  if item.items and #item.items > 0 then
+  if item.isDir then
     table.insert(currentListsStack, item)
     table.insert(currentPathStack, item.internalLabel)
     if item.isSystem then -- set selected system (gb, nes, etc.)

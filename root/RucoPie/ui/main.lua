@@ -373,14 +373,18 @@ function handleUserInput(data)
 
   if loadingGames then return end
   
-  local item = listManager:getSelectedItem()
-  if not item then return end
-
+  -- actions that are independent of a selected item:
   if value == constants.keys.ESCAPE or value == joystickManager:getButton('B') then
     listManager:back(value, listsStack, pathStack, currentScreen)
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then
     switchScreen()
-  elseif value == constants.keys.LEFT or value == joystickManager:getHat('Left') then
+  end
+
+  local item = listManager:getSelectedItem()
+  if not item then return end
+
+  -- the ones that depend on the current selected item:
+  if value == constants.keys.LEFT or value == joystickManager:getHat('Left') then
     handleLeft()
   elseif value == constants.keys.RIGHT or value == joystickManager:getHat('Right') then
     handleRight()
@@ -392,7 +396,7 @@ function handleUserInput(data)
     listManager:performAction(listsStack, pathStack, item.action or function()
       local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.internalLabel
       osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
-    end)
+    end, currentScreen)
   end
 end
 
