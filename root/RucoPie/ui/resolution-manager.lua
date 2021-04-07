@@ -20,13 +20,26 @@ function resolutionManager.calculate(core)
     scale = scale + 1
     xResolution = xOriginal * scale
     yResolution = yOriginal * scale
-  until yResolution >= love.graphics.getHeight()
+  until yResolution >= love.graphics.getHeight() -- limit to screen's height
 
-  local result = osBridge.udpateConfigs(core, {
-    custom_viewport_width = xOriginal * (scale - 1),
-    custom_viewport_height = yOriginal * (scale - 1)
+  scale = scale - 1
+  return scale, xOriginal * scale, yOriginal * scale
+end
+
+function resolutionManager.saveScaleForCore(core, w, h)
+  local result = osBridge.updateConfigs(core, {
+    custom_viewport_width = w,
+    custom_viewport_height = h
   })
-  return result, scale - 1
+
+  local screenW = love.graphics.getWidth()
+  local screenH = love.graphics.getHeight()
+  osBridge.saveFile(
+    'This file means RucoPie has been executed in this resolution.',
+    'cache/' .. screenW .. 'x' .. screenH .. '.lock'
+  )
+
+  return result
 end
 
 return resolutionManager

@@ -10,6 +10,11 @@ local colors = {
   orange = {0.875, 0.443, 0.149},
 }
 
+function colors:withOpacity(name, opacity)
+  local c = self[name]
+  return { c[1], c[2], c[3], opacity }
+end
+
 -- tweak for older versions of LOVE
 -- for k, c in pairs(colors) do
 --   colors[k] = { c[1] * 255, c[2] * 255, c[3] * 255 }

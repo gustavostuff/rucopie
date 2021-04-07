@@ -14,25 +14,21 @@ _G.debug = true
 _G.screenDebug = false
 _G.font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
 _G.debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
-_G.videoModePreviews = {
-  ['gbc'] = {
-    scale = 7,
-    img = love.graphics.newImage('assets/img/video-mode-previews/gbc.png')    
-  }
-}
-_G.videoModePreviews['gbc'].img:setFilter('nearest', 'nearest')
+_G.videoModePreviews = {}
 
--- for _, core in ipairs(availableCores) then
---   local item = {}
---   item.scale = 1
---   item.img = love.graphics.newImage('assets/img/mode-previews/' .. core .. '.png')
---   _G.videoModePreviews = item
--- end
+local indexVideoModePreview = 1
 
+local osBridge = require 'os-bridge'
 local colors = require 'colors'
 local constants = require 'constants'
-local osBridge = require 'os-bridge'
 local utils = require 'utils'
+local images = require 'images'
+
+if osBridge.fileExists(constants.RUCOPIE_DIR .. 'config/custom-preferences.lua') then
+  _G.preferences = loadstring(osBridge.readFile('config/custom-preferences.lua'))()
+else
+  _G.preferences = loadstring(osBridge.readFile('config/default-preferences.lua'))()
+end
 
 local themeManager = require 'theme-manager'
 local listManager = require 'list-manager'
@@ -112,38 +108,66 @@ local function loadGameList()
 end
 
 local function initCanvas()
-  canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
-  stencilCanvas = love.graphics.newCanvas(
-    constants.CANVAS_WIDTH,
-    constants.CANVAS_HEIGHT,
-    { format ='stencil8' }
-  )
-  canvas:setFilter('nearest', 'nearest')
-  stencilCanvas:setFilter('nearest', 'nearest')
+  _G.canvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+  _G.videoModePreviewCanvas = love.graphics.newCanvas(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+  -- stencilCanvas = love.graphics.newCanvas(
+  --   constants.CANVAS_WIDTH,
+  --   constants.CANVAS_HEIGHT,
+  --   { format ='stencil8' }
+  -- )
+  _G.canvas:setFilter('nearest', 'nearest')
+  _G.videoModePreviewCanvas:setFilter('nearest', 'nearest')
+  -- stencilCanvas:setFilter('nearest', 'nearest')
   scaleX = love.graphics.getWidth() / constants.CANVAS_WIDTH
   scaleY = love.graphics.getHeight() / constants.CANVAS_HEIGHT
 end
 
-local function drawListAndCaption()
-  love.graphics.setColor(colors.white)
-  if listManager.currentList then
-    listManager:draw()
-    local caption = listManager.currentList.caption or constants.captions[currentScreen]
-    utils.pp(caption,
-      listManager.listBounds.x,
-      listManager.listBounds.x + listManager.listBounds.h
-    )
+_G.updateVideoModePreviews = function ()
+  for _, item in pairs(_G.videoModePreviews) do
+    if _G.preferences.video.smoothGames then
+      item.img:setFilter('linear', 'linear')
+    else
+      item.img:setFilter('nearest', 'nearest')
+    end
   end
 end
 
-local function drawJoystickMapping()
-  if joystickManager.isCurrentlyMapping then
-    local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
-    utils.pp(text,
-      math.floor(constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2),
-      math.floor(constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2)
-    )
+local function initPreferences()
+  themeManager:updateSmoothUI(_G.preferences.video.smoothUI)
+end
+
+local function shouldDrawVideoModePreview()
+  return not joystickManager.isCurrentlyMapping and
+    _G.currentJoystick and
+    _G.currentJoystick:isDown(joystickManager:getButton('X')) and
+    listManager.currentList.internalLabel == 'Video'
+end
+
+local function drawCurrentList()
+  love.graphics.setColor(colors.white)
+  if listManager.currentList then
+    listManager:draw(scaleX, scaleY)
   end
+end
+
+local function drawCurrentCaption()
+  if not listManager.currentList then return end
+
+  love.graphics.setColor(colors.white)
+  local caption = listManager.currentList.caption or constants.captions[currentScreen]
+
+  utils.pp(caption,
+    listManager.listBounds.x,
+    listManager.listBounds.x + listManager.listBounds.h
+  )
+end
+
+local function drawJoystickMapping()
+  local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
+  utils.pp(text,
+    math.floor(constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2),
+    math.floor(constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2)
+  )
 end
 
 local function drawMessagesForAsyncTaks()
@@ -160,22 +184,55 @@ local function drawMessagesForAsyncTaks()
   end
 end
 
-local function drawVideoModePreviews()
-  if _G.currentJoystick and _G.currentJoystick:isDown(joystickManager:getButton('X')) and
-  listManager.currentList.internalLabel == 'Video'  
-  then
-    local item = _G.videoModePreviews['gbc']
-    love.graphics.setColor(colors.black)
-    love.graphics.rectangle('fill',
-      0, 0, love.graphics.getWidth(), love.graphics.getHeight()
-    )
+local function drawGameScreenPreview(item)
+  love.graphics.setColor(colors.white)
 
-    love.graphics.setColor(colors.white)
+  if _G.preferences.video.stretchGames then
+    love.graphics.draw(item.img, 0, 0, 0,
+      love.graphics.getWidth() / item.img:getWidth(),
+      love.graphics.getHeight() / item.img:getHeight()
+    )
+  else
     utils.drawCentered(item.img,
       love.graphics.getWidth() / 2,
       love.graphics.getHeight() / 2, 
       { scale = item.scale }
     )
+  end
+end
+
+local function drawGamePreviewBanner()
+  love.graphics.clear(0, 0, 0, 0)
+  love.graphics.setColor(colors:withOpacity('black', 0.75))
+  love.graphics.rectangle('fill',
+    0,
+    constants.CANVAS_HEIGHT / 2 - 20,
+    constants.CANVAS_WIDTH,
+    40
+  )
+
+  local core = constants.cores[indexVideoModePreview]
+  local label = constants.coreAssociations[core]
+  utils.pp('< ' .. label .. ' >', 0, 0, {
+    centerH = true,
+    centerV = true
+  })
+end
+
+local function drawVideoModePreviews()
+  if shouldDrawVideoModePreview() then
+    local item = _G.videoModePreviews[constants.cores[indexVideoModePreview]]
+    love.graphics.setColor(colors.black)
+    love.graphics.rectangle('fill',
+      0, 0, love.graphics.getWidth(), love.graphics.getHeight()
+    )
+    drawGameScreenPreview(item)
+
+    love.graphics.setCanvas({_G.videoModePreviewCanvas, stencil = true })
+    drawGamePreviewBanner()
+    love.graphics.setCanvas()
+  
+    love.graphics.draw(_G.videoModePreviewCanvas, 0, 0, 0, scaleX, scaleY)
   end
 end
 
@@ -186,17 +243,32 @@ local function initFontsAndStuff()
   love.graphics.setBackgroundColor(colors.purple)
 end
 
+local function needsToUpdateScales()
+  local w = love.graphics.getWidth()
+  local h = love.graphics.getHeight()
+  local file = constants.RUCOPIE_DIR .. 'cache/' .. w .. 'x' .. h .. '.lock'
+  return not osBridge.fileExists(file)
+end
+
 ---------------------------------------------
 ---------------------------------------------
 -- Global functions:
 ---------------------------------------------
 ---------------------------------------------
 
-_G.calculateCoresResolution = function ()
+_G.calculateResolutionsAndVideoModePreviews = function (forceUpdate)
   for _, core in ipairs(constants.cores) do
-    local _, scale = resolutionManager.calculate(core)
-    --_G.videoModePreviews[core].scale = scale
+    local scale, w, h = resolutionManager.calculate(core)
+    if needsToUpdateScales() or forceUpdate then
+      local result = resolutionManager.saveScaleForCore(core, w, h)
+    end
+
+    _G.videoModePreviews[core] = {}
+    local item = _G.videoModePreviews[core]
+    item.scale = scale
+    item.img = images.videoModePreviews[core .. '.png']
   end
+  _G.updateVideoModePreviews()
 end
 
 _G.refreshSystemsTree = function ()
@@ -218,17 +290,6 @@ end
 ---------------------------------------------
 
 function love.load()
-  utils.debug('Renderer info:')
-  utils.debug('  ', love.graphics.getRendererInfo())
-  utils.debug('Canvas formats:')
-  for k,v in pairs(love.graphics.getCanvasFormats()) do
-    if tostring(v) == 'true' then
-      utils.debug('  Supported: ' .. k)
-    else
-      utils.debug('  NOT Supported: ' .. k)
-    end
-  end
-
   initFontsAndStuff()
   _G.screens = {
     systems = 1,
@@ -237,8 +298,9 @@ function love.load()
   currentScreen = _G.screens.systems
   initNavigationStacks()
   loadGameList()
-  _G.calculateCoresResolution()
   initCanvas()
+  initPreferences()
+  _G.calculateResolutionsAndVideoModePreviews()
 end
 
 function love.update(dt)
@@ -248,23 +310,24 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setCanvas({
-    canvas,
-    depthstencil = stencilCanvas
-  })
-  love.graphics.clear()
+  love.graphics.setCanvas({ _G.canvas, stencil = true })
+  love.graphics.clear(colors.purple)
  
-  love.graphics.setColor(colors.purple)
+  love.graphics.setColor(colors.purple) -- backgroundest background
   love.graphics.rectangle('fill', 0, 0, constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
 
   themeManager:drawCurrentTheme()
-  drawListAndCaption()
-  drawJoystickMapping()
-  drawMessagesForAsyncTaks()
+  if joystickManager.isCurrentlyMapping then
+    drawJoystickMapping()
+  else
+    drawCurrentList()
+    drawCurrentCaption()
+    drawMessagesForAsyncTaks()
+  end
 
   love.graphics.setCanvas()
   love.graphics.setColor(colors.white)
-  love.graphics.draw(canvas, 0, 0, 0, scaleX, scaleY)
+  love.graphics.draw(_G.canvas, 0, 0, 0, scaleX, scaleY)
 
   love.graphics.setColor(colors.white)
   drawVideoModePreviews()
@@ -275,15 +338,37 @@ end
 -- events
 ---------------
 
+function handleLeft()
+  if shouldDrawVideoModePreview() then
+    indexVideoModePreview = indexVideoModePreview - 1
+    if indexVideoModePreview < 1 then
+      indexVideoModePreview = #constants.cores
+    end
+  else
+    listManager:left()
+  end
+end
+
+function handleRight()
+  if shouldDrawVideoModePreview() then
+    indexVideoModePreview = indexVideoModePreview + 1
+    if indexVideoModePreview > #constants.cores then
+      indexVideoModePreview = 1
+    end
+  else
+    listManager:right()
+  end
+end
+
 function handleUserInput(data)
   -- debug
   local value = data.value
   if value == joystickManager:getButton('Hotkey') or value == constants.keys.ESCAPE then
     love.event.quit()
   end
-  if value == joystickManager:getButton('R1') then
-    love.graphics.captureScreenshot('screenshot_' .. tostring(os.time()) .. '.png')
-  end
+  -- if value == joystickManager:getButton('R1') then
+  --   love.graphics.captureScreenshot('screenshot_' .. tostring(os.time()) .. '.png')
+  -- end
   --end of debug
 
   if loadingGames then return end
@@ -296,9 +381,9 @@ function handleUserInput(data)
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then
     switchScreen()
   elseif value == constants.keys.LEFT or value == joystickManager:getHat('Left') then
-    listManager:left()
+    handleLeft()
   elseif value == constants.keys.RIGHT or value == joystickManager:getHat('Right') then
-    listManager:right()
+    handleRight()
   elseif value == constants.keys.UP or value == joystickManager:getHat('Up') then
     listManager:up()
   elseif value == constants.keys.DOWN or value == joystickManager:getHat('Down') then

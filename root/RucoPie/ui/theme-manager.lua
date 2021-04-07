@@ -73,6 +73,16 @@ function themeManager:setTheme(folder)
   _G.currentTheme = theme
 end
 
+function themeManager:updateSmoothUI(value)
+  if value then
+    _G.canvas:setFilter('linear', 'linear')
+    _G.videoModePreviewCanvas:setFilter('linear', 'linear')
+  else
+    _G.canvas:setFilter('nearest', 'nearest')
+    _G.videoModePreviewCanvas:setFilter('nearest', 'nearest')
+  end
+end
+
 function themeManager:drawCurrentTheme()
   love.graphics.setColor(colors.white)  
 
@@ -84,6 +94,6 @@ function themeManager:drawCurrentTheme()
   love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 end
 
-themeManager:setTheme('Super Mario Scroll') -- default theme
+themeManager:setTheme(_G.preferences.theme)
 
 return themeManager

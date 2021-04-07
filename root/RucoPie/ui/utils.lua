@@ -89,6 +89,14 @@ utils.pp = function (text, x, y, data)
 
   love.graphics.setColor(data.shadowColor or colors.black)
 
+  if data.centerH then
+    x = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(shadowText) / 2
+  end
+
+  if data.centerV then
+    y = constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2
+  end
+
   local sd = { -- shadow directions
     {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
   }

@@ -1,6 +1,6 @@
 local colors = require 'colors'
 
-return {
+local constants = {
   CANVAS_WIDTH = 320,
   CANVAS_HEIGHT = 180,
   -- CANVAS_WIDTH = 400,
@@ -39,30 +39,33 @@ return {
     gbc = 'Game Boy Color',
     neogeo = 'Neo Geo',
     nes = 'Nintendo',
-    snes = 'Super Nintendo',
+    snes = 'Super Nintendo Chalmers',
     ports = 'Ports',
     atari2600 = 'Atari 2600'
-  },
-  cores = {
-    'fceumm',
-    'gambatte',
-    'fbneo',
-    'snes9x',
-    'stella2014'
   },
   extensionsToRemove = {
     'zip'
   },
   filesToDisplay = {
-    'zip',
-    'png',
-    'jpg',
-    'jpeg',
-    'gif',
-    'mp4',
-    'ogg',
-    'ogv',
-    'mov',
-    '3gp'
+    gb = { 'gb' },
+    nes = { 'nes' },
   }
 }
+
+constants.cores = {
+  'fceumm',
+  'gambatte',
+  'fbneo',
+  'snes9x',
+  'stella2014'
+}
+
+constants.coreAssociations = {
+  ['fceumm'] = constants.systemsLabels.nes,
+  ['gambatte'] = constants.systemsLabels.gb .. '/' .. constants.systemsLabels.gbc,
+  ['fbneo'] = constants.systemsLabels.neogeo,
+  ['snes9x'] = constants.systemsLabels.snes,
+  ['stella2014'] = constants.systemsLabels.atari2600,
+}
+
+return constants

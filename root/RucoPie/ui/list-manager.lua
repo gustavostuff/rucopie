@@ -131,11 +131,11 @@ end
 
 function listManager:drawListPointer(y)
   local list, _, _, _ = self:getListingCommons()
-  local p = images.icons.defaultPointer
+  local p = images.icons['default-pointer.png']
   local offset = p:getWidth() + constants.POINTER_SEPARATION
   if y == (list.page.indexAtCurrentPage - 1) then
     love.graphics.setColor(colors.white)
-    utils.drawWithShadow(images.icons.defaultPointer,
+    utils.drawWithShadow(images.icons['default-pointer.png'],
       self.listBounds.x - offset,
       self.listBounds.y + y * lineHeight
     )
@@ -144,8 +144,8 @@ end
 
 function listManager:drawLineExtras(item, y)
   if item.checkbox then
-    local icon = images.icons.checkboxOff
-    if item.value then icon = images.icons.checkboxOn end
+    local icon = images.icons['checkbox-off.png']
+    if item.value then icon = images.icons['checkbox-on.png'] end
     utils.drawWithShadow(icon,
       self.rightSideX,
       self.rightSideY + y * lineHeight
@@ -234,13 +234,13 @@ function listManager:draw()
   local list, from, to, y = self:getListingCommons()
 
   -- debug
-  -- love.graphics.setColor(0, 0, 0, 0.15)
-  -- love.graphics.rectangle('fill',
-  --   self.listBounds.x,
-  --   self.listBounds.y,
-  --   self.listBounds.w,
-  --   self.listBounds.h
-  -- )
+  love.graphics.setColor(0, 0, 0, 0.2)
+  love.graphics.rectangle('fill',
+    self.listBounds.x,
+    self.listBounds.y,
+    self.listBounds.w,
+    self.listBounds.h
+  )
 
   love.graphics.stencil(getListStencil(), 'replace', 1) 
   love.graphics.setStencilTest('greater', 0)
@@ -267,7 +267,7 @@ function listManager:draw()
     --
 
     local color = item.color or list.color or colors.white
-    if item.isDir then icon = images.icons.folder end
+    if item.isDir then icon = images.icons['folder.png'] end
     local iconOffset = self:drawIconAndGetOffset(icon, x, y)
     self:printItemText(item, x, y, iconOffset, printOffset)
     self:drawListPointer(y)

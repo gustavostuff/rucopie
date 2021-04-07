@@ -9,9 +9,24 @@ local data = ({...})[2]
 local totalGames = 0
 
 local function clipLargeLine(item)
-  if (#item.displayLabel * data.characterW) >= data.maxLineWidth then
+  if #item.displayLabel > constants.MAX_LINE_CHARACTERS then
     item.clipped = true
   end
+end
+
+local function validExtension(systemName, file)
+  -- allowing all zip files for all systems, for now
+  if file:find('.zip$') then return true end
+
+  -- for system, extensions in pairs(constants.filesToDisplay) do
+  --   for _, ext in ipairs(extensions) do
+  --     if file:find('.' .. ext .. '$', '') then
+  --       return true
+  --     end
+  --   end
+  -- end
+
+  -- return false
 end
 
 local function createSystemsTree(path, parentList, level)
@@ -39,6 +54,7 @@ local function createSystemsTree(path, parentList, level)
           index = 1,
           isDir = true,
           isSystem = level == 1,
+          systemName = ((level == 1) and file) or nil,
           page = utils.initPage()
         }
         createSystemsTree(fullPath .. '/', elementToInsert, level + 1)
@@ -46,6 +62,10 @@ local function createSystemsTree(path, parentList, level)
         table.insert(parentList.items, elementToInsert)
         parentList.page = utils.initPage()
       else
+        if not validExtension(systemName, file) then
+          goto continue
+        end
+
         totalGames = totalGames + 1
         elementToInsert = {
           displayLabel = utils.getDisplayLabel(file),
@@ -53,6 +73,8 @@ local function createSystemsTree(path, parentList, level)
         }
         clipLargeLine(elementToInsert)
         table.insert(parentList.items, elementToInsert)
+
+        ::continue::
       end
     end
   end

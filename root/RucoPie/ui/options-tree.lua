@@ -4,20 +4,35 @@ local utils = require 'utils'
 local osBridge = require 'os-bridge'
 local themeManager = require 'theme-manager'
 
-local function bilinearOptionAction(item)
+local function smoothUIAction(item)
   item.value = not item.value
-  if item.value then
-    canvas:setFilter('linear', 'linear')
-  else
-    canvas:setFilter('nearest', 'nearest')
-  end
+  _G.preferences.video.smoothUI = item.value
+  osBridge.saveCustomPreferences(_G.preferences)
+  themeManager:updateSmoothUI(item.value)
 end
 
-local function inGameBilinearAction(item)
+local function smoothGamesAction(item)
   item.value = not item.value
-  for _, core in ipairs(constants.cores) do
-    osBridge.updateConfig(core, 'video_smooth', item.value)
+  osBridge.updateConfigsForAllCores({ video_smooth = item.value })
+  _G.preferences.video.smoothGames = item.value
+  osBridge.saveCustomPreferences(_G.preferences)
+  _G.updateVideoModePreviews()
+end
+
+local function stretchGamesAction(item)
+  item.value = not item.value
+  _G.preferences.video.stretchGames = item.value
+  if item.value then
+    osBridge.updateConfigsForAllCores({
+      video_scale_integer = false,
+      custom_viewport_width = love.graphics.getWidth(),
+      custom_viewport_height = love.graphics.getHeight(),
+    })
+  else
+    osBridge.updateConfigsForAllCores({ video_scale_integer = true })
+    _G.calculateResolutionsAndVideoModePreviews(true)
   end
+  osBridge.saveCustomPreferences(_G.preferences)
 end
 
 local function initThemesList()
@@ -37,6 +52,8 @@ local function initThemesList()
     }
     themeItem.action = function()
       themeManager:setTheme(themeItem.internalLabel)
+      _G.preferences.theme = themeItem.internalLabel
+      osBridge.saveCustomPreferences(_G.preferences)
     end
     table.insert(displayList.items, themeItem)
   end
@@ -67,8 +84,8 @@ local function refreshRomsAction()
   _G.refreshSystemsTree()
 end
 
-local function recalculateCoresResolutionAction()
-  _G.calculateCoresResolution()
+local function recalculateResolutionsAndVideoModePreviewsAction()
+  _G.calculateResolutionsAndVideoModePreviews()
 end
 
 optionsTree = {
@@ -78,18 +95,25 @@ optionsTree = {
       internalLabel = 'Video',
       items = {
         {
-          displayLabel = utils.getDisplayLabel('Bilinear UI'),
-          internalLabel = 'Bilinear UI',
+          displayLabel = utils.getDisplayLabel('Smooth UI'),
+          internalLabel = 'Smooth UI',
           checkbox = true,
-          value = false,
-          action = bilinearOptionAction
+          value = _G.preferences.video.smoothUI,
+          action = smoothUIAction
         },
         {
-          displayLabel = utils.getDisplayLabel('In-Game Bilinear'),
-          internalLabel = 'In-Game Bilinear',
+          displayLabel = utils.getDisplayLabel('Smooth Games'),
+          internalLabel = 'Smooth Games',
           checkbox = true,
-          value = false,
-          action = inGameBilinearAction
+          value = _G.preferences.video.smoothGames,
+          action = smoothGamesAction
+        },
+        {
+          displayLabel = utils.getDisplayLabel('Stretch Games'),
+          internalLabel = 'Stretch Games',
+          checkbox = true,
+          value = _G.preferences.video.stretchGames,
+          action = stretchGamesAction
         }
       },
       page = utils.initPage(),
@@ -129,7 +153,7 @@ optionsTree = {
           -- debug
           displayLabel = utils.getDisplayLabel('Refresh resolutions'),
           internalLabel = 'Refresh Resolutions',
-          action = recalculateCoresResolutionAction
+          action = recalculateResolutionsAndVideoModePreviewsAction
         }
       },
       page = utils.initPage(),

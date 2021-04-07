@@ -1,18 +1,27 @@
 local imgFolder = 'assets/img/'
 local iconsFolder = imgFolder .. 'icons/'
+local videoModePreviewsFolder = imgFolder .. 'video-mode-previews/'
+
+local function loadImages(dir)
+  local items = {}
+  for file in lfs.dir('/root/RucoPie/ui/' .. dir) do
+    if file ~= "." and file ~= ".." then
+      items[file] = love.graphics.newImage(dir .. file)
+    end
+  end
+
+  return items
+end
 
 local images = {
-  icons = {
-    defaultPointer = love.graphics.newImage(iconsFolder .. 'default-pointer.png'),
-    folder = love.graphics.newImage(iconsFolder .. 'folder.png'),
-    checkboxOff = love.graphics.newImage(iconsFolder .. 'checkbox-off.png'),
-    checkboxOn = love.graphics.newImage(iconsFolder .. 'checkbox-on.png'),
-    cog = love.graphics.newImage(iconsFolder .. 'cog.png')
-  }
+  icons = loadImages(iconsFolder),
+  videoModePreviews = loadImages(videoModePreviewsFolder)
 }
 
-for k, img in pairs(images.icons) do
-  img:setFilter('nearest', 'nearest')
+for section, list in pairs(images) do
+  for k, img in pairs(list) do
+    img:setFilter('nearest', 'nearest')
+  end
 end
 
 return images

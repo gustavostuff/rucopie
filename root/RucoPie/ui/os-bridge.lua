@@ -34,9 +34,15 @@ osBridge.updateConfig = function (core, configName, value)
   return result
 end
 
-osBridge.udpateConfigs = function (core, configs)
+osBridge.updateConfigs = function (core, configs)
   for configName, value in pairs(configs) do
     osBridge.updateConfig(core, configName, value)
+  end
+end
+
+osBridge.updateConfigsForAllCores = function (configs)
+  for _, core in ipairs(constants.cores) do
+    osBridge.updateConfigs(core, configs)
   end
 end
 
@@ -57,6 +63,15 @@ osBridge.readFile = function(path)
   utils.debug('File being read:\n' .. content)
   file:close()
   return content
+end
+
+osBridge.saveCustomPreferences = function (preferences)
+  osBridge.saveFile(
+    'return {' ..
+      utils.tableToString(preferences) ..
+    '}',
+    'config/custom-preferences.lua'
+  )
 end
 
 osBridge.fileExists = function(path)

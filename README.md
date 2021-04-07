@@ -39,3 +39,6 @@ Things to do/fix:
 * Locale/Country settings
 * Skip button while mapping joystick for UI
 * Change the terminal banner
+* Add Favorites
+* Recently played
+* All games
