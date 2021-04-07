@@ -81,8 +81,8 @@ end
 
 local function initNavigationStacks()
   listsStack = {
-    [_G.screens.systems] = {_G.systemsTree},
-    [_G.screens.options] = {optionsTree}
+    [_G.screens.systems] = { _G.systemsTree },
+    [_G.screens.options] = { optionsTree }
   }
   pathStack = {
     [_G.screens.systems] = {},
@@ -91,7 +91,7 @@ local function initNavigationStacks()
 end
 
 local function setRefreshedGameList()
-  listsStack[_G.screens.systems] = {_G.systemsTree}
+  listsStack[_G.screens.systems] = { _G.systemsTree }
   pathStack[_G.screens.systems] = {}
   listManager:setCurrentList(_G.systemsTree)
   currentScreen = _G.screens.systems

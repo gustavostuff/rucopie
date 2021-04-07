@@ -60,12 +60,13 @@ constants.cores = {
   'stella2014'
 }
 
+local labels = constants.systemsLabels
 constants.coreAssociations = {
-  ['fceumm'] = constants.systemsLabels.nes,
-  ['gambatte'] = constants.systemsLabels.gb .. '/' .. constants.systemsLabels.gbc,
-  ['fbneo'] = constants.systemsLabels.neogeo,
-  ['snes9x'] = constants.systemsLabels.snes,
-  ['stella2014'] = constants.systemsLabels.atari2600,
+  ['fceumm'] = labels.nes,
+  ['gambatte'] = labels.gb .. '/' .. labels.gbc,
+  ['fbneo'] = labels.neogeo,
+  ['snes9x'] = labels.snes,
+  ['stella2014'] = labels.atari2600,
 }
 
 return constants
