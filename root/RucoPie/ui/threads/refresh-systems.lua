@@ -31,7 +31,12 @@ end
 
 local function createSystemsTree(path, parentList, level)
   path = path or constants.ROMS_DIR
-  parentList = parentList or { index = 1, items = {}, isRoot = true }
+  parentList = parentList or {
+    index = 1,
+    items = {},
+    isRoot = true,
+    page = utils.initPage()
+  }
   level = level or 1
 
   local elements = {}

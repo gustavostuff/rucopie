@@ -10,7 +10,7 @@ echo "Installing RetroPie dependencies..."
 
 echo "$separator"
 echo ''
-echo "Executing RetroPie Setup (answer yes to user ownership messages and then exit)..."
+echo "Executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
 echo ''
 
 /usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
@@ -18,13 +18,10 @@ cd RetroPie-Setup
 ./retropie_setup.sh
 
 cd ~
-echo "$separator"
-echo -e "${green}Installing required packages...${default}"
 declare -a pkgs=("retroarch" "love" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo" "lr-stella2014")
 for pkg in "${pkgs[@]}"
 do
   echo "$separator"
-  echo "Installing dependencies for $pkg..."
   ~/RetroPie-Setup/retropie_packages.sh $pkg depends
   echo "Installing now $pkg..."
   ~/RetroPie-Setup/retropie_packages.sh $pkg install_bin
