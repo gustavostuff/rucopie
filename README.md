@@ -1,6 +1,6 @@
 # RucoPie
 
-## :warning: Experimental project, not really usable yet.
+## :warning: Experimental project in really early stages, not really usable yet.
 
 RucoPie aims to be an easy to use alternative to systems like [RetroPie](https://retropie.org.uk/), [Lakka](https://www.lakka.tv/) or [Recalbox](https://www.recalbox.com/). It targets Raspberry Pi 3 and 4 devices, and it was insprired by [RGB-Pi](https://www.rgb-pi.com/)... with a big difference: this is not for CRT TVs (yet?), if you like that, please go check RGB-Pi instead :smiley:
 
