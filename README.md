@@ -15,9 +15,9 @@ RucoPie aims to be a fast, pixel-perfect, not EmulationStation-based, easy to us
 
 If you have a screen with a resolution that isn't a multiple of 640x360 (1366x768, for instance), all games will still look pixel-perfect, but you won't get a pixel-perfect UI right away. Workarounds for this are also planned in the form of "custom resolutions". Here's some screenshots for the current state of the UI, lots of things are still missing:
 
-![](https://i.postimg.cc/fTR8nRyc/screenshot-1618111911.png)
-![](https://i.postimg.cc/7YtmxrJp/screenshot-1618111918.png)
-![](https://i.postimg.cc/x1kg8pKq/screenshot-1618111927.png)
+![](https://i.postimg.cc/tRYkCCFp/screenshot-1618111911.png)
+![](https://i.postimg.cc/pV4Z9bB8/screenshot-1618111918.png)
+![](https://i.postimg.cc/zXhkKtdQ/screenshot-1618111927.png)
 
 ```bash
 curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | bash -s
