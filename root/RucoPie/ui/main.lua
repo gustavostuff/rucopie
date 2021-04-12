@@ -383,9 +383,9 @@ function handleUserInput(data)
   if value == joystickManager:getButton('Hotkey') or value == constants.keys.ESCAPE then
     love.event.quit()
   end
-  -- if value == joystickManager:getButton('R1') then
-  --   love.graphics.captureScreenshot('screenshot_' .. tostring(os.time()) .. '.png')
-  -- end
+  if value == joystickManager:getButton('R1') then
+    love.graphics.captureScreenshot('screenshot_' .. tostring(os.time()) .. '.png')
+  end
   --end of debug
 
   if loadingGames then return end
