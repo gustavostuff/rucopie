@@ -102,9 +102,10 @@ function listManager:drawIconAndGetOffset(icon, x, y)
   if icon then
     love.graphics.setColor(colors.white)
     iconOffset = icon:getWidth() + 5
-    utils.drawWithShadow(icon,
+    utils.draw(icon,
       self.listBounds.x + x,
-      self.listBounds.y + y * lineHeight
+      self.listBounds.y + (y * lineHeight) + lineHeight / 2,
+      { shadow = true, centeredY = true }
     )
   end
 
@@ -135,9 +136,10 @@ function listManager:drawListPointer(y)
   local offset = p:getWidth() + constants.POINTER_SEPARATION
   if y == (list.page.indexAtCurrentPage - 1) then
     love.graphics.setColor(colors.white)
-    utils.drawWithShadow(images.icons['default-pointer.png'],
+    utils.draw(images.icons['default-pointer.png'],
       self.listBounds.x - offset,
-      self.listBounds.y + y * lineHeight
+      self.listBounds.y + (y * lineHeight) + lineHeight / 2,
+      { shadow = true, centeredY = true }
     )
   end
 end
@@ -146,9 +148,10 @@ function listManager:drawLineExtras(item, y)
   if item.checkbox then
     local icon = images.icons['checkbox-off.png']
     if item.value then icon = images.icons['checkbox-on.png'] end
-    utils.drawWithShadow(icon,
+    utils.draw(icon,
       self.rightSideX,
-      self.rightSideY + y * lineHeight
+      self.rightSideY + y * lineHeight,
+      { shadow = true }
     )
   end
 end
@@ -405,7 +408,7 @@ function listManager:performAction(listsStack, pathStack, cb, screen)
   local currentListsStack = listsStack[screen]
   local currentPathStack = pathStack[screen]
 
-  if item.isDir then
+  if item.isDir or item.items then
     table.insert(currentListsStack, item)
     table.insert(currentPathStack, item.internalLabel)
     if item.isSystem then -- set selected system (gb, nes, etc.)

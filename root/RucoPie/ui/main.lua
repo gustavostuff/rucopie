@@ -14,6 +14,8 @@ _G.debug = true
 _G.screenDebug = false
 _G.font = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 16)
 _G.debugFont = love.graphics.newFont('assets/fonts/proggy-tiny/ProggyTinySZ.ttf', 32)
+-- _G.font = love.graphics.newFont('assets/fonts/quarlow/Quarlow.ttf', 16)
+-- _G.debugFont = love.graphics.newFont('assets/fonts/quarlow/Quarlow.ttf', 32)
 _G.videoModePreviews = {}
 
 local indexVideoModePreview = 1
@@ -45,31 +47,33 @@ love.graphics.setLineWidth(1)
 local function printDebug()
   love.graphics.setFont(_G.debugFont)
   if _G.screenDebug then
-    love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.rectangle('fill', 0, 0,
-      love.graphics.getWidth(),
-      love.graphics.getHeight()
-    )
-    love.graphics.setColor(colors.white)
-
+    
     local n = #listManager.currentList.items
     local totalPages = listManager:getTotalPages()
     local itemsInCurrentPage = listManager:getItemsAtCurrentPage()
     local text = 'FPS: ' .. love.timer.getFPS() .. '\n' ..
-      'Width: ' .. love.graphics.getWidth() .. '\n' ..
-      'Height: ' .. love.graphics.getHeight() .. '\n' ..
-      'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
-      'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
-      '----------------------------------\n' ..
-      'items in list: ' .. n .. '\n' ..
-      'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
-      'page size: ' .. listManager.pageSize .. '\n' ..
-      'total pages: ' .. totalPages .. '\n' ..
-      'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
-      'items at current page: ' .. itemsInCurrentPage .. '\n' ..
-      '----------------------------------\n' ..
-      'character width (monospaced font should be used): ' .. _G.characterW .. ' '
+    'Width: ' .. love.graphics.getWidth() .. '\n' ..
+    'Height: ' .. love.graphics.getHeight() .. '\n' ..
+    'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
+    'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
+    '----------------------------------\n' ..
+    'items in list: ' .. n .. '\n' ..
+    'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
+    'page size: ' .. listManager.pageSize .. '\n' ..
+    'total pages: ' .. totalPages .. '\n' ..
+    'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
+    'items at current page: ' .. itemsInCurrentPage .. '\n' ..
+    '----------------------------------\n' ..
+    'character width (monospaced font should be used): ' .. _G.characterW .. ' '
+    
+    local bgw = _G.debugFont:getWidth(text)
+    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.rectangle('fill', love.graphics.getWidth() - bgw, 0,
+      bgw,
+      _G.debugFont:getHeight() * 17
+    )
 
+    love.graphics.setColor(colors.white)
     utils.pp(text,
       love.graphics.getWidth() - _G.debugFont:getWidth(text), 0,
       { shadowColor = { 1, 1, 1, 0 } }
@@ -101,7 +105,7 @@ local function loadGameList()
   if osBridge.fileExists(constants.RUCOPIE_DIR .. 'cache/games-tree.lua') then
     _G.systemsTree = loadstring(osBridge.readFile('cache/games-tree.lua'))()
     setRefreshedGameList()
-    utils.debug('Systems tree from cache:\n', '{' .. utils.tableToString(_G.systemsTree) .. '}')
+    -- utils.debug('Systems tree from cache:\n', '{' .. utils.tableToString(_G.systemsTree) .. '}')
   else
     _G.refreshSystemsTree()
   end
@@ -193,10 +197,10 @@ local function drawGameScreenPreview(item)
       love.graphics.getHeight() / item.img:getHeight()
     )
   else
-    utils.drawCentered(item.img,
+    utils.draw(item.img,
       love.graphics.getWidth() / 2,
       love.graphics.getHeight() / 2, 
-      { scale = item.scale }
+      { scale = item.scale, centered = true }
     )
   end
 end
@@ -257,16 +261,23 @@ end
 ---------------------------------------------
 
 _G.calculateResolutionsAndVideoModePreviews = function (forceUpdate)
+  local coresToUpdate = {}
   for _, core in ipairs(constants.cores) do
     local scale, w, h = resolutionManager.calculate(core)
-    if needsToUpdateScales() or forceUpdate then
-      local result = resolutionManager.saveScaleForCore(core, w, h)
-    end
-
+    coresToUpdate[core] = {
+      w = w,
+      h = h
+    }
     _G.videoModePreviews[core] = {}
     local item = _G.videoModePreviews[core]
     item.scale = scale
     item.img = images.videoModePreviews[core .. '.png']
+  end
+
+  if needsToUpdateScales() or forceUpdate then -- it enters just 1 time to this if, it should not
+    for core, data in pairs(coresToUpdate) do
+      local result = resolutionManager.saveScaleForCore(core, data.w, data.h)
+    end
   end
   _G.updateVideoModePreviews()
 end
@@ -285,7 +296,7 @@ end
 
 ---------------------------------------------
 ---------------------------------------------
---  Three main callbacks:
+--  3 main callbacks:
 ---------------------------------------------
 ---------------------------------------------
 
@@ -297,19 +308,23 @@ function love.load()
   }
   currentScreen = _G.screens.systems
   initNavigationStacks()
-  loadGameList()
+  loadGameList() -- this may be async
   initCanvas()
   initPreferences()
   _G.calculateResolutionsAndVideoModePreviews()
 end
 
 function love.update(dt)
+  if _G.onHold then return end
+
   themeManager:update(dt)
   threadManager:update(dt)
   listManager:update(dt)
 end
 
 function love.draw()
+  if _G.onHold then return end
+
   love.graphics.setCanvas({ _G.canvas, stencil = true })
   love.graphics.clear(colors.purple)
  
@@ -334,9 +349,11 @@ function love.draw()
   printDebug()
 end
 
----------------
--- events
----------------
+---------------------------------------------
+---------------------------------------------
+--  user events
+---------------------------------------------
+---------------------------------------------
 
 function handleLeft()
   if shouldDrawVideoModePreview() then
@@ -412,11 +429,21 @@ function switchScreen()
   listManager.currentList = list[#list]
 end
 
+---------------------------------------------
+---------------------------------------------
+--  LOVE event callbacks
+---------------------------------------------
+---------------------------------------------
+
 function love.keypressed(k)
+  if _G.onHold then return end
+
   handleUserInput({ value = k })
 end
 
 function love.joystickadded(joystick)
+  if _G.onHold then return end
+
   if osBridge.fileExists(constants.RUCOPIE_DIR .. constants.JOYSTICK_CONFIG_PATH) then
     -- todo: save config per joystick (using name or id)
     utils.debug('Joystick config file found.')
@@ -430,6 +457,8 @@ function love.joystickadded(joystick)
 end
 
 function love.joystickpressed(joystick, button)
+  if _G.onHold then return end
+
   if joystickManager.isCurrentlyMapping then
     if not joystickManager.buttonMappingDone then
      joystickManager:mapRequestedInput(button)
@@ -440,6 +469,8 @@ function love.joystickpressed(joystick, button)
 end
 
 function love.joystickhat(joystick, hat, direction)
+  if _G.onHold then return end
+  
   if direction == 'c' then return end -- ignored when idle
 
   if joystickManager.isCurrentlyMapping then

@@ -114,32 +114,38 @@ utils.pp = function (text, x, y, data)
   love.graphics.print(text, x, y)
 end
 
-utils.drawCentered = function (drawable, x, y, data)
+utils.draw = function (drawable, x, y, options)
   x = x or 0
   y = y or 0
-  data = data or {}
+  options = options or {}
 
+  local originX, originY = 0, 0
+  local scale = options.scale or 1
+  if options.centered then
+    originX = math.floor(drawable:getWidth() / 2)
+    originY = math.floor(drawable:getHeight() / 2)
+  elseif options.centeredX then
+    originX = math.floor(drawable:getWidth() / 2)
+  elseif options.centeredY then
+    originY = math.floor(drawable:getHeight() / 2)
+  end
+
+  if options.shadow then
+    love.graphics.setColor(options.shadowColor or colors.black)
+    love.graphics.draw(drawable, math.floor(x - 1), math.floor(y + 1),
+      0, scale, scale, originX, originY)
+  end
+
+  love.graphics.setColor(optionsTree.fgColor or colors.white)
   love.graphics.draw(drawable,
     math.floor(x),
     math.floor(y),
     0,
-    data.scale or 1,
-    data.scale or 1,
-    math.floor(drawable:getWidth() / 2),
-    math.floor(drawable:getHeight() / 2)
+    scale,
+    scale,
+    originX,
+    originY
   )
-end
-
-utils.drawWithShadow = function (img, x, y, data)
-  x = x or 0
-  y = y or 0
-  data = data or {}
-
-  love.graphics.setColor(data.shadowColor or colors.black)
-  love.graphics.draw(img, math.floor(x - 1), math.floor(y + 1))
-
-  love.graphics.setColor(data.fgColor or colors.white)
-  love.graphics.draw(img, math.floor(x), math.floor(y))
 end
 
 utils.getDisplayLabel = function (line)

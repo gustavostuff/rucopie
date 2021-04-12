@@ -17,11 +17,26 @@ osBridge.runGame = function (system, path)
 
   path = osBridge.readFrom(base .. 'normalize.sh "' .. path .. '"')
   local retroarch = base .. 'run_game.sh ' .. system .. ' ' .. path
-  local backToUI = base .. 'start_ui.sh';
-  local cmd = 'nohup sh -c "' .. retroarch .. ' && ' .. backToUI .. '" > /root/retroarch.log &';
-  utils.debug('>> cmd to run retroarch and go back:', cmd)
-  io.popen(cmd)
-  love.event.quit() -- love app is closed but opened after retroarch closes
+  
+
+
+
+  _G.onHold = true
+  love.window.close()
+  os.execute(retroarch)
+  love.event.clear()
+  love.window.setMode(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+  _G.onHold = false
+
+
+
+
+
+  -- local backToUI = base .. 'start_ui.sh';
+  -- local cmd = 'nohup sh -c "' .. retroarch .. ' && ' .. backToUI .. '" > /root/retroarch.log &';
+  -- utils.debug('>> cmd to run retroarch and go back:', cmd)
+  -- io.popen(cmd)
+  -- love.event.quit() -- love app is closed but opened after retroarch closes
 end
 
 osBridge.updateConfig = function (core, configName, value)
@@ -49,7 +64,7 @@ end
 -- next 2 functions are used for files with no spaces in between the name
 osBridge.saveFile = function(content, path)
   -- this is synchronus, love app will be blocked:
-  utils.debug('Saving file with content:\n' .. content)
+  -- utils.debug('Saving file with content:\n' .. content)
   local file = io.open(constants.RUCOPIE_DIR .. path, 'w')
   file:write(content)
   file:close()
@@ -60,7 +75,7 @@ osBridge.readFile = function(path)
   
   local file = assert(io.open(constants.RUCOPIE_DIR .. path, "rb"))
   local content = file:read("*all")
-  utils.debug('File being read:\n' .. content)
+  -- utils.debug('File being read:\n' .. content)
   file:close()
   return content
 end
