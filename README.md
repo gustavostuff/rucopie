@@ -25,7 +25,7 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
 * Install DietPi for Raspberry Pi and start the system
 * Connect to the internet and enable Onboard Wifi
 * Enable automatic boot
-* Set OpenSSH as default SSH server witu ```dietpi-software``` (this is for roms transferring)
+* Set OpenSSH as default SSH server with ```dietpi-software``` (this is for roms transferring)
 * Run the following script and follow steps
 
 ```bash
