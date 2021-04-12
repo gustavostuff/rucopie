@@ -17,7 +17,7 @@ If you have a screen with a resolution that isn't a multiple of 640x360 (1366x76
 
 ![](https://i.postimg.cc/tRYkCCFp/screenshot-1618111911.png)
 ![](https://i.postimg.cc/pV4Z9bB8/screenshot-1618111918.png)
-![](https://i.postimg.cc/zXhkKtdQ/screenshot-1618111927.png)
+![](https://i.postimg.cc/dVtJ9XYV/screenshot-1617225131.png)
 
 ```bash
 curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | bash -s
