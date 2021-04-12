@@ -239,13 +239,13 @@ function listManager:draw()
   local list, from, to, y = self:getListingCommons()
 
   -- debug
-  love.graphics.setColor(0, 0, 0, 0.2)
-  love.graphics.rectangle('fill',
-    self.listBounds.x,
-    self.listBounds.y,
-    self.listBounds.w,
-    self.listBounds.h
-  )
+  -- love.graphics.setColor(0, 0, 0, 0.2)
+  -- love.graphics.rectangle('fill',
+  --   self.listBounds.x,
+  --   self.listBounds.y,
+  --   self.listBounds.w,
+  --   self.listBounds.h
+  -- )
   if #list.items == 0 then
     self:printItemText({ displayLabel = '<empty folder>' }, 0, y, 0, 1)
     return
