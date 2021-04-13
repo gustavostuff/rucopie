@@ -21,7 +21,6 @@ function start () {
   [ -e "$logs" ] && rm "$logs"
   colorEcho "green" "Starting RucoPie UI..."
   nohup love /root/RucoPie/ui > ~/ui.log &
-
   colorEcho "green" "$separator"
 }
 

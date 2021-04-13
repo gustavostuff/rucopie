@@ -20,5 +20,5 @@ function colorEcho() {
       return 1
   esac
 
-  echo -e "${colorcode}$2${default}"
+  echo -e "${colorcode} $2 ${default}"
 }

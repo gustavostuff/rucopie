@@ -1,6 +1,7 @@
 local utils = require 'utils'
 local constants = require 'constants'
 local lfs = require 'lfs'
+local threadManager = require 'thread-manager'
 
 local osBridge = {}
 
@@ -17,26 +18,15 @@ osBridge.runGame = function (system, path)
 
   path = osBridge.readFrom(base .. 'normalize.sh "' .. path .. '"')
   local retroarch = base .. 'run_game.sh ' .. system .. ' ' .. path
-  
-
-
 
   _G.onHold = true
   love.window.close()
-  os.execute(retroarch)
-  love.event.clear()
-  love.window.setMode(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
-  _G.onHold = false
-
-
-
-
-
-  -- local backToUI = base .. 'start_ui.sh';
-  -- local cmd = 'nohup sh -c "' .. retroarch .. ' && ' .. backToUI .. '" > /root/retroarch.log &';
-  -- utils.debug('>> cmd to run retroarch and go back:', cmd)
-  -- io.popen(cmd)
-  -- love.event.quit() -- love app is closed but opened after retroarch closes
+  threadManager:run('open-retroarch', function (value)
+    utils.debug('RetroArch is done with:', value)
+    love.event.clear()
+    love.window.setMode(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
+    _G.onHold = false
+  end, { command = retroarch })
 end
 
 osBridge.updateConfig = function (core, configName, value)

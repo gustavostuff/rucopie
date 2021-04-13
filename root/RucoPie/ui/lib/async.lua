@@ -446,8 +446,10 @@ end
 -- tasks (print_values), which waits for the scheduler to print a number
 -- and yields allowing the non-deterministic ordering of output.
 
+--[[
+  
 local print_value = async(function(value)
-    print("Value: ", value)
+  print("Value: ", value)
 end)
 
 local generate_numbers = async(function(count)
@@ -523,3 +525,10 @@ end)
 fire_event()
 do_work_after_event()
 task_schedule_all()
+
+]]
+
+return {
+  async = async,
+  task_schedule_all = task_schedule_all
+}

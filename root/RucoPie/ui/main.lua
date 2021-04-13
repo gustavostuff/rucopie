@@ -315,10 +315,10 @@ function love.load()
 end
 
 function love.update(dt)
+  threadManager:update(dt) -- running all the time even when retroarch is opened
   if _G.onHold then return end
 
   themeManager:update(dt)
-  threadManager:update(dt)
   listManager:update(dt)
 end
 
