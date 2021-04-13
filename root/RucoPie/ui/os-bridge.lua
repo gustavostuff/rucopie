@@ -24,6 +24,7 @@ osBridge.runGame = function (system, path)
   threadManager:run('open-retroarch', function (value)
     utils.debug('RetroArch is done with:', value)
     love.event.clear()
+    -- open window again
     love.window.setMode(constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
     _G.onHold = false
   end, { command = retroarch })
