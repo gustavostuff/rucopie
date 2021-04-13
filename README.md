@@ -7,13 +7,15 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
 ## Features
 
 * Fast environment, it boots on [DietPi](https://dietpi.com/) (highly optimized Raspbian)
-* Fast, thread-based, pixel-perfect UI in any resolution that is a multiple of 640x360:
-  * HD (1280x720)
-  * Full HD (1920x1080)
-  * WQHD (2560x1440, Raspberry Pi 4 only)
-  * 4K (3840x2160, Raspberry Pi 4 only)
-* Highly customizable UI either through system options or themes
-* Automatically scaled, pixel perfect games in any resolution (while keeping aspect ratio)
+* For the UI:
+    * Thread-based (helps with performance as well)
+    * Pixel-perfect in any resolution that is a multiple of 640x360:
+      * HD (1280x720)
+      * Full HD (1920x1080)
+      * WQHD (2560x1440, Raspberry Pi 4 only)
+      * 4K (3840x2160, Raspberry Pi 4 only)
+    * Highly customizable either through system options or themes
+* Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
 
 ![](https://i.postimg.cc/76RKYsSv/screenshot-1618112860.png)
