@@ -36,8 +36,8 @@ local themeManager = require 'theme-manager'
 local listManager = require 'list-manager'
 local joystickManager = require 'joystick-manager'
 local resolutionManager = require 'resolution-manager'
-local gridManager = require 'grid-manager'
 local threadManager = require 'thread-manager'
+local virtualKeyboard = require 'virtual-keyboard'
 
 local optionsTree = require 'options-tree'
 
@@ -77,7 +77,7 @@ local function printDebug()
     love.graphics.setColor(colors.white)
     utils.pp(text,
       love.graphics.getWidth() - _G.debugFont:getWidth(text), 0,
-      { shadowColor = { 1, 1, 1, 0 } }
+      { shadow = true }
     )
   end
 
@@ -141,8 +141,8 @@ local function initPreferences()
   themeManager:updateSmoothUI(_G.preferences.video.smoothUI)
 end
 
-local function initGridManager()
-  gridManager:setGrid(constants.VIRTUAL_KEYBOARD)
+local function initvirtualKeyboard()
+  virtualKeyboard:setGrid(constants.VIRTUAL_KEYBOARD)
 end
 
 local function shouldDrawVideoModePreview()
@@ -163,7 +163,7 @@ local function drawCurrentCaption()
   if not listManager.currentList then return end
 
   love.graphics.setColor(colors.white)
-  local caption = (gridManager.active and gridManager.caption) or
+  local caption = (virtualKeyboard.active and virtualKeyboard.caption) or
     listManager.currentList.caption or
     generalCaptions[currentScreen]
 
@@ -178,21 +178,22 @@ local function drawJoystickMapping()
   local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
   utils.pp(text,
     math.floor(constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2),
-    math.floor(constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2)
+    math.floor(constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2),
+    { shadow = true }
   )
 end
 
 local function drawMessagesForAsyncTaks()
   if loadingGames then
-    utils.pp('Loading games...')
+    utils.pp('Loading games...', 0, 0, { shadow = true, centered = true })
   end
 
   if _G.shuttingDown then
-    utils.pp('Shutting down...')
+    utils.pp('Shutting down...', 0, 0, { shadow = true, centered = true })
   end
 
   if _G.restarting then
-    utils.pp('Restarting...')
+    utils.pp('Restarting...', 0, 0, { shadow = true, centered = true })
   end
 end
 
@@ -225,10 +226,7 @@ local function drawGamePreviewBanner()
 
   local core = constants.cores[indexVideoModePreview]
   local label = constants.coreAssociations[core]
-  utils.pp('< ' .. label .. ' >', 0, 0, {
-    centerH = true,
-    centerV = true
-  })
+  utils.pp('< ' .. label .. ' >', 0, 0, { shadow = true, centered = true })
 end
 
 local function drawVideoModePreviews()
@@ -335,7 +333,7 @@ function love.load()
   loadGameList() -- this may be async
   initCanvas()
   initPreferences()
-  initGridManager()
+  initvirtualKeyboard()
   _G.calculateResolutionsAndVideoModePreviews()
 end
 
@@ -357,15 +355,18 @@ function love.draw()
   love.graphics.rectangle('fill', 0, 0, constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
 
   themeManager:drawCurrentTheme()
-  if gridManager.active then
-    gridManager:draw()
+  if virtualKeyboard.active then
+    virtualKeyboard:draw()
+    drawCurrentCaption()
   elseif joystickManager.isCurrentlyMapping then
     drawJoystickMapping()
   else
     drawCurrentList()
     drawMessagesForAsyncTaks()
+    drawCurrentCaption()
   end
-  drawCurrentCaption()
+
+  utils.pp(_G.connected or '', 0, 0, { shadow = true, centered = true })
 
   love.graphics.setCanvas()
   love.graphics.setColor(colors.white)
@@ -383,16 +384,22 @@ end
 ---------------------------------------------
 
 function handleBack()
-  if gridManager.active then
-    gridManager:remove()
+  if virtualKeyboard.active then
+    virtualKeyboard:remove()
   else
     listManager:back(value, listsStack, pathStack, currentScreen)
   end
 end
 
+function handleSelect()
+  if virtualKeyboard.active then
+    virtualKeyboard:cancel()
+  end
+end
+
 function handleStart()
-  if gridManager.active then
-    gridManager:confirm()
+  if virtualKeyboard.active then
+    virtualKeyboard:confirm()
   else
     switchScreen()
   end
@@ -404,8 +411,8 @@ function handleLeft()
     if indexVideoModePreview < 1 then
       indexVideoModePreview = #constants.cores
     end
-  elseif gridManager.active then
-    gridManager:left()
+  elseif virtualKeyboard.active then
+    virtualKeyboard:left()
   else
     listManager:left()
   end
@@ -417,32 +424,32 @@ function handleRight()
     if indexVideoModePreview > #constants.cores then
       indexVideoModePreview = 1
     end
-  elseif gridManager.active then
-    gridManager:right()
+  elseif virtualKeyboard.active then
+    virtualKeyboard:right()
   else
     listManager:right()
   end
 end
 
 function handleUp()
-  if gridManager.active then
-    gridManager:up()
+  if virtualKeyboard.active then
+    virtualKeyboard:up()
   else
     listManager:up()
   end
 end
 
 function handleDown()
-  if gridManager.active then
-    gridManager:down()
+  if virtualKeyboard.active then
+    virtualKeyboard:down()
   else
     listManager:down()
   end
 end
 
 function handleAction(item)
-  if gridManager.active then
-    gridManager:add(gridManager:getSelectedItem())
+  if virtualKeyboard.active then
+    virtualKeyboard:add(virtualKeyboard:getSelectedItem())
   else
     listManager:performAction(listsStack, pathStack, item.action or function()
       local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.internalLabel
@@ -467,6 +474,8 @@ function handleUserInput(data)
   -- actions that are independent of a selected item:
   if value == constants.keys.ESCAPE or value == joystickManager:getButton('B') then
     handleBack()
+  elseif value == constants.keys.F1 or value == joystickManager:getButton('Select') then
+    handleSelect()
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then
     handleStart()
   end

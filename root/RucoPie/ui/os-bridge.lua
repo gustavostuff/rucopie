@@ -80,6 +80,19 @@ osBridge.saveCustomPreferences = function (preferences)
   )
 end
 
+osBridge.setupWifi = function (ssid, pass)
+  local r1 = osBridge.readFrom(constants.RUCOPIE_DIR .. 'scripts/test_connection.sh')
+  utils.debug('r1:', r1)
+  if r1:find('offline') then
+    local r2 = osBridge.readFrom(
+      constants.RUCOPIE_DIR .. 'scripts/connect_to_wifi.sh "' .. ssid .. '" "' .. pass .. '"')
+    utils.debug('r2:', r2)
+    if r2:find('online') then
+      _G.connected = 'Connected!'
+    end
+  end
+end
+
 osBridge.fileExists = function(path)
   local file = io.open(path, 'r')
   if file ~= nil then

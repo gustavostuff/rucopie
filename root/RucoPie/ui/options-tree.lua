@@ -3,7 +3,7 @@ local colors = require 'colors'
 local utils = require 'utils'
 local osBridge = require 'os-bridge'
 local themeManager = require 'theme-manager'
-local gridManager = require 'grid-manager'
+local virtualKeyboard = require 'virtual-keyboard'
 
 local function smoothUIAction(item)
   item.value = not item.value
@@ -90,7 +90,11 @@ local function recalculateResolutionsAndVideoModePreviewsAction()
 end
 
 local function openTextGrid(item)
-  gridManager:openFor(item)
+  virtualKeyboard:openFor(item)
+end
+
+local function applyWifiSettings(item)
+  osBridge.setupWifi('fiber', 'Jikilopolipoloko10')
 end
 
 optionsTree = {
@@ -147,6 +151,11 @@ optionsTree = {
           type = 'password',
           value = '',
           action = openTextGrid
+        },
+        {
+          displayLabel = utils.getDisplayLabel('Apply'),
+          internalLabel = 'Apply',
+          action = applyWifiSettings
         },
       },
       page = utils.initPage(),

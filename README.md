@@ -20,10 +20,10 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
 
-![](https://i.postimg.cc/76RKYsSv/screenshot-1618112860.png)
-![](https://i.postimg.cc/qgVQ2Nmj/screenshot-1618112871.png)
+![](https://i.postimg.cc/2jZrbwH9/screenshot-1618196440.png)
+![](https://i.postimg.cc/7YrDg2dH/screenshot-1618196445.png)
+![](https://i.postimg.cc/PrbHKqnm/screenshot-1618196453.png)
 ![](https://i.postimg.cc/PrzcNmrZ/screenshot-1618183351.png)
-![](https://i.postimg.cc/SNhpF4pb/screenshot-1618117083.png)
 
 ## How to try this out:
 

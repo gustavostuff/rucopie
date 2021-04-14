@@ -36,7 +36,7 @@ local constants = {
     gbc = 'Game Boy Color',
     neogeo = 'Neo Geo',
     nes = 'Nintendo',
-    snes = 'Super Nintendo Chalmers',
+    snes = 'Super Nintendo',
     ports = 'Ports',
     atari2600 = 'Atari 2600'
   },

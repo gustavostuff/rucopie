@@ -121,13 +121,14 @@ function listManager:printItemText(item, x, y, iconOffset, printOffset)
 
   local offset_0 = printOffset or 1
   local offset_1 = printOffset and (printOffset + constants.MAX_LINE_CHARACTERS - 1)
-    or #item.displayLabel
-  utils.pp(label:sub(offset_0, offset_1),
+    or #item.dislayLabel
+  local text = label:sub(offset_0, offset_1)
+
+  utils.pp(text,
     self.listBounds.x + iconOffset + x,
     self.listBounds.y + y * lineHeight,
     { fgColor = color, shadow = true }
   )
-
 end
 
 function listManager:drawListPointer(y)

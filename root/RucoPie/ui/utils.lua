@@ -97,11 +97,12 @@ utils.pp = function (text, x, y, data)
 
   love.graphics.setColor(data.shadowColor or colors.black)
 
-  if data.centerH then
+  if data.centered then
     x = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(shadowText) / 2
-  end
-
-  if data.centerV then
+    y = constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2
+  elseif data.centeredX then
+    x = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(shadowText) / 2
+  elseif data.centeredY then
     y = constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2
   end
 
