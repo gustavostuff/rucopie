@@ -125,7 +125,7 @@ function listManager:printItemText(item, x, y, iconOffset, printOffset)
   utils.pp(label:sub(offset_0, offset_1),
     self.listBounds.x + iconOffset + x,
     self.listBounds.y + y * lineHeight,
-    { fgColor = color }
+    { fgColor = color, shadow = true }
   )
 
 end
@@ -149,6 +149,16 @@ function listManager:drawLineExtras(item, y)
     local icon = images.icons['checkbox-off.png']
     if item.value then icon = images.icons['checkbox-on.png'] end
     utils.draw(icon,
+      self.rightSideX,
+      self.rightSideY + y * lineHeight,
+      { shadow = true }
+    )
+  elseif item.text then
+    local label = (#item.value > 0 and item.value) or '<not set>'
+    if item.type == 'password' and #item.value > 0 then
+      label = '*****'
+    end
+    utils.pp(label,
       self.rightSideX,
       self.rightSideY + y * lineHeight,
       { shadow = true }

@@ -1,6 +1,14 @@
 local colors = require 'colors'
 local constants = require 'constants'
 
+local captionColorMap = {
+  A = colors.green,
+  B = colors.red,
+  Start = colors.blue,
+  Select = colors.yellow,
+  X = colors.orange
+}
+
 local utils = {
   split = function (str, sep)
     local sep, fields = sep or ":", {}
@@ -100,18 +108,20 @@ utils.pp = function (text, x, y, data)
   local sd = { -- shadow directions
     {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
   }
-  if data.cell then
-    for _, d in ipairs(sd) do
-      love.graphics.print(shadowText, x + d[1], y + d[2])
+  if data.shadow then
+    if data.cell then
+      for _, d in ipairs(sd) do
+        love.graphics.print(shadowText, math.floor(x + d[1]), math.floor(y + d[2]))
+      end
+    else
+      --love.graphics.print(shadowText, math.floor(x - 1), math.floor(y + 1))
+      love.graphics.print(shadowText, math.floor(x + sd[6][1]), math.floor(y + sd[6][2]))
     end
-  else
-    --love.graphics.print(shadowText, math.floor(x - 1), math.floor(y + 1))
-    love.graphics.print(shadowText, x + sd[6][1], y + sd[6][2])
   end
 
   love.graphics.setColor(data.fgColor or colors.white)
   --love.graphics.print(text, math.floor(x), math.floor(y))
-  love.graphics.print(text, x, y)
+  love.graphics.print(text, math.floor(x), math.floor(y))
 end
 
 utils.draw = function (drawable, x, y, options)
@@ -153,6 +163,19 @@ utils.getDisplayLabel = function (line)
     line = line:gsub('.' .. ext .. '$', '')
   end
   return line
+end
+
+utils.getCaption = function (data)
+  local caption = {}
+  for i, captionItem in ipairs(data) do
+    local button = captionItem[1]
+    local label = captionItem[2]
+    table.insert(caption, captionColorMap[button] or colors.white)
+    table.insert(caption, button .. ':')
+    table.insert(caption, colors.white)
+    table.insert(caption, label .. '  ')
+  end
+  return caption
 end
 
 utils.initPage = function ()

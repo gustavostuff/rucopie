@@ -5,11 +5,11 @@
 ## sudo ./wifi.sh <ssid> <pass>
 #!/bin/bash
 
-wget -q --spider http://google.com
+#wget -q --spider http://google.com
 
-if [ $? -eq 0 ]; then
-    echo "rucopie-already-online"
-else
+#if [ $? -eq 0 ]; then
+#    echo "rucopie-already-online"
+#else
     ifdown wlan0
 
     # build the interfaces file that will point to the file that holds our configuration
@@ -32,4 +32,4 @@ else
     wpa_passphrase "$1" "$2" >> /etc/wpa_supplicant/wpa_supplicant.conf
     ifup wlan0
     echo "rucopie-connected"
-fi
+#fi

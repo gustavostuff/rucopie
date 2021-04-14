@@ -36,6 +36,7 @@ local themeManager = require 'theme-manager'
 local listManager = require 'list-manager'
 local joystickManager = require 'joystick-manager'
 local resolutionManager = require 'resolution-manager'
+local gridManager = require 'grid-manager'
 local threadManager = require 'thread-manager'
 
 local optionsTree = require 'options-tree'
@@ -140,6 +141,10 @@ local function initPreferences()
   themeManager:updateSmoothUI(_G.preferences.video.smoothUI)
 end
 
+local function initGridManager()
+  gridManager:setGrid(constants.VIRTUAL_KEYBOARD)
+end
+
 local function shouldDrawVideoModePreview()
   return not joystickManager.isCurrentlyMapping and
     _G.currentJoystick and
@@ -158,11 +163,14 @@ local function drawCurrentCaption()
   if not listManager.currentList then return end
 
   love.graphics.setColor(colors.white)
-  local caption = listManager.currentList.caption or constants.captions[currentScreen]
+  local caption = (gridManager.active and gridManager.caption) or
+    listManager.currentList.caption or
+    generalCaptions[currentScreen]
 
   utils.pp(caption,
     listManager.listBounds.x,
-    listManager.listBounds.x + listManager.listBounds.h
+    listManager.listBounds.x + listManager.listBounds.h,
+    { shadow = true }
   )
 end
 
@@ -247,6 +255,21 @@ local function initFontsAndStuff()
   love.graphics.setBackgroundColor(colors.purple)
 end
 
+local function initCaptions()
+  generalCaptions = {
+    [1] = utils.getCaption({
+      { 'A', 'OK' },
+      { 'B', 'Back' },
+      { 'Start', 'Options' }
+    }),
+    [2] = utils.getCaption({
+      { 'A', 'OK' },
+      { 'B', 'Back' },
+      { 'Start', 'Systems' }
+    })
+  }
+end
+
 local function needsToUpdateScales()
   local w = love.graphics.getWidth()
   local h = love.graphics.getHeight()
@@ -302,6 +325,7 @@ end
 
 function love.load()
   initFontsAndStuff()
+  initCaptions()
   _G.screens = {
     systems = 1,
     options = 2
@@ -311,6 +335,7 @@ function love.load()
   loadGameList() -- this may be async
   initCanvas()
   initPreferences()
+  initGridManager()
   _G.calculateResolutionsAndVideoModePreviews()
 end
 
@@ -332,13 +357,15 @@ function love.draw()
   love.graphics.rectangle('fill', 0, 0, constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT)
 
   themeManager:drawCurrentTheme()
-  if joystickManager.isCurrentlyMapping then
+  if gridManager.active then
+    gridManager:draw()
+  elseif joystickManager.isCurrentlyMapping then
     drawJoystickMapping()
   else
     drawCurrentList()
-    drawCurrentCaption()
     drawMessagesForAsyncTaks()
   end
+  drawCurrentCaption()
 
   love.graphics.setCanvas()
   love.graphics.setColor(colors.white)
@@ -355,12 +382,30 @@ end
 ---------------------------------------------
 ---------------------------------------------
 
+function handleBack()
+  if gridManager.active then
+    gridManager:remove()
+  else
+    listManager:back(value, listsStack, pathStack, currentScreen)
+  end
+end
+
+function handleStart()
+  if gridManager.active then
+    gridManager:confirm()
+  else
+    switchScreen()
+  end
+end
+
 function handleLeft()
   if shouldDrawVideoModePreview() then
     indexVideoModePreview = indexVideoModePreview - 1
     if indexVideoModePreview < 1 then
       indexVideoModePreview = #constants.cores
     end
+  elseif gridManager.active then
+    gridManager:left()
   else
     listManager:left()
   end
@@ -372,8 +417,37 @@ function handleRight()
     if indexVideoModePreview > #constants.cores then
       indexVideoModePreview = 1
     end
+  elseif gridManager.active then
+    gridManager:right()
   else
     listManager:right()
+  end
+end
+
+function handleUp()
+  if gridManager.active then
+    gridManager:up()
+  else
+    listManager:up()
+  end
+end
+
+function handleDown()
+  if gridManager.active then
+    gridManager:down()
+  else
+    listManager:down()
+  end
+end
+
+function handleAction(item)
+  if gridManager.active then
+    gridManager:add(gridManager:getSelectedItem())
+  else
+    listManager:performAction(listsStack, pathStack, item.action or function()
+      local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.internalLabel
+      osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
+    end, currentScreen)
   end
 end
 
@@ -392,9 +466,9 @@ function handleUserInput(data)
   
   -- actions that are independent of a selected item:
   if value == constants.keys.ESCAPE or value == joystickManager:getButton('B') then
-    listManager:back(value, listsStack, pathStack, currentScreen)
+    handleBack()
   elseif value == constants.keys.F1 or value == joystickManager:getButton('Start') then
-    switchScreen()
+    handleStart()
   end
 
   local item = listManager:getSelectedItem()
@@ -406,14 +480,11 @@ function handleUserInput(data)
   elseif value == constants.keys.RIGHT or value == joystickManager:getHat('Right') then
     handleRight()
   elseif value == constants.keys.UP or value == joystickManager:getHat('Up') then
-    listManager:up()
+    handleUp()
   elseif value == constants.keys.DOWN or value == joystickManager:getHat('Down') then
-    listManager:down()
+    handleDown()
   elseif value == constants.keys.ENTER  or value == joystickManager:getButton('A') then
-    listManager:performAction(listsStack, pathStack, item.action or function()
-      local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.internalLabel
-      osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
-    end, currentScreen)
+    handleAction(item)
   end
 end
 

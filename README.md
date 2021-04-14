@@ -22,7 +22,7 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
 
 ![](https://i.postimg.cc/76RKYsSv/screenshot-1618112860.png)
 ![](https://i.postimg.cc/qgVQ2Nmj/screenshot-1618112871.png)
-![](https://i.postimg.cc/cC8XKRcv/screenshot-1618112893.png)
+![](https://i.postimg.cc/PrzcNmrZ/screenshot-1618183351.png)
 ![](https://i.postimg.cc/SNhpF4pb/screenshot-1618117083.png)
 
 ## How to try this out:

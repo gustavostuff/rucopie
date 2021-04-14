@@ -3,6 +3,7 @@ local colors = require 'colors'
 local utils = require 'utils'
 local osBridge = require 'os-bridge'
 local themeManager = require 'theme-manager'
+local gridManager = require 'grid-manager'
 
 local function smoothUIAction(item)
   item.value = not item.value
@@ -58,11 +59,11 @@ local function initThemesList()
     table.insert(displayList.items, themeItem)
   end
 
-  displayList.caption = {
-    colors.green, 'A: Set theme',
-    colors.red, '  B: Back',
-    colors.blue, '  Start: Systems'
-  }
+  displayList.caption = utils.getCaption({
+    { 'A', 'Set theme' },
+    { 'B', 'Back' },
+    { 'Start', 'Systems' }
+  })
   return displayList
 end
 
@@ -86,6 +87,10 @@ end
 
 local function recalculateResolutionsAndVideoModePreviewsAction()
   _G.calculateResolutionsAndVideoModePreviews()
+end
+
+local function openTextGrid(item)
+  gridManager:openFor(item)
 end
 
 optionsTree = {
@@ -118,12 +123,34 @@ optionsTree = {
       },
       page = utils.initPage(),
       index = 1,
-      caption = {
-        colors.green, 'A: Select',
-        colors.red, '  B: Back',
-        colors.orange, '  X: Preview',
-        colors.blue, '  Start: Systems'
-      }
+      caption = utils.getCaption({
+        { 'A', 'Select' },
+        { 'B', 'Back' },
+        { 'X', 'Preview' },
+        { 'Start', 'Systems' },
+      })        
+    }, {
+      displayLabel = utils.getDisplayLabel('Wifi'),
+      internalLabel = 'Wifi',
+      items = {
+        {
+          displayLabel = utils.getDisplayLabel('Network Name'),
+          internalLabel = 'Network Name',
+          text = true,
+          value = '',
+          action = openTextGrid
+        },
+        {
+          displayLabel = utils.getDisplayLabel('Password'),
+          internalLabel = 'Password',
+          text = true,
+          type = 'password',
+          value = '',
+          action = openTextGrid
+        },
+      },
+      page = utils.initPage(),
+      index = 1,
     }, {
       displayLabel = utils.getDisplayLabel('Refresh Game List'),
       internalLabel = 'Refresh Game List',
