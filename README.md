@@ -16,7 +16,7 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
       * WQHD (2560x1440, Raspberry Pi 4 only)
       * 4K (3840x2160, Raspberry Pi 4 only)
     * Highly customizable
-    * A theme system you've never seen (highly customizable as well)
+    * An awesome theme system (highly customizable as well)
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
 
