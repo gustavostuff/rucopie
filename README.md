@@ -57,6 +57,8 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Add Favorites
 * Recently played
 * All games
+* Vertical mode
+* Add other languages
 * Other things not in this list
 
 ---
