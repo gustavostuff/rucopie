@@ -67,4 +67,6 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 
 ---
 
-RucoPie was inspired by [RGB-Pi](https://www.rgb-pi.com/)
+## Notes
+* RucoPie was inspired by [RGB-Pi](https://www.rgb-pi.com/)
+* Not everything described in here is implemented yet
