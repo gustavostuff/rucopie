@@ -2,21 +2,20 @@
 
 ## :warning: This is in early stages, not really usable.
 
-RucoPie aims to be an easy to use alternative to systems like [RetroPie](https://retropie.org.uk/), [Lakka](https://www.lakka.tv/) or [Recalbox](https://www.recalbox.com/). It targets Raspberry Pi 3 and 4 devices, and it was inspired by [RGB-Pi](https://www.rgb-pi.com/)... with a big difference: this is not for CRT TVs (yet?), if you like that, please go check RGB-Pi instead :smiley:
+RucoPie aims to be an easy to use alternative to systems like [RetroPie](https://retropie.org.uk/), [Lakka](https://www.lakka.tv/) or [Recalbox](https://www.recalbox.com/). It targets Raspberry Pi 3 and 4 devices to be used via HDMI.
 
 ## Features
-(not all of these are yet implemented)
 
 * Fast environment, built on top of [DietPi](https://dietpi.com/) (highly optimized Raspbian)
 * For the UI:
-    * Thread-based (helps with performance as well)
+    * Thread-based
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:
       * HD (1280x720)
       * Full HD (1920x1080)
       * WQHD (2560x1440, Raspberry Pi 4 only)
       * 4K (3840x2160, Raspberry Pi 4 only)
     * Highly customizable
-    * An awesome theme system
+    * Flexible theme system
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
 
@@ -59,3 +58,7 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Recently played
 * All games
 * Other things not in this list
+
+---
+
+RucoPie was inspired by [RGB-Pi](https://www.rgb-pi.com/)
