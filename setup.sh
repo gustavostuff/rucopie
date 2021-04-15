@@ -17,7 +17,17 @@ cd RetroPie-Setup
 ./retropie_setup.sh
 
 cd ~
-declare -a pkgs=("retroarch" "love" "splashscreen" "lr-gambatte" "lr-fceumm" "lr-snes9x" "lr-fbneo" "lr-stella2014")
+declare -a pkgs=(
+  "retroarch"
+  "love"
+  "splashscreen"
+  "lr-gambatte"
+  "lr-fceumm"
+  "lr-snes9x"
+  "lr-fbneo"
+  "lr-stella2014"
+)
+
 for pkg in "${pkgs[@]}"
 do
   echo "$separator"
@@ -26,8 +36,8 @@ do
   ~/RetroPie-Setup/retropie_packages.sh $pkg install_bin
 done
 
-/usr/bin/git clone https://github.com/tavuntu/rucopie-bkp
-cd rucopie-bkp
+/usr/bin/git clone https://github.com/tavuntu/rucopie
+cd rucopie
 echo "$separator"
 echo "Installing config files..."
 
