@@ -12,7 +12,7 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:
       * [![Standard HD](http://img.shields.io/:Standard-HD-blue.svg)](https://en.wikipedia.org/wiki/720p)
       * [![Full HD](http://img.shields.io/:Full-HD-blue.svg)](https://en.wikipedia.org/wiki/1080p)
-      * [![WQHD](http://img.shields.io/:WQ-HD-green.svg)](https://en.wikipedia.org/wiki/1440p)
+      * [![Quad HD](http://img.shields.io/:Quad-HD-green.svg)](https://en.wikipedia.org/wiki/1440p)
       * [![4K UHD](http://img.shields.io/:4K-UHD-green.svg)](https://en.wikipedia.org/wiki/4K_resolution)
     * Highly customizable
     * Flexible theme system
