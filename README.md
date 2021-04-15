@@ -18,6 +18,8 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
     * Flexible theme system
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
+* Audio equalizer and custom profiles
+* Thumbnail-based Save/Load Game States
 
 ![](https://i.postimg.cc/2jZrbwH9/screenshot-1618196440.png)
 ![](https://i.postimg.cc/7YrDg2dH/screenshot-1618196445.png)
@@ -59,6 +61,8 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * All games
 * Vertical mode
 * Add other languages
+* Game states with thumbnaild
+* Audio management
 * Other things not in this list
 
 ---
