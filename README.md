@@ -10,10 +10,10 @@ RucoPie aims to be an easy to use alternative to systems like [RetroPie](https:/
 * For the UI:
     * Thread-based
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
-      [Standard HD](https://en.wikipedia.org/wiki/720p)
-      [Full HD](https://en.wikipedia.org/wiki/1080p)
-      [Quad HD](https://en.wikipedia.org/wiki/1440p)
-      [4K UHD](https://en.wikipedia.org/wiki/4K_resolution)
+      * [Standard HD](https://en.wikipedia.org/wiki/720p)
+      * [Full HD](https://en.wikipedia.org/wiki/1080p)
+      * [Quad HD](https://en.wikipedia.org/wiki/1440p)
+      * [4K UHD](https://en.wikipedia.org/wiki/4K_resolution)
     * Highly customizable
     * Flexible theme system
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
