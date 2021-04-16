@@ -17,6 +17,7 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
       * [4K UHD](https://en.wikipedia.org/wiki/4K_resolution)
     * Flexible theme system
     * Highly customizable!
+    * Bilingual (English and Spanish)
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
 * Audio equalizer and custom profiles
