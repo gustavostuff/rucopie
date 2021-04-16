@@ -10,7 +10,7 @@ local resolutions =  {
 }
 
 
--- sets optimal resolutions for this core
+-- sets optimal resolution for this core
 function resolutionManager.calculate(core)
   local xResolution, yResolution = resolutions[core].w, resolutions[core].h
   local xOriginal, yOriginal = resolutions[core].w, resolutions[core].h
