@@ -65,6 +65,7 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Add other languages
 * Game states with thumbnaild
 * Audio management
+* English and Spanish for UI (not for RetroArch)
 * Other things not in this list
 
 ---
