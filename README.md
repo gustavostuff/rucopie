@@ -53,6 +53,7 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Add more themes
 * Add animated boot screen
 * Add background music manager
+* Add audio equalizer with profiles, if possible
 * Add no-copyright roms
 * Bluetooth joystick support
 * Locale/Country settings
@@ -64,7 +65,6 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Vertical mode
 * Add other languages
 * Game states with thumbnails
-* Audio management
 * Other things not in this list
 
 ---
