@@ -9,18 +9,17 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
 * Fast environment, built on top of [DietPi](https://dietpi.com/) (highly optimized Raspbian)
 * For the UI:
     * Highly customizable
+    * Multi language
+    * Flexible theme system
     * Thread-based IO (helps with performance)
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
       * [Standard HD](https://en.wikipedia.org/wiki/720p)
       * [Full HD](https://en.wikipedia.org/wiki/1080p)
       * [Quad HD](https://en.wikipedia.org/wiki/1440p)
       * [4K UHD](https://en.wikipedia.org/wiki/4K_resolution)
-    * Flexible theme system
-    * Multi language
-    * Highly customizable!
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tweaks.
-* Audio equalizer and custom profiles
+* Audio equalizer with custom profiles
 * Vertical mode
 * WiFi setup screen (non-terminal based)
 * Thumbnail Game States
