@@ -164,6 +164,26 @@ function listManager:drawLineExtras(item, y)
       self.rightSideY + y * lineHeight,
       { shadow = true }
     )
+  elseif item.list then
+    local arrowLeft = images.icons['arrow-left.png']
+    local label = item.list[item.index]
+    local arrowRight = images.icons['arrow-right.png']
+    
+    utils.draw(arrowLeft,
+      self.rightSideX,
+      self.rightSideY + y * lineHeight,
+      { shadow = true }
+    )
+    utils.pp(label,
+      self.rightSideX + arrowLeft:getWidth(),
+      self.rightSideY + y * lineHeight,
+      { shadow = true }
+    )
+    utils.draw(arrowRight,
+      self.rightSideX + arrowLeft:getWidth() + _G.font:getWidth(label),
+      self.rightSideY + y * lineHeight,
+      { shadow = true }
+    )
   end
 end
 

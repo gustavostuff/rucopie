@@ -4,6 +4,7 @@ local utils = require 'utils'
 local osBridge = require 'os-bridge'
 local themeManager = require 'theme-manager'
 local virtualKeyboard = require 'virtual-keyboard'
+local translator = require 'translator'
 
 local function smoothUIAction(item)
   item.value = not item.value
@@ -36,11 +37,12 @@ local function stretchGamesAction(item)
   osBridge.saveCustomPreferences(_G.preferences)
 end
 
-local function initThemesList()
+local function themesSection()
   local rawList = osBridge.readFrom('ls ' .. constants.THEMES_DIR)
+  local label = translator:get('Themes')
   local list, displayList = utils.split(rawList, '\n'), {
-    displayLabel = utils.getDisplayLabel('Themes'),
-    internalLabel = 'Themes',
+    displayLabel = utils.getDisplayLabel(label),
+    internalLabel = label,
     index = 1,
     items = {},
     page = utils.initPage()
@@ -60,9 +62,9 @@ local function initThemesList()
   end
 
   displayList.caption = utils.getCaption({
-    { 'A', 'Set theme' },
-    { 'B', 'Back' },
-    { 'Start', 'Systems' }
+    { 'A', translator:get('Set theme') },
+    { 'B', translator:get('Back') },
+    { 'Start', translator:get('Systems') }
   })
   return displayList
 end
@@ -94,32 +96,32 @@ local function openTextGrid(item)
 end
 
 local function applyWifiSettings(item)
-  osBridge.setupWifi('fiber', 'Jikilopolipoloko10')
+  osBridge.setupWifi('fiber', 'Jikilopolipoloko10') -- testing this
 end
 
 optionsTree = {
   items = {
     {
-      displayLabel = utils.getDisplayLabel('Video'),
-      internalLabel = 'Video',
+      displayLabel = utils.getDisplayLabel(translator:get('Video')),
+      internalLabel = translator:get('Video'),
       items = {
         {
-          displayLabel = utils.getDisplayLabel('Smooth UI'),
-          internalLabel = 'Smooth UI',
+          displayLabel = utils.getDisplayLabel(translator:get('Smooth UI')),
+          internalLabel = translator:get('Smooth UI'),
           checkbox = true,
           value = _G.preferences.video.smoothUI,
           action = smoothUIAction
         },
         {
-          displayLabel = utils.getDisplayLabel('Smooth Games'),
-          internalLabel = 'Smooth Games',
+          displayLabel = utils.getDisplayLabel(translator:get('Smooth Games')),
+          internalLabel = translator:get('Smooth Games'),
           checkbox = true,
           value = _G.preferences.video.smoothGames,
           action = smoothGamesAction
         },
         {
-          displayLabel = utils.getDisplayLabel('Stretch Games'),
-          internalLabel = 'Stretch Games',
+          displayLabel = utils.getDisplayLabel(translator:get('Stretch Games')),
+          internalLabel = translator:get('Stretch Games'),
           checkbox = true,
           value = _G.preferences.video.stretchGames,
           action = stretchGamesAction
@@ -128,67 +130,73 @@ optionsTree = {
       page = utils.initPage(),
       index = 1,
       caption = utils.getCaption({
-        { 'A', 'Select' },
-        { 'B', 'Back' },
-        { 'X', 'Preview' },
-        { 'Start', 'Systems' },
+        { 'A', translator:get('OK') },
+        { 'B', translator:get('Back') },
+        { 'X', translator:get('Preview') },
+        { 'Start', translator:get('Systems') },
       })        
     }, {
-      displayLabel = utils.getDisplayLabel('Wifi'),
-      internalLabel = 'Wifi',
+      displayLabel = utils.getDisplayLabel(translator:get('Wifi')),
+      internalLabel = translator:get('Wifi'),
       items = {
         {
-          displayLabel = utils.getDisplayLabel('Network Name'),
-          internalLabel = 'Network Name',
+          displayLabel = utils.getDisplayLabel(translator:get('Network Name')),
+          internalLabel = translator:get('Network Name'),
           text = true,
           value = '',
           action = openTextGrid
         },
         {
-          displayLabel = utils.getDisplayLabel('Password'),
-          internalLabel = 'Password',
+          displayLabel = utils.getDisplayLabel(translator:get('Password')),
+          internalLabel = translator:get('Password'),
           text = true,
           type = 'password',
           value = '',
           action = openTextGrid
         },
         {
-          displayLabel = utils.getDisplayLabel('Apply'),
-          internalLabel = 'Apply',
+          displayLabel = utils.getDisplayLabel(translator:get('Apply')),
+          internalLabel = translator:get('Apply'),
           action = applyWifiSettings
         },
       },
       page = utils.initPage(),
       index = 1,
     }, {
-      displayLabel = utils.getDisplayLabel('Refresh Game List'),
-      internalLabel = 'Refresh Game List',
+      displayLabel = utils.getDisplayLabel(translator:get('Refresh Game List')),
+      internalLabel = translator:get('Refresh Game List'),
       action = refreshRomsAction,
     },
-    initThemesList(),
+    themesSection(),
     {
-      displayLabel = utils.getDisplayLabel('Restart'),
-      internalLabel = 'Restart',
+      displayLabel = utils.getDisplayLabel(translator:get('Language')),
+      internalLabel = translator:get('Language'),
+      index = 1,
+      list = { 'EN', 'ES', 'FR' }
+    },
+    {
+      displayLabel = utils.getDisplayLabel(translator:get('Restart')),
+      internalLabel = translator:get('Restart'),
       color = colors.yellow,
       action = restartAction
     }, {
-      displayLabel = utils.getDisplayLabel('Shutdown'),
-      internalLabel = 'Shutdown',
+      displayLabel = utils.getDisplayLabel(translator:get('Shutdown')),
+      internalLabel = translator:get('Shutdown'),
       color = colors.red,
       action = shutdownAction
     }, {
-      displayLabel = utils.getDisplayLabel('Advanced'),
-      internalLabel = 'Advanced',
+      displayLabel = utils.getDisplayLabel(translator:get('Advanced')),
+      internalLabel = translator:get('Advanced'),
       items = {
         {
-          displayLabel = utils.getDisplayLabel('Show debug info'),
-          internalLabel = 'Show debug info',
+          displayLabel = utils.getDisplayLabel(translator:get('Show debug info')),
+          internalLabel = translator:get('Show debug info'),
           color = colors.orange,
           action = toggleDebug
         }, {
           -- debug
-          displayLabel = utils.getDisplayLabel('Refresh resolutions'),
-          internalLabel = 'Refresh Resolutions',
+          displayLabel = utils.getDisplayLabel(translator:get('Refresh resolutions')),
+          internalLabel = translator:get('Refresh Resolutions'),
           action = recalculateResolutionsAndVideoModePreviewsAction
         }
       },

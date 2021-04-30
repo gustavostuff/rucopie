@@ -10,7 +10,17 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
 * For the UI:
     * Highly customizable
     * Multi language
+      * :uk: English
+      * :es: Spanish
+      * :fr: French
     * Flexible theme system
+      * Single-static backgrounds
+      * Multiple-static backgrounds
+      * Multiple-dynamic backgrounds
+      * Color palette customizer
+      * Shadows/Opacity controls
+      * Custom icons per theme
+      * Custom audio per theme
     * Thread-based IO (helps with performance)
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
       * [Standard HD](https://en.wikipedia.org/wiki/720p)

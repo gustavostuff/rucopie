@@ -54,10 +54,10 @@ function themeManager:update(dt)
 
     -- move quad viewport
     -- help needed, when setting using floor, layers movement becomes non-smooth after changing themes
-    --bg.quad:setViewport(math.floor(bg.dispX), math.floor(bg.dispY), w, h)
+    bg.quad:setViewport(math.floor(bg.dispX), math.floor(bg.dispY), w, h)
     
     -- this is a workaround but it's not correct (will show perfect pixels with aliasing)
-    bg.quad:setViewport(bg.dispX, bg.dispY, w, h)
+    -- bg.quad:setViewport(bg.dispX, bg.dispY, w, h)
   end
 end
 
