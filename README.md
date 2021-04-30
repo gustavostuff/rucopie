@@ -18,7 +18,7 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
       * Multiple-static backgrounds
       * Multiple-dynamic backgrounds (useful to simulate depth on the movement)
       * Color palette customizer
-      * Shadows/Opacity controls
+      * Shadows/Opacity/Bounding controls
       * Custom icons per theme
       * Custom audio per theme
     * Thread-based IO (helps with performance)
