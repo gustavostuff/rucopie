@@ -346,6 +346,11 @@ function listManager:handleLastPage()
 end
 
 function listManager:left()
+  local item = self:getSelectedItem()
+  if item.list then
+    item.action(item, -1)
+  end
+
   local list, n, totalPages = self:getPaginationCommons()
   if totalPages == 1 then return end
 
@@ -360,6 +365,11 @@ function listManager:left()
 end
 
 function listManager:right()
+  local item = self:getSelectedItem()
+  if item.list then
+    item.action(item, 1)
+  end
+
   local list, n, totalPages = self:getPaginationCommons()
   if totalPages == 1 then return end
 

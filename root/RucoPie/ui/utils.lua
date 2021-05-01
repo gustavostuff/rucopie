@@ -1,5 +1,7 @@
+local utils = {}
 local colors = require 'colors'
 local constants = require 'constants'
+local t = require 'translator'
 
 local captionColorMap = {
   A = colors.green,
@@ -9,7 +11,11 @@ local captionColorMap = {
   X = colors.orange
 }
 
-local utils = {
+local shadowCellMap = { -- shadow/cell directions for shadowed text
+  {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+}
+
+utils = {
   split = function (str, sep)
     local sep, fields = sep or ":", {}
     local pattern = string.format("([^%s]+)", sep)
@@ -88,11 +94,18 @@ utils.pp = function (text, x, y, data)
   x, y = x or 0, y or 0
   data = data or {}
   local shadowText = text
+  local fgText
   if type(text) == 'table' then -- colored text table
     shadowText = ''
+    fgText = {unpack(text)}
     for i = 2, #text, 2 do
-      shadowText = shadowText .. (text[i] or '')
+      fgText[i] = t.get(text[i]) -- translate
+      shadowText = shadowText .. (fgText[i] or '')
     end
+  else
+    -- translate
+    fgText = t.get(text)
+    shadowText = t.get(text)
   end
 
   love.graphics.setColor(data.shadowColor or colors.black)
@@ -106,23 +119,21 @@ utils.pp = function (text, x, y, data)
     y = constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2
   end
 
-  local sd = { -- shadow directions
-    {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
-  }
   if data.shadow then
     if data.cell then
-      for _, d in ipairs(sd) do
+      for _, d in ipairs(shadowCellMap) do
         love.graphics.print(shadowText, math.floor(x + d[1]), math.floor(y + d[2]))
       end
     else
       --love.graphics.print(shadowText, math.floor(x - 1), math.floor(y + 1))
-      love.graphics.print(shadowText, math.floor(x + sd[6][1]), math.floor(y + sd[6][2]))
+      love.graphics.print(shadowText,
+      math.floor(x + shadowCellMap[6][1]), math.floor(y + shadowCellMap[6][2]))
     end
   end
 
   love.graphics.setColor(data.fgColor or colors.white)
-  --love.graphics.print(text, math.floor(x), math.floor(y))
-  love.graphics.print(text, math.floor(x), math.floor(y))
+  --love.graphics.print(fgText, math.floor(x), math.floor(y))
+  love.graphics.print(fgText, math.floor(x), math.floor(y))
 end
 
 utils.draw = function (drawable, x, y, options)
@@ -174,7 +185,9 @@ utils.getCaption = function (data)
     table.insert(caption, captionColorMap[button] or colors.white)
     table.insert(caption, button .. ':')
     table.insert(caption, colors.white)
-    table.insert(caption, label .. '  ')
+    table.insert(caption, label)
+    table.insert(caption, colors.white)
+    table.insert(caption, ' ')
   end
   return caption
 end

@@ -149,8 +149,8 @@ end
 function virtualKeyboard:drawPointer(x, y, gridX, gridY)
   if self:indexAt(x, y) then
     love.graphics.setColor(colors.green)
-    love.graphics.rectangle('line',
-      gridX + (x - 1) * self.cellWidth,
+    love.graphics.rectangle('fill',
+      gridX + (x - 1) * self.cellWidth - 1,
       gridY + (y - 1) * self.cellHeight,
       self.cellWidth,
       self.cellHeight
@@ -163,7 +163,7 @@ function virtualKeyboard:drawElement(element, x, y, gridX, gridY)
   utils.pp(element,
     (gridX + (x - 1) * self.cellWidth) + self.cellWidth / 2 - _G.font:getWidth(element) / 2,
     (gridY + (y - 1) * self.cellHeight) + self.cellHeight / 2 - _G.font:getHeight() / 2,
-    { shadow = true }
+    { shadow = self:getSelectedItem() ~= element }
   )
 end
 

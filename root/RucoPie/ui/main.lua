@@ -25,6 +25,7 @@ local colors = require 'colors'
 local constants = require 'constants'
 local utils = require 'utils'
 local images = require 'images'
+local t = require 'translator'
 
 if osBridge.fileExists(constants.RUCOPIE_DIR .. 'config/custom-preferences.lua') then
   _G.preferences = loadstring(osBridge.readFile('config/custom-preferences.lua'))()
@@ -139,9 +140,10 @@ end
 
 local function initPreferences()
   themeManager:updateSmoothUI(_G.preferences.video.smoothUI)
+  t.set(_G.preferences.lang)
 end
 
-local function initvirtualKeyboard()
+local function initVirtualKeyboard()
   virtualKeyboard:setGrid(constants.VIRTUAL_KEYBOARD)
 end
 
@@ -333,7 +335,7 @@ function love.load()
   loadGameList() -- this may be async
   initCanvas()
   initPreferences()
-  initvirtualKeyboard()
+  initVirtualKeyboard()
   _G.calculateResolutionsAndVideoModePreviews()
 end
 
