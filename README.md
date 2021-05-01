@@ -33,10 +33,9 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
 * WiFi setup screen (non-terminal based)
 * Thumbnail Game States
 
-![](https://i.postimg.cc/2jZrbwH9/screenshot-1618196440.png)
-![](https://i.postimg.cc/7YrDg2dH/screenshot-1618196445.png)
-![](https://i.postimg.cc/PrbHKqnm/screenshot-1618196453.png)
-![](https://i.postimg.cc/PrzcNmrZ/screenshot-1618183351.png)
+![](https://i.postimg.cc/3N1x2sGJ/1.png)
+![](https://i.postimg.cc/7Pnhv2R8/2.png)
+![](https://i.postimg.cc/Gh32bp0B/3.png)
 
 ## How to try this out:
 
