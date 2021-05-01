@@ -76,6 +76,7 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Vertical mode
 * Add other languages (done, ES and FR)
 * Game states with thumbnails
+* Multimedia player
 * Other things not in this list
 
 ---
