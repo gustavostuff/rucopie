@@ -8,6 +8,7 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
 
 * Fast environment, built on top of [DietPi](https://dietpi.com/) (highly optimized Raspbian)
 * Support for pretty much every Libretro emulator
+* Automatically scaled, pixel perfect games in any resolution
 * Built-in Multimedia Player
 * For the UI:
     * Multi-Language: :uk: :es: :fr:
@@ -23,7 +24,6 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
       * Full HD (1920x1080)
       * WQHD (2560x1440)
       * 4K UHD (3840x2160)
-* Automatically scaled, pixel perfect games (RetroArch) in any resolution
 * Extra video options for bilinear, stretching and other tricks
 * Audio equalizer with custom profiles
 * Vertical mode
