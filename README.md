@@ -10,9 +10,9 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
 * Supports pretty much every Libretro emulator
 * For the UI:
     * Multi language
-      * :uk: English
-      * :es: Spanish
-      * :fr: French
+      * :uk: English
+      * :es: Spanish
+      * :fr: French
     * Flexible theme system
       * Single-static backgrounds
       * Multiple-static backgrounds
