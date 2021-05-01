@@ -8,6 +8,7 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
 
 * Fast environment, built on top of [DietPi](https://dietpi.com/) (highly optimized Raspbian)
 * Support for pretty much every Libretro emulator
+* Built-in Multimedia Player
 * For the UI:
     * Multi language
       * :uk: English
