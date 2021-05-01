@@ -10,10 +10,7 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
 * Support for pretty much every Libretro emulator
 * Built-in Multimedia Player
 * For the UI:
-    * Multi-Language
-      * :uk:
-      * :es:
-      * :fr:
+    * Multi-Language: :uk: :es: :fr:
     * Flexible theme system
       * Multi-layer, dynamic backgrounds
       * Per-theme icons
