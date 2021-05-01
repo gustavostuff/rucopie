@@ -20,7 +20,7 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
       * Per-theme icons
       * Per-theme sounds/music
     * Color palette editor
-    * Thread-based IO (helps with performance)
+    * Heavy operations are thread-based (file reading/writing, large data processing)
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
       * [Standard HD](https://en.wikipedia.org/wiki/720p)
       * [Full HD](https://en.wikipedia.org/wiki/1080p)
