@@ -75,6 +75,7 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * Add other languages (done, ES and FR)
 * Game states with thumbnails
 * Multimedia player
+* Game scrapping for listing
 * Other things not in this list
 
 ---
