@@ -15,7 +15,7 @@ RucoPie aims to be a simple (yet customizable), alternative to systems like [Ret
       * :es:
       * :fr:
     * Flexible theme system
-      * Multi-layer, dynamic backgrounds (useful to simulate depth)
+      * Multi-layer, dynamic backgrounds
       * Shadow, Opacity and Bounding controls
       * Per-theme icons
       * Per-theme sounds/music
