@@ -24,7 +24,7 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
       * WQHD (2560x1440)
       * 4K UHD (3840x2160)
 * Automatically scaled, pixel perfect games (RetroArch) in any resolution
-* Extra video options for bilinear, stretching and other tweaks.
+* Extra video options for bilinear, stretching and other tricks
 * Audio equalizer with custom profiles
 * Vertical mode
 * WiFi setup screen (non-terminal based)
