@@ -16,9 +16,9 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
       * :fr:
     * Flexible theme system
       * Multi-layer, dynamic backgrounds
-      * Shadow, Opacity and Bounding controls
       * Per-theme icons
       * Per-theme sounds/music
+      * Other tweaks for opacity, shadows and sizing
     * Color palette editor
     * Heavy operations are thread-based (file reading/writing, large data processing)
     * Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
