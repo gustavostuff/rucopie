@@ -12,10 +12,10 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
 * Built-in Multimedia Player
 * For the UI:
     * Multi-Language:
-      * :uk: English
-      * :es: Spanish
-      * :fr: French
-      * :de: German
+      * English :uk:
+      * Spanish :es:
+      * French :fr:
+      * German :de:
     * Flexible theme system
       * Multi-layer, dynamic backgrounds
       * Per-theme icons
