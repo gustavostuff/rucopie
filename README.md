@@ -10,20 +10,19 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * Support for pretty much every Libretro emulator
 * Automatically scaled, pixel perfect games in any resolution
 * Built-in Multimedia Player
-* For the UI:
-    * Multi-Language: :uk: :es: :fr: :de:
-    * Flexible theme system
-      * Multi-layer, dynamic backgrounds
-      * Per-theme icons
-      * Per-theme sounds/music
-      * Other tweaks for opacity, shadows and sizing
-    * Color palette editor
-    * Heavy operations are thread-based (file reading/writing, large data processing)
-    * Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
-      * Standard HD (1280x720)
-      * Full HD (1920x1080)
-      * WQHD (2560x1440)
-      * 4K UHD (3840x2160)
+* Multi-Language: :uk: :es: :fr: :de:
+* Flexible theme system
+  * Multi-layer, dynamic backgrounds
+  * Per-theme icons
+  * Per-theme sounds/music
+  * Other tweaks for opacity, shadows and sizing
+* Color palette editor
+* Heavy operations are thread-based (file reading/writing, large data processing)
+* Pixel-perfect in any resolution that is a multiple of 640x360, such as:  
+  * Standard HD (1280x720)
+  * Full HD (1920x1080)
+  * WQHD (2560x1440)
+  * 4K UHD (3840x2160)
 * Extra video options for bilinear, stretching and other tricks
 * Audio equalizer with custom profiles
 * Vertical mode
