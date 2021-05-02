@@ -28,7 +28,6 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * Audio equalizer with custom profiles
 * Vertical mode
 * WiFi setup screen (non-terminal based)
-* Thumbnail Game States
 
 ![](https://i.postimg.cc/3N1x2sGJ/1.png)
 ![](https://i.postimg.cc/7Pnhv2R8/2.png)
@@ -70,7 +69,6 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | ba
 * All games
 * Vertical mode
 * Add other languages (done, ES and FR)
-* Game states with thumbnails
 * Multimedia player
 * Game scrapping for listing
 * Other things not in this list
