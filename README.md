@@ -11,11 +11,7 @@ RucoPie aims to be a simple, sweet alternative to systems like [RetroPie](https:
 * Automatically scaled, pixel perfect games in any resolution
 * Built-in Multimedia Player
 * For the UI:
-    * Multi-Language:
-      * English :uk:
-      * Spanish :es:
-      * French :fr:
-      * German :de:
+    * Multi-Language: :uk: :es: :fr: :de:
     * Flexible theme system
       * Multi-layer, dynamic backgrounds
       * Per-theme icons
