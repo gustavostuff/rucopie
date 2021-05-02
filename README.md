@@ -6,7 +6,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 
 ## Features
 
-* Fast environment, built on top of [DietPi](https://dietpi.com/)
+* Fast boot, built on top of [DietPi](https://dietpi.com/)
 * Support for pretty much every Libretro emulator
 * Automatically scaled, pixel perfect games in any resolution
 * Built-in Multimedia Player
