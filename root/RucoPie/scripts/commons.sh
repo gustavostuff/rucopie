@@ -6,7 +6,7 @@ default="\033[0m"
 
 separator="-------------------------------------------------------------------"
 
-function colorEcho() {
+function color_echo() {
   colorcode=""
   case $1 in
     red)

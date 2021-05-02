@@ -25,7 +25,11 @@ local labels = {
   'Add',
   'Remove',
   'Confirm',
-  'Cancel'
+  'Cancel',
+  'Press for',
+  'Loading games',
+  'Shutting down',
+  'Restarting',
 }
 
 local function initLang(translations)
@@ -64,7 +68,11 @@ translator.ES = initLang({
   'Agregar',
   'Quitar',
   'Confirmar',
-  'Cancelar'
+  'Cancelar',
+  'Presione para',
+  'Cargando juegos',
+  'Apagando',
+  'Reiniciando',
 })
 
 translator.FR = initLang({
@@ -90,7 +98,41 @@ translator.FR = initLang({
   'Ajouter',
   'Supprimer',
   'Confirmer',
-  'Annuler'
+  'Annuler',
+  'Appuyez pour',
+  'Chargement des jeux',
+  'Éteindre',
+  'Redémarrage',
+})
+
+translator.DE = initLang({
+  'Zurück',
+  'Optionen',
+  "Systeme",
+  'Spieleliste aktualisieren',
+  "Themen",
+  'Neu starten',
+  'Schließen',
+  'Fortgeschritten',
+  'Reibungslose Benutzeroberfläche',
+  "Smooth Games",
+  "Stretch Games",
+  'Netzwerkname',
+  'Passwort',
+  'Anwenden',
+  'Thema setzen',
+  'Auflösungen aktualisieren',
+  'Debug-Informationen anzeigen',
+  'Vorschau',
+  'Sprache',
+  'Hinzufügen',
+  'Entfernen',
+  'Bestätigen',
+  'Stornieren',
+  'Drücken Sie für',
+  "Laden von Spielen",
+  'Herunterfahren',
+  'Neustart',
 })
 
 function translator.get(text) -- text must be in English by default

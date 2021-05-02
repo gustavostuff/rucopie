@@ -187,7 +187,7 @@ utils.getCaption = function (data)
     table.insert(caption, colors.white)
     table.insert(caption, label)
     table.insert(caption, colors.white)
-    table.insert(caption, ' ')
+    table.insert(caption, '  ')
   end
   return caption
 end

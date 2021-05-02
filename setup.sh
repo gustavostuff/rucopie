@@ -51,6 +51,9 @@ echo "Creating global link for love..."
 cd ..
 ln -s /opt/retropie/ports/love/bin/love /usr/bin/
 
+echo "Installing alsamixer equalizer..."
+apt-get --assume-yes install libasound2-plugin-equal
+
 echo "Installing extra Lua stuff..."
 apt-get --assume-yes install luarocks
 luarocks install luafilesystem

@@ -177,25 +177,35 @@ local function drawCurrentCaption()
 end
 
 local function drawJoystickMapping()
-  local text = 'Press for ' .. joystickManager:getInputBeingMapped() .. '...'
-  utils.pp(text,
-    math.floor(constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2),
-    math.floor(constants.CANVAS_HEIGHT / 2 - _G.font:getHeight() / 2),
-    { shadow = true }
-  )
+  local text = {
+    colors.white, 'Press for',
+    colors.white, ': ',
+    colors.green, joystickManager:getInputBeingMapped(),
+    colors.white, '...'
+  }
+  utils.pp(text, 0, 0, { shadow = true, centered = true })
 end
 
 local function drawMessagesForAsyncTaks()
   if loadingGames then
-    utils.pp('Loading games...', 0, 0, { shadow = true, centered = true })
+    utils.pp({
+      colors.white, 'Loading games',
+      colors.white, '...'
+    }, 0, 0, { shadow = true, centered = true })
   end
 
   if _G.shuttingDown then
-    utils.pp('Shutting down...', 0, 0, { shadow = true, centered = true })
+    utils.pp({
+      colors.white, 'Shutting down',
+      colors.white, '...'
+    }, 0, 0, { shadow = true, centered = true })
   end
 
   if _G.restarting then
-    utils.pp('Restarting...', 0, 0, { shadow = true, centered = true })
+    utils.pp({
+      colors.white, 'Restarting',
+      colors.white, '...'
+    }, 0, 0, { shadow = true, centered = true })
   end
 end
 

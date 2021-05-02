@@ -4,5 +4,6 @@ return {
     smoothGames = false,
     stretchGames = false,
   },
-  theme = 'Super Mario Scroll'
+  theme = 'Super Mario Scroll',
+  lang = 'EN'
 }

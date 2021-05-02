@@ -7,23 +7,12 @@ failed_status=1
 function run_game () {
   core=""
   case $1 in
-    atari2600)
-      core="stella2014"
-      ;;
-    nes)
-      core="fceumm"
-      ;;
-    snes)
-      core="snes9x"
-      ;;
-    gb|gbc)
-      core="gambatte"
-      ;;
-    neogeo)
-      core="fbneo"
-      ;;
-    *)
-      colorEcho "red" "Error: System $1 is not valid."
+    atari2600) core="stella2014" ;;
+    nes)       core="fceumm" ;;
+    snes)      core="snes9x" ;;
+    gb|gbc)    core="gambatte" ;;
+    neogeo)    core="fbneo" ;;
+    *)         color_echo "red" "Error: System $1 is not valid."
   esac
 
   if [ -z $core ]; then
@@ -32,7 +21,7 @@ function run_game () {
 
   ## full game path:
   path="$2"
-  colorEcho "green" "Executing retroarch with: core = $core, rom = $path"
+  color_echo "green" "Executing retroarch with: core = $core, rom = $path"
 
   /opt/retropie/emulators/retroarch/bin/retroarch -L \
   /opt/retropie/libretrocores/lr-"$core"/"$core"_libretro.so \

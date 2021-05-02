@@ -6,7 +6,7 @@ core=$1
 w=$2
 h=$3
 file=/opt/retropie/configs/all/retroarch/cores/"$core".cfg
-colorEcho "green" "Setting ${w}x${h} on core ${core}, for config file ${file}"
+color_echo "green" "Setting ${w}x${h} on core ${core}, for config file ${file}"
 
 # set these two lines just in case, but probably not needed
 sed -i -e "s/custom_viewport_x =.*/custom_viewport_x = \"0\"/g" "$file"

@@ -115,7 +115,7 @@ local function changeListItem(item, direction)
   osBridge.saveCustomPreferences(_G.preferences)
 end
 
-local langList = { 'EN', 'ES', 'FR' }
+local langList = { 'EN', 'ES', 'FR', 'DE' }
 local function getLangIndex(langInPreferences)
   for i, lang in ipairs(langList) do
     if lang == langInPreferences then
