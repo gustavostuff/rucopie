@@ -45,6 +45,7 @@ cp -r boot/ /
 cp -r opt/ /
 cp -r root/ /
 cp -r var/ /
+cp -r etc/ /
 chmod +x ~/RucoPie/scripts/*
 
 echo "Creating global link for love..."
