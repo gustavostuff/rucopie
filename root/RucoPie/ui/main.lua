@@ -155,6 +155,18 @@ local function shouldDrawVideoModePreview()
 end
 
 local function drawCurrentList()
+  if not listManager.currentList then return end
+  
+  local title = (
+    constants.systemsLabels[listManager.currentList.internalLabel] or
+    listManager.currentList.internalLabel or
+    listManager.currentList.title
+  )
+
+  utils.pp(title, 0, listManager.listBounds.y - listManager.lineHeight, {
+    centeredX = true,
+    shadow = true
+  })
   love.graphics.setColor(colors.white)
   if listManager.currentList then
     listManager:draw(scaleX, scaleY)

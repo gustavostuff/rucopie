@@ -88,6 +88,7 @@ local function createSystemsTree(path, parentList, level)
 end
 
 local tree = createSystemsTree()
+tree.title = 'Systems'
 tree.totalGames = totalGames
 local stringTree = 'return { ' .. utils.tableToString(tree) .. '}'
 osBridge.saveFile(stringTree, 'cache/games-tree.lua')

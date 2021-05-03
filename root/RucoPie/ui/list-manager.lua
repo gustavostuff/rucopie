@@ -6,8 +6,9 @@ local themeManager = require 'theme-manager'
 local images = require 'images'
 local timer = require 'timer'
 
-local listManager = {}
-local lineHeight = _G.font:getHeight() + 1
+local listManager = {
+  lineHeight = _G.font:getHeight() + 1
+}
 
 listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
 listManager.listBounds = {
@@ -104,7 +105,7 @@ function listManager:drawIconAndGetOffset(icon, x, y)
     iconOffset = icon:getWidth() + 5
     utils.draw(icon,
       self.listBounds.x + x,
-      self.listBounds.y + (y * lineHeight) + lineHeight / 2,
+      self.listBounds.y + (y * self.lineHeight) + self.lineHeight / 2,
       { shadow = true, centeredY = true }
     )
   end
@@ -121,12 +122,12 @@ function listManager:printItemText(item, x, y, iconOffset, printOffset)
 
   local offset_0 = printOffset or 1
   local offset_1 = printOffset and (printOffset + constants.MAX_LINE_CHARACTERS - 1)
-    or #item.dislayLabel
+    or #item.displayLabel
   local text = label:sub(offset_0, offset_1)
 
   utils.pp(text,
     self.listBounds.x + iconOffset + x,
-    self.listBounds.y + y * lineHeight,
+    self.listBounds.y + y * self.lineHeight,
     { fgColor = color, shadow = true }
   )
 end
@@ -139,7 +140,7 @@ function listManager:drawListPointer(y)
     love.graphics.setColor(colors.white)
     utils.draw(images.icons['default-pointer.png'],
       self.listBounds.x - offset,
-      self.listBounds.y + (y * lineHeight) + lineHeight / 2,
+      self.listBounds.y + (y * self.lineHeight) + self.lineHeight / 2,
       { shadow = true, centeredY = true }
     )
   end
@@ -151,7 +152,7 @@ function listManager:drawLineExtras(item, y)
     if item.value then icon = images.icons['checkbox-on.png'] end
     utils.draw(icon,
       self.rightSideX,
-      self.rightSideY + y * lineHeight,
+      self.rightSideY + y * self.lineHeight,
       { shadow = true }
     )
   elseif item.text then
@@ -161,7 +162,7 @@ function listManager:drawLineExtras(item, y)
     end
     utils.pp(label,
       self.rightSideX,
-      self.rightSideY + y * lineHeight,
+      self.rightSideY + y * self.lineHeight,
       { shadow = true }
     )
   elseif item.list then
@@ -171,17 +172,17 @@ function listManager:drawLineExtras(item, y)
     
     utils.draw(arrowLeft,
       self.rightSideX,
-      self.rightSideY + y * lineHeight,
+      self.rightSideY + y * self.lineHeight,
       { shadow = true }
     )
     utils.pp(label,
       self.rightSideX + arrowLeft:getWidth(),
-      self.rightSideY + y * lineHeight,
+      self.rightSideY + y * self.lineHeight,
       { shadow = true }
     )
     utils.draw(arrowRight,
       self.rightSideX + arrowLeft:getWidth() + _G.font:getWidth(label),
-      self.rightSideY + y * lineHeight,
+      self.rightSideY + y * self.lineHeight,
       { shadow = true }
     )
   end

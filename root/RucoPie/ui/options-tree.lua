@@ -125,10 +125,11 @@ local function getLangIndex(langInPreferences)
 end
 
 optionsTree = {
+  title = 'Options',
   items = {
     {
       displayLabel = utils.getDisplayLabel('Video'),
-      internalLabel = ('Video'),
+      internalLabel = 'Video',
       items = {
         {
           displayLabel = utils.getDisplayLabel('Smooth UI'),
