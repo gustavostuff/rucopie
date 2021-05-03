@@ -30,6 +30,7 @@ local labels = {
   'Loading games',
   'Shutting down',
   'Restarting',
+  '~ Empty Folder ~',
 }
 
 local function initLang(translations)
@@ -73,6 +74,7 @@ translator.ES = initLang({
   'Cargando juegos',
   'Apagando',
   'Reiniciando',
+  '~ Carpeta Vacía ~',
 })
 
 translator.FR = initLang({
@@ -103,6 +105,7 @@ translator.FR = initLang({
   'Chargement des jeux',
   'Éteindre',
   'Redémarrage',
+  '~ Dossier Vide ~',
 })
 
 translator.DE = initLang({
@@ -133,6 +136,7 @@ translator.DE = initLang({
   "Laden von Spielen",
   'Herunterfahren',
   'Neustart',
+  '~ Leerer Ordner ~',
 })
 
 function translator.get(text) -- text must be in English by default

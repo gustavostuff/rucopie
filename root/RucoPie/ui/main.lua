@@ -519,6 +519,7 @@ function switchScreen()
     list = listsStack[_G.screens.systems]
   end
   listManager.currentList = list[#list]
+  listManager:resetClippedLine()
 end
 
 ---------------------------------------------

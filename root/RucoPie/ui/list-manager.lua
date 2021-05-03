@@ -278,7 +278,7 @@ function listManager:draw()
   --   self.listBounds.h
   -- )
   if #list.items == 0 then
-    self:printItemText({ displayLabel = '<empty folder>' }, 0, y, 0, 1)
+    self:printItemText({ displayLabel = '~ Empty Folder ~' }, 0, y, 0, 1)
     return
   end
 
