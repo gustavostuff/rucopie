@@ -63,5 +63,7 @@ echo "Enabling RucoPie splashscreen..."
 systemctl enable asplashscreen.service
 
 echo "$separator"
-echo "Done!"
+echo "Done! Restarting now..."
 echo "$separator"
+
+reboot
