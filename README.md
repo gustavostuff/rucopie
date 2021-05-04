@@ -24,7 +24,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
   * WQHD (2560x1440)
   * 4K UHD (3840x2160)
 * Extra video options for bilinear, stretching and other tricks
-* Audio equalizer with Winamp's presets
+* Audio equalizer with 17 presets
 * Vertical mode
 * 180° mode
 * WiFi setup screen (non-terminal based)
