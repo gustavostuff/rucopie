@@ -59,6 +59,9 @@ echo "Installing extra Lua stuff..."
 apt-get --assume-yes install luarocks
 luarocks install luafilesystem
 
+echo "Enabling RucoPie splashscreen..."
+systemctl enable asplashscreen.service
+
 echo "$separator"
 echo "Done!"
 echo "$separator"
