@@ -45,7 +45,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * Run the following script and follow the steps
 
 ```bash
-curl -s https://raw.githubusercontent.com/tavuntu/rucopie-bkp/main/setup.sh | bash -s
+curl -s https://raw.githubusercontent.com/tavuntu/rucopie/main/setup.sh | bash -s
 ```
 
 * Reboot, and it should be ready to go!
