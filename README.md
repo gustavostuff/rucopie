@@ -29,6 +29,8 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * 180° mode
 * WiFi setup screen (non-terminal based)
 
+## Some screenshots
+
 ![](https://i.postimg.cc/NGk8Yjp8/screenshot-1620085835.png)
 ![](https://i.postimg.cc/28jQ5NKs/screenshot-1620085841.png)
 ![](https://i.postimg.cc/Wb9MFfRh/screenshot-1620085851.png)
