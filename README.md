@@ -71,7 +71,7 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie/main/setup.sh | bash -
 * Recently played
 * All games
 * Vertical mode
-* Add other languages (done, ES and FR)
+* Add other languages (done: Spanish, French and German)
 * Multimedia player
 * Game scrapping for listing
 * Other things not in this list
