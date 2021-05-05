@@ -146,7 +146,7 @@ function virtualKeyboard:drawBackground(gridX, gridY)
   -- )
 end
 
-function virtualKeyboard:drawPointer(x, y, gridX, gridY)
+function virtualKeyboard:drawCursor(x, y, gridX, gridY)
   if self:indexAt(x, y) then
     love.graphics.setColor(colors.green)
     love.graphics.rectangle('fill',
@@ -171,7 +171,7 @@ function virtualKeyboard:drawTypedText(gridX, gridY)
   local text = table.concat(self.typedText)
   local xText = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2
   love.graphics.line(gridX, gridY - self.padding, gridX + self.w - 1, gridY - self.padding)
-  utils.pp(text, xText, gridY - self.cellHeight, { shadow = true })
+  utils.pp(text, xText, gridY - self.cellHeight, { shadow = _G.currentTheme.shadow })
 end
 
 function virtualKeyboard:draw()
@@ -187,7 +187,7 @@ function virtualKeyboard:draw()
 
     for x = 1, #row do
       local element = row[x]
-      self:drawPointer(x, y, gridX, gridY)
+      self:drawCursor(x, y, gridX, gridY)
       self:drawElement(element, x, y, gridX, gridY)
     end
   end

@@ -10,16 +10,6 @@ local listManager = {
   lineHeight = _G.font:getHeight() + 1
 }
 
-listManager.pageSize = (_G.currentTheme and _G.currentTheme.pageSize) or constants.PAGE_SIZE
-listManager.listBounds = {
-  x = 24,
-  y = 24,
-  w = constants.CANVAS_WIDTH - 120,
-  h = constants.CANVAS_HEIGHT - 48
-}
-listManager.rightSideX = listManager.listBounds.x + listManager.listBounds.w
-listManager.rightSideY = listManager.listBounds.y
-
 local function getListStencil()
   local rec = listManager.listBounds
   return function ()
@@ -50,6 +40,18 @@ local clippedLineCharIndex = 1
 --     end
 --   end):ease('linear'):delay(0.5)
 -- end
+
+function listManager:setBounds(bounds)
+  self.pageSize = _G.currentTheme.pageSize or constants.PAGE_SIZE
+  self.listBounds = {
+    x = bounds.x or 24,
+    y = bounds.y or 24,
+    w = bounds.w or constants.CANVAS_WIDTH - 120,
+    h = bounds.h or constants.CANVAS_HEIGHT - 48
+  }
+end
+
+listManager:setBounds(_G.currentTheme.listBounds or {})
 
 function listManager:resetClippedLine()
   -- local item = self:getSelectedItem()
@@ -106,7 +108,7 @@ function listManager:drawIconAndGetOffset(icon, x, y)
     utils.draw(icon,
       self.listBounds.x + x,
       self.listBounds.y + (y * self.lineHeight) + self.lineHeight / 2,
-      { shadow = true, centeredY = true }
+      { shadow = _G.currentTheme.shadow, centeredY = true }
     )
   end
 
@@ -116,7 +118,7 @@ end
 function listManager:printItemText(item, x, y, iconOffset, printOffset)
   local list, _, _, _ = self:getListingCommons()
   local label = constants.systemsLabels[item.internalLabel] or item.displayLabel
-  local color = (item.isDir and colors.blue) or
+  local color = _G.currentTheme.fontColor or (item.isDir and colors.blue) or
     (item.color or list.color or colors.white)
   label = label or '<label not set>'
 
@@ -125,25 +127,31 @@ function listManager:printItemText(item, x, y, iconOffset, printOffset)
     or #item.displayLabel
   local text = label:sub(offset_0, offset_1)
 
+  if item == self:getSelectedItem() then
+    color = _G.currentTheme.selectionColor or color
+  end
+
   utils.pp(text,
     self.listBounds.x + iconOffset + x,
     self.listBounds.y + y * self.lineHeight,
-    { fgColor = color, shadow = true }
+    {
+      fontColor = color,
+      shadow = _G.currentTheme.shadow,
+      shadowColor = _G.currentTheme.shadowColor or colors.black
+    }
   )
 end
 
-function listManager:drawListPointer(y)
+function listManager:drawListCursor()
   local list, _, _, _ = self:getListingCommons()
-  local p = images.icons['default-pointer.png']
-  local offset = p:getWidth() + constants.POINTER_SEPARATION
-  if y == (list.page.indexAtCurrentPage - 1) then
-    love.graphics.setColor(colors.white)
-    utils.draw(images.icons['default-pointer.png'],
-      self.listBounds.x - offset,
-      self.listBounds.y + (y * self.lineHeight) + self.lineHeight / 2,
-      { shadow = true, centeredY = true }
-    )
-  end
+  local cursor = _G.currentTheme.cursor or images.cursor
+  local y = ((self.currentList.page.indexAtCurrentPage - 1) * self.lineHeight)
+  love.graphics.setColor(colors.white)
+  utils.draw(cursor,
+    0,
+    self.listBounds.y + y + self.lineHeight / 2,
+    { shadow = _G.currentTheme.shadow, centeredY = true }
+  )
 end
 
 function listManager:drawLineExtras(item, y)
@@ -151,9 +159,9 @@ function listManager:drawLineExtras(item, y)
     local icon = images.icons['checkbox-off.png']
     if item.value then icon = images.icons['checkbox-on.png'] end
     utils.draw(icon,
-      self.rightSideX,
-      self.rightSideY + y * self.lineHeight,
-      { shadow = true }
+      listManager.listBounds.x + listManager.listBounds.w,
+      self.listBounds.y + y * self.lineHeight,
+      { shadow = _G.currentTheme.shadow }
     )
   elseif item.text then
     local label = (#item.value > 0 and item.value) or '<not set>'
@@ -161,9 +169,9 @@ function listManager:drawLineExtras(item, y)
       label = '*****'
     end
     utils.pp(label,
-      self.rightSideX,
-      self.rightSideY + y * self.lineHeight,
-      { shadow = true }
+      listManager.listBounds.x + listManager.listBounds.w,
+      self.listBounds.y + y * self.lineHeight,
+      { shadow = _G.currentTheme.shadow }
     )
   elseif item.list then
     local arrowLeft = images.icons['arrow-left.png']
@@ -171,19 +179,19 @@ function listManager:drawLineExtras(item, y)
     local arrowRight = images.icons['arrow-right.png']
     
     utils.draw(arrowLeft,
-      self.rightSideX,
-      self.rightSideY + y * self.lineHeight,
-      { shadow = true }
+      listManager.listBounds.x + listManager.listBounds.w,
+      self.listBounds.y + y * self.lineHeight,
+      { shadow = _G.currentTheme.shadow }
     )
     utils.pp(label,
-      self.rightSideX + arrowLeft:getWidth(),
-      self.rightSideY + y * self.lineHeight,
-      { shadow = true }
+      listManager.listBounds.x + listManager.listBounds.w + arrowLeft:getWidth(),
+      self.listBounds.y + y * self.lineHeight,
+      { shadow = _G.currentTheme.shadow, fontColor = _G.currentTheme.fontColor or colors.white }
     )
     utils.draw(arrowRight,
-      self.rightSideX + arrowLeft:getWidth() + _G.font:getWidth(label),
-      self.rightSideY + y * self.lineHeight,
-      { shadow = true }
+      listManager.listBounds.x + listManager.listBounds.w + arrowLeft:getWidth() + _G.font:getWidth(label),
+      self.listBounds.y + y * self.lineHeight,
+      { shadow = _G.currentTheme.shadow }
     )
   end
 end
@@ -283,8 +291,8 @@ function listManager:draw()
     return
   end
 
-  love.graphics.stencil(getListStencil(), 'replace', 1) 
-  love.graphics.setStencilTest('greater', 0)
+  --love.graphics.stencil(getListStencil(self.listBounds), 'replace', 1) 
+  --love.graphics.setStencilTest('greater', 0)
   
   for i = from, to do
     local item = list.items[i]
@@ -311,14 +319,14 @@ function listManager:draw()
     if item.isDir then icon = images.icons['folder.png'] end
     local iconOffset = self:drawIconAndGetOffset(icon, x, y)
     self:printItemText(item, x, y, iconOffset, printOffset)
-    self:drawListPointer(y)
     self:drawLineExtras(item, y)
     y = y + 1
-
+    
     ::continue::
   end
+  self:drawListCursor()
 
-  love.graphics.setStencilTest()
+  --love.graphics.setStencilTest()
 end
 
 function listManager:back(value, listsStack, pathStack, screen)

@@ -15,12 +15,17 @@ end
 
 local images = {
   icons = loadImages(iconsFolder),
-  videoModePreviews = loadImages(videoModePreviewsFolder)
+  videoModePreviews = loadImages(videoModePreviewsFolder),
+  cursor = love.graphics.newImage(imgFolder .. 'default-cursor.png')
 }
 
-for section, list in pairs(images) do
-  for k, img in pairs(list) do
-    img:setFilter('nearest', 'nearest')
+for section, item in pairs(images) do
+  if type(item) == 'table' then
+    for k, img in pairs(item) do
+      img:setFilter('nearest', 'nearest')
+    end
+  else
+    item:setFilter('nearest', 'nearest')
   end
 end
 

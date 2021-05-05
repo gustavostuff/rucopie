@@ -2,6 +2,7 @@ local osBridge = require 'os-bridge'
 local colors = require 'colors'
 local constants = require 'constants'
 local utils = require 'utils'
+local k = require 'lib/katsudo'
 
 local themeManager = {}
 
@@ -9,22 +10,32 @@ local function initBackgrounds(data, folder)
   local bgs = {}
   if type(data.background) == 'string' then
     data.background = {
-      { data.background, 0, 0, 0.5 }
+      { data.background, speedX = 0, speedY = 0 }
     }
   end
 
   for i = 1, #data.background do
     local item = data.background[i]
     local img = love.graphics.newImage('assets/themes/'.. folder .. '/img/' .. item[1])
+    local layerAnimInfo = item.animation or {}
     img:setWrap('repeat', 'repeat')
     -- help needed, when using this filter, there's some ugly tearing effects:
-    --img:setFilter('nearest', 'nearest')
+    img:setFilter('nearest', 'nearest')
+    local animation = k.new(img,
+      layerAnimInfo.w or img:getWidth(),
+      layerAnimInfo.h or img:getHeight(),
+      layerAnimInfo.total or 1,
+      layerAnimInfo.delay or 1
+    )
+    animation.x = layerAnimInfo.x
+    animation.y = layerAnimInfo.y
     table.insert(bgs, {
-      img = img,
+      animation = animation,
+      isAnimated = layerAnimInfo.total,
       quad = love.graphics.newQuad(0, 0, constants.CANVAS_WIDTH, constants.CANVAS_HEIGHT,
-        img:getWidth(), img:getHeight()),
-      speedX = item[2] or 0,
-      speedY = item[3] or 0,
+        animation.w, animation.h),
+      speedX = item.speedX or 0,
+      speedY = item.speedY or 0,
       dispX = 0,
       dispY = 0
     })
@@ -34,6 +45,8 @@ end
 
 function themeManager:update(dt)
   if not _G.currentTheme then return end
+
+  k.update(dt)
 
   dt = love.timer.getDelta()
   for _, bg in ipairs(_G.currentTheme.backgrounds) do
@@ -47,17 +60,17 @@ function themeManager:update(dt)
     bg.dispY = bg.dispY - dt * bg.speedY
 
     -- return quad to the equivalent [0, 0] position
-    if (math.abs(bg.dispX) >= bg.img:getWidth()) or (math.abs(bg.dispY) >= bg.img:getHeight()) then
-      bg.dispX = (bg.img:getWidth()  - math.abs(bg.dispX)) * xDirection
-      bg.dispY = (bg.img:getHeight() - math.abs(bg.dispY)) * yDirection
+    if (math.abs(bg.dispX) >= bg.animation.w) or (math.abs(bg.dispY) >= bg.animation.h) then
+      bg.dispX = (bg.animation.w  - math.abs(bg.dispX)) * xDirection
+      bg.dispY = (bg.animation.h - math.abs(bg.dispY)) * yDirection
     end
 
     -- move quad viewport
     -- help needed, when setting using floor, layers movement becomes non-smooth after changing themes
-    bg.quad:setViewport(math.floor(bg.dispX), math.floor(bg.dispY), w, h)
+    --bg.quad:setViewport(math.floor(bg.dispX), math.floor(bg.dispY), w, h)
     
     -- this is a workaround but it's not correct (will show perfect pixels with aliasing)
-    -- bg.quad:setViewport(bg.dispX, bg.dispY, w, h)
+    bg.quad:setViewport(bg.dispX, bg.dispY, w, h)
   end
 end
 
@@ -68,8 +81,19 @@ function themeManager:setTheme(folder)
   local theme = {}
   theme.backgrounds = initBackgrounds(dataFromFile, folder)
   theme.opacity = dataFromFile.opacity or 0.5
+  theme.shadow = dataFromFile.shadow
+  theme.shadowColor = dataFromFile.shadowColor
+  theme.fontColor = dataFromFile.fontColor
+  theme.listBounds = dataFromFile.listBounds
+  theme.selectionColor = dataFromFile.selectionColor
+  theme.title = dataFromFile.title -- coords
+  if dataFromFile.cursor then
+    local path = 'assets/themes/' .. folder .. '/img/' .. dataFromFile.cursor
+    theme.cursor = love.graphics.newImage(path)
+    theme.cursor:setFilter('nearest', 'nearest')
+  end
 
-  self.currentThemeName = folder
+  theme.name = folder
   _G.currentTheme = theme
 end
 
@@ -88,7 +112,12 @@ function themeManager:drawCurrentTheme()
 
   local bgs = _G.currentTheme.backgrounds
   for i = #bgs, 1, -1 do
-    love.graphics.draw(bgs[i].img, bgs[i].quad, 0, 0, 0, 1, 1)
+    local bg = bgs[i]
+    if bg.isAnimated then
+      bg.animation:draw(bg.animation.x or 0, bg.animation.y or 0)
+    else
+      love.graphics.draw(bg.animation.img, bg.quad, 0, 0, 0, 1, 1)
+    end
   end
   love.graphics.setColor(0, 0, 0, _G.currentTheme.opacity)
   love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())

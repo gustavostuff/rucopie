@@ -78,7 +78,7 @@ local function printDebug()
     love.graphics.setColor(colors.white)
     utils.pp(text,
       love.graphics.getWidth() - _G.debugFont:getWidth(text), 0,
-      { shadow = true }
+      { shadow = _G.currentTheme.shadow }
     )
   end
 
@@ -162,10 +162,12 @@ local function drawCurrentList()
     listManager.currentList.internalLabel or
     listManager.currentList.title
   )
-
-  utils.pp(title, 0, listManager.listBounds.y - listManager.lineHeight, {
-    centeredX = true,
-    shadow = true
+  local x = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(title) / 2
+  local y = listManager.listBounds.y - listManager.lineHeight
+  local titleData = _G.currentTheme.title or {}
+  utils.pp(title, titleData.x or x, titleData.y or y, {
+      shadow = _G.currentTheme.shadow,
+      fontColor = titleData.color or _G.currentTheme.fontColor or colors.white
   })
   love.graphics.setColor(colors.white)
   if listManager.currentList then
@@ -184,7 +186,7 @@ local function drawCurrentCaption()
   utils.pp(caption,
     listManager.listBounds.x,
     listManager.listBounds.x + listManager.listBounds.h,
-    { shadow = true }
+    { shadow = _G.currentTheme.shadow }
   )
 end
 
@@ -195,7 +197,7 @@ local function drawJoystickMapping()
     colors.green, joystickManager:getInputBeingMapped(),
     colors.white, '...'
   }
-  utils.pp(text, 0, 0, { shadow = true, centered = true })
+  utils.pp(text, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
 end
 
 local function drawMessagesForAsyncTaks()
@@ -203,21 +205,21 @@ local function drawMessagesForAsyncTaks()
     utils.pp({
       colors.white, 'Loading games',
       colors.white, '...'
-    }, 0, 0, { shadow = true, centered = true })
+    }, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
   end
 
   if _G.shuttingDown then
     utils.pp({
       colors.white, 'Shutting down',
       colors.white, '...'
-    }, 0, 0, { shadow = true, centered = true })
+    }, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
   end
 
   if _G.restarting then
     utils.pp({
       colors.white, 'Restarting',
       colors.white, '...'
-    }, 0, 0, { shadow = true, centered = true })
+    }, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
   end
 end
 
@@ -250,7 +252,7 @@ local function drawGamePreviewBanner()
 
   local core = constants.cores[indexVideoModePreview]
   local label = constants.coreAssociations[core]
-  utils.pp('< ' .. label .. ' >', 0, 0, { shadow = true, centered = true })
+  utils.pp('< ' .. label .. ' >', 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
 end
 
 local function drawVideoModePreviews()
@@ -390,7 +392,7 @@ function love.draw()
     drawCurrentCaption()
   end
 
-  utils.pp(_G.connected or '', 0, 0, { shadow = true, centered = true })
+  utils.pp(_G.connected or '', 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
 
   love.graphics.setCanvas()
   love.graphics.setColor(colors.white)
@@ -479,6 +481,9 @@ function handleAction(item)
       local romPath = utils.join('/', pathStack[_G.screens.systems]) .. '/' .. item.internalLabel
       osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
     end, currentScreen)
+    if listManager.currentList.internalLabel == 'Themes' then
+      listManager:setBounds(_G.currentTheme.listBounds or {})
+    end
   end
 end
 

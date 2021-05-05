@@ -131,7 +131,7 @@ utils.pp = function (text, x, y, data)
     end
   end
 
-  love.graphics.setColor(data.fgColor or colors.white)
+  love.graphics.setColor(data.fontColor or colors.white)
   --love.graphics.print(fgText, math.floor(x), math.floor(y))
   love.graphics.print(fgText, math.floor(x), math.floor(y))
 end
@@ -158,7 +158,7 @@ utils.draw = function (drawable, x, y, options)
       0, scale, scale, originX, originY)
   end
 
-  love.graphics.setColor(optionsTree.fgColor or colors.white)
+  love.graphics.setColor(optionsTree.fontColor or colors.white)
   love.graphics.draw(drawable,
     math.floor(x),
     math.floor(y),
@@ -184,7 +184,7 @@ utils.getCaption = function (data)
     local label = captionItem[2]
     table.insert(caption, captionColorMap[button] or colors.white)
     table.insert(caption, button .. ':')
-    table.insert(caption, colors.white)
+    table.insert(caption, _G.currentTheme.fontColor or colors.white)
     table.insert(caption, label)
     table.insert(caption, colors.white)
     table.insert(caption, '  ')
