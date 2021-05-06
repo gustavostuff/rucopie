@@ -155,11 +155,14 @@ function listManager:drawListCursor()
 end
 
 function listManager:drawLineExtras(item, y)
+  local x = (_G.currentTheme.listBounds and _G.currentTheme.listBounds.rightSideX) or
+    listManager.listBounds.x + listManager.listBounds.w
+
   if item.checkbox then
     local icon = images.icons['checkbox-off.png']
     if item.value then icon = images.icons['checkbox-on.png'] end
-    utils.draw(icon,
-      listManager.listBounds.x + listManager.listBounds.w,
+
+    utils.draw(icon, x,
       self.listBounds.y + y * self.lineHeight,
       { shadow = _G.currentTheme.shadow }
     )
@@ -168,8 +171,7 @@ function listManager:drawLineExtras(item, y)
     if item.type == 'password' and #item.value > 0 then
       label = '*****'
     end
-    utils.pp(label,
-      listManager.listBounds.x + listManager.listBounds.w,
+    utils.pp(label, x,
       self.listBounds.y + y * self.lineHeight,
       { shadow = _G.currentTheme.shadow }
     )
@@ -178,18 +180,15 @@ function listManager:drawLineExtras(item, y)
     local label = item.list[item.index]
     local arrowRight = images.icons['arrow-right.png']
     
-    utils.draw(arrowLeft,
-      listManager.listBounds.x + listManager.listBounds.w,
+    utils.draw(arrowLeft, x,
       self.listBounds.y + y * self.lineHeight,
       { shadow = _G.currentTheme.shadow }
     )
-    utils.pp(label,
-      listManager.listBounds.x + listManager.listBounds.w + arrowLeft:getWidth(),
+    utils.pp(label, x + arrowLeft:getWidth(),
       self.listBounds.y + y * self.lineHeight,
       { shadow = _G.currentTheme.shadow, fontColor = _G.currentTheme.fontColor or colors.white }
     )
-    utils.draw(arrowRight,
-      listManager.listBounds.x + listManager.listBounds.w + arrowLeft:getWidth() + _G.font:getWidth(label),
+    utils.draw(arrowRight, x + arrowLeft:getWidth() + _G.font:getWidth(label),
       self.listBounds.y + y * self.lineHeight,
       { shadow = _G.currentTheme.shadow }
     )
@@ -294,6 +293,9 @@ function listManager:draw()
   --love.graphics.stencil(getListStencil(self.listBounds), 'replace', 1) 
   --love.graphics.setStencilTest('greater', 0)
   
+  if _G.currentTheme.cursorBehind then
+    self:drawListCursor()
+  end
   for i = from, to do
     local item = list.items[i]
     if not item then goto continue end
@@ -324,8 +326,9 @@ function listManager:draw()
     
     ::continue::
   end
-  self:drawListCursor()
-
+  if not _G.currentTheme.cursorBehind then
+     self:drawListCursor()
+  end
   --love.graphics.setStencilTest()
 end
 

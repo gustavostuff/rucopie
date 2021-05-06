@@ -1,9 +1,10 @@
 return {
   background = 'bg.png',
   cursor = 'cursor.png',
+  cursorBehind = true,
   opacity = 0,
   fontColor = {0, 0, 0},
-  selectionColor = {0.196, 0.059, 1},
+  selectionColor = {1, 1, 1},
   shadow = false,
   listBounds = {
     x = 12,

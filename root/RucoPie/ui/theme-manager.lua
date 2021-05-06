@@ -87,6 +87,7 @@ function themeManager:setTheme(folder)
   theme.listBounds = dataFromFile.listBounds
   theme.selectionColor = dataFromFile.selectionColor
   theme.title = dataFromFile.title -- coords
+  theme.cursorBehind = dataFromFile.cursorBehind
   if dataFromFile.cursor then
     local path = 'assets/themes/' .. folder .. '/img/' .. dataFromFile.cursor
     theme.cursor = love.graphics.newImage(path)
