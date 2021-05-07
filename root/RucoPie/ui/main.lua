@@ -182,12 +182,12 @@ local function drawCurrentCaption()
   local caption = (virtualKeyboard.active and virtualKeyboard.caption) or
     listManager.currentList.caption or
     generalCaptions[currentScreen]
+  local x = (_G.currentTheme.caption and _G.currentTheme.caption.x) or
+    caption,listManager.listBounds.x
+  local y = (_G.currentTheme.caption and _G.currentTheme.caption.y) or
+    listManager.listBounds.x + listManager.listBounds.h
 
-  utils.pp(caption,
-    listManager.listBounds.x,
-    listManager.listBounds.x + listManager.listBounds.h,
-    { shadow = _G.currentTheme.shadow }
-  )
+  utils.pp(caption, x, y, { shadow = _G.currentTheme.shadow })
 end
 
 local function drawJoystickMapping()
