@@ -14,7 +14,6 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * Flexible theme system
   * Multi-layer, dynamic backgrounds
   * Per-theme icons
-  * Per-theme sounds/music
   * Other tweaks for opacity, shadows and sizing
 * Color palette editor
 * Heavy operations (file reading/writing, large data processing) are asynchronous
@@ -58,11 +57,10 @@ curl -s https://raw.githubusercontent.com/tavuntu/rucopie/main/setup.sh | bash -
 * Support joysticks via USB (done-ish)
 * Wireless internet conexion screen (in progress)
 * More video options (in progress)
-* Add more themes
+* Add more themes (in progress)
 * Add animated boot screen
 * Add background music manager
-* Add audio equalizer with profiles, if possible
-* Add no-copyright roms
+* Add audio equalizer with profiles, if possible (added alta equal tool)
 * Bluetooth joystick support
 * Locale/Country settings
 * Skip button while mapping joystick for UI
