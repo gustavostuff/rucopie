@@ -6,6 +6,8 @@ return {
   fontColor = {0, 0, 0},
   selectionColor = {1, 1, 1},
   shadow = false,
+  arrowLeft = 'arrow-left.png',
+  arrowRight = 'arrow-right.png',
   listBounds = {
     x = 12,
     y = 30,
@@ -16,5 +18,8 @@ return {
     x = 12,
     y = 8,
     color = {1, 1, 1}
+  },
+  caption = {
+    y = 166
   }
 }

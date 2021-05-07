@@ -183,9 +183,9 @@ local function drawCurrentCaption()
     listManager.currentList.caption or
     generalCaptions[currentScreen]
   local x = (_G.currentTheme.caption and _G.currentTheme.caption.x) or
-    caption,listManager.listBounds.x
+    listManager.listBounds.x
   local y = (_G.currentTheme.caption and _G.currentTheme.caption.y) or
-    listManager.listBounds.x + listManager.listBounds.h
+    (listManager.listBounds.y + listManager.listBounds.h)
 
   utils.pp(caption, x, y, { shadow = _G.currentTheme.shadow })
 end

@@ -20,7 +20,7 @@ local function initBackgrounds(data, folder)
     local layerAnimInfo = item.animation or {}
     img:setWrap('repeat', 'repeat')
     -- help needed, when using this filter, there's some ugly tearing effects:
-    img:setFilter('nearest', 'nearest')
+    --img:setFilter('nearest', 'nearest')
     local animation = k.new(img,
       layerAnimInfo.w or img:getWidth(),
       layerAnimInfo.h or img:getHeight(),
@@ -88,6 +88,9 @@ function themeManager:setTheme(folder)
   theme.selectionColor = dataFromFile.selectionColor
   theme.title = dataFromFile.title -- coords
   theme.cursorBehind = dataFromFile.cursorBehind
+  theme.caption = dataFromFile.caption
+  theme.arrowLeft = dataFromFile.arrowLeft
+  theme.arrowRight = dataFromFile.arrowRight
   if dataFromFile.cursor then
     local path = 'assets/themes/' .. folder .. '/img/' .. dataFromFile.cursor
     theme.cursor = love.graphics.newImage(path)
