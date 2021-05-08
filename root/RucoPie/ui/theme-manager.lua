@@ -3,6 +3,8 @@ local colors = require 'colors'
 local constants = require 'constants'
 local utils = require 'utils'
 local k = require 'lib/katsudo'
+local images = require 'images'
+local lfs = require 'lfs'
 
 local themeManager = {}
 
@@ -16,11 +18,11 @@ local function initBackgrounds(data, folder)
 
   for i = 1, #data.background do
     local item = data.background[i]
-    local img = love.graphics.newImage('assets/themes/'.. folder .. '/img/' .. item[1])
+    local img = love.graphics.newImage('assets/themes/'.. folder .. '/img/backgrounds/' .. item[1])
     local layerAnimInfo = item.animation or {}
     img:setWrap('repeat', 'repeat')
     -- help needed, when using this filter, there's some ugly tearing effects:
-    --img:setFilter('nearest', 'nearest')
+    img:setFilter('nearest', 'nearest')
     local animation = k.new(img,
       layerAnimInfo.w or img:getWidth(),
       layerAnimInfo.h or img:getHeight(),
@@ -41,6 +43,19 @@ local function initBackgrounds(data, folder)
     })
   end
   return bgs
+end
+
+local function initImages(theme, dataFromFile, themeFolder)
+  local path = constants.THEMES_DIR .. '/' .. themeFolder .. '/img/'
+  local images = {}
+  for file in lfs.dir(path) do
+    if file ~= "." and file ~= ".." and file:find('.png$') then
+      images[file] = love.graphics.newImage('assets/themes/' .. themeFolder .. '/img/' .. file)
+      images[file]:setFilter('nearest', 'nearest')
+    end
+  end
+
+  return images
 end
 
 function themeManager:update(dt)
@@ -75,27 +90,23 @@ function themeManager:update(dt)
 end
 
 function themeManager:setTheme(folder)
-  local data = osBridge.readFile('ui/assets/themes/' .. folder .. '/theme.lua')
+  local path = 'ui/assets/themes/' .. folder .. '/'
+  local data = osBridge.readFile(path .. 'theme.lua')
   local dataFromFile = loadstring(data)()
 
   local theme = {}
   theme.backgrounds = initBackgrounds(dataFromFile, folder)
   theme.opacity = dataFromFile.opacity or 0.5
   theme.shadow = dataFromFile.shadow
-  theme.shadowColor = dataFromFile.shadowColor
-  theme.fontColor = dataFromFile.fontColor
-  theme.listBounds = dataFromFile.listBounds
+  theme.shadowColor = dataFromFile.shadowColor or colors.black
+  theme.fontColor = dataFromFile.fontColor or colors.white
   theme.selectionColor = dataFromFile.selectionColor
-  theme.title = dataFromFile.title -- coords
   theme.cursorBehind = dataFromFile.cursorBehind
-  theme.caption = dataFromFile.caption
-  theme.arrowLeft = dataFromFile.arrowLeft
-  theme.arrowRight = dataFromFile.arrowRight
-  if dataFromFile.cursor then
-    local path = 'assets/themes/' .. folder .. '/img/' .. dataFromFile.cursor
-    theme.cursor = love.graphics.newImage(path)
-    theme.cursor:setFilter('nearest', 'nearest')
-  end
+  theme.title = dataFromFile.title or {} -- coords
+  theme.listBounds = dataFromFile.listBounds or constants.DEFAULT_LIST_BOUNDS
+  theme.caption = dataFromFile.caption or {}
+  theme.palette = dataFromFile.palette or {}
+  theme.images = initImages(theme, dataFromFile, folder)
 
   theme.name = folder
   _G.currentTheme = theme

@@ -3,13 +3,15 @@ local colors = require 'colors'
 local constants = require 'constants'
 local t = require 'translator'
 
-local captionColorMap = {
-  A = colors.green,
-  B = colors.red,
-  Start = colors.blue,
-  Select = colors.yellow,
-  X = colors.orange
-}
+local function getCaptionColor(button)
+  return ({
+    A = _G.currentTheme.palette.green or colors.green,
+    B = _G.currentTheme.palette.red or colors.red,
+    Start = _G.currentTheme.palette.blue or colors.blue,
+    Select = _G.currentTheme.palette.yellow or colors.yellow,
+    X = _G.currentTheme.palette.orange or colors.orange
+  })[button] or colors.white
+end
 
 local shadowCellMap = { -- shadow/cell directions for shadowed text
   {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
@@ -182,9 +184,9 @@ utils.getCaption = function (data)
   for i, captionItem in ipairs(data) do
     local button = captionItem[1]
     local label = captionItem[2]
-    table.insert(caption, captionColorMap[button] or colors.white)
+    table.insert(caption, getCaptionColor(button))
     table.insert(caption, button .. ':')
-    table.insert(caption, _G.currentTheme.fontColor or colors.white)
+    table.insert(caption, _G.currentTheme.fontColor)
     table.insert(caption, label)
     table.insert(caption, colors.white)
     table.insert(caption, '  ')

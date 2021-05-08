@@ -1,17 +1,14 @@
 return {
   background = 'bg.png',
-  cursor = 'cursor.png',
   cursorBehind = true,
-  opacity = 0,
   fontColor = {0, 0, 0},
+  opacity = 0,
   selectionColor = {1, 1, 1},
   shadow = false,
-  arrowLeft = 'arrow-left.png',
-  arrowRight = 'arrow-right.png',
   listBounds = {
     x = 12,
     y = 30,
-    w = 220,
+    w = 200,
     h = 140
   },
   title = {
@@ -21,5 +18,8 @@ return {
   },
   caption = {
     y = 166
+  },
+  palette = {
+    blue = {0.031, 0, 0.525}
   }
 }

@@ -61,11 +61,14 @@ local function themesSection()
     table.insert(displayList.items, themeItem)
   end
 
-  displayList.caption = utils.getCaption({
-    { 'A', 'Set theme' },
-    { 'B', 'Back' },
-    { 'Start', 'Systems' }
-  })
+  displayList.getCaption = function ()
+    return utils.getCaption({
+      { 'A', 'Set theme' },
+      { 'B', 'Back' },
+      { 'Start', 'Systems' }
+    })
+  end
+  
   return displayList
 end
 

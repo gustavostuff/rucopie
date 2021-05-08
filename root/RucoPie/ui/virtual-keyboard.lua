@@ -9,12 +9,14 @@ local virtualKeyboard = {
   cellHeight = 5 + _G.font:getHeight(),
   padding = 4,
   typedText = {},
-  caption = utils.getCaption({
-    {'A', 'Add'},
-    {'B', 'Remove'},
-    {'Start', 'Confirm'},
-    {'Select', 'Cancel'}
-  }),
+  getCaption = function()
+    return utils.getCaption({
+      {'A', 'Add'},
+      {'B', 'Remove'},
+      {'Start', 'Confirm'},
+      {'Select', 'Cancel'}
+    })
+  end,
   index = { 1, 1 } -- row and column
 }
 
@@ -163,7 +165,7 @@ function virtualKeyboard:drawElement(element, x, y, gridX, gridY)
   utils.pp(element,
     (gridX + (x - 1) * self.cellWidth) + self.cellWidth / 2 - _G.font:getWidth(element) / 2,
     (gridY + (y - 1) * self.cellHeight) + self.cellHeight / 2 - _G.font:getHeight() / 2,
-    { shadow = self:getSelectedItem() ~= element }
+    _G.getPrintingParameters({ shadow = self:getSelectedItem() ~= element })
   )
 end
 
@@ -171,7 +173,7 @@ function virtualKeyboard:drawTypedText(gridX, gridY)
   local text = table.concat(self.typedText)
   local xText = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(text) / 2
   love.graphics.line(gridX, gridY - self.padding, gridX + self.w - 1, gridY - self.padding)
-  utils.pp(text, xText, gridY - self.cellHeight, { shadow = _G.currentTheme.shadow })
+  utils.pp(text, xText, gridY - self.cellHeight, _G.getPrintingParameters())
 end
 
 function virtualKeyboard:draw()

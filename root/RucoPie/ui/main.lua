@@ -53,20 +53,21 @@ local function printDebug()
     local n = #listManager.currentList.items
     local totalPages = listManager:getTotalPages()
     local itemsInCurrentPage = listManager:getItemsAtCurrentPage()
-    local text = 'FPS: ' .. love.timer.getFPS() .. '\n' ..
-    'Width: ' .. love.graphics.getWidth() .. '\n' ..
-    'Height: ' .. love.graphics.getHeight() .. '\n' ..
-    'Canvas Width: ' .. constants.CANVAS_WIDTH .. '\n' ..
-    'Canvas Height: ' .. constants.CANVAS_HEIGHT .. '\n' ..
-    '----------------------------------\n' ..
-    'items in list: ' .. n .. '\n' ..
-    'current page: ' .. listManager.currentList.page.pageNumber .. '\n' ..
-    'page size: ' .. listManager.pageSize .. '\n' ..
-    'total pages: ' .. totalPages .. '\n' ..
-    'total games (all systems): ' .. _G.systemsTree.totalGames .. '\n' ..
-    'items at current page: ' .. itemsInCurrentPage .. '\n' ..
-    '----------------------------------\n' ..
-    'character width (monospaced font should be used): ' .. _G.characterW .. ' '
+    local text = 'FPS: ' .. love.timer.getFPS() ..
+    '\nWidth: ' .. love.graphics.getWidth() ..
+    '\nHeight: ' .. love.graphics.getHeight() ..
+    '\nCanvas Width: ' .. constants.CANVAS_WIDTH ..
+    '\nCanvas Height: ' .. constants.CANVAS_HEIGHT ..
+    '\n----------------------------------' ..
+    '\nitems in list: ' .. n ..
+    '\ncurrent page: ' .. listManager.currentList.page.pageNumber ..
+    '\npage size: ' .. listManager.pageSize ..
+    '\ntotal pages: ' .. totalPages ..
+    '\ntotal games (all systems): ' .. _G.systemsTree.totalGames ..
+    '\nitems at current page: ' .. itemsInCurrentPage ..
+    '\n----------------------------------' ..
+    '\ncharacter width (monospaced font should be used): ' .. _G.characterW ..
+    '\ncharacter height: ' .. _G.font:getHeight()
     
     local bgw = _G.debugFont:getWidth(text)
     love.graphics.setColor(0, 0, 0, 0.5)
@@ -76,10 +77,8 @@ local function printDebug()
     )
 
     love.graphics.setColor(colors.white)
-    utils.pp(text,
-      love.graphics.getWidth() - _G.debugFont:getWidth(text), 0,
-      { shadow = _G.currentTheme.shadow }
-    )
+    local x = love.graphics.getWidth() - _G.debugFont:getWidth(text)
+    utils.pp(text, x, 0, _G.getPrintingParameters())
   end
 
   love.graphics.setFont(_G.font)
@@ -164,30 +163,37 @@ local function drawCurrentList()
   )
   local x = constants.CANVAS_WIDTH / 2 - _G.font:getWidth(title) / 2
   local y = listManager.listBounds.y - listManager.lineHeight
-  local titleData = _G.currentTheme.title or {}
-  utils.pp(title, titleData.x or x, titleData.y or y, {
-      shadow = _G.currentTheme.shadow,
-      fontColor = titleData.color or _G.currentTheme.fontColor or colors.white
-  })
+  local titleData = _G.currentTheme.title
+  utils.pp(title, titleData.x or x, titleData.y or y, _G.getPrintingParameters({
+    fontColor = titleData.color or _G.currentTheme.fontColor or colors.white
+  }))
   love.graphics.setColor(colors.white)
   if listManager.currentList then
     listManager:draw(scaleX, scaleY)
   end
 end
 
+local function getGeneralCaption(screen)
+  local label = 'Options'
+  if screen == screens.options then label = 'Systems' end
+  return utils.getCaption({
+    { 'A', 'OK' },
+    { 'B', 'Back' },
+    { 'Start', label }
+  })
+end
+
 local function drawCurrentCaption()
   if not listManager.currentList then return end
 
   love.graphics.setColor(colors.white)
-  local caption = (virtualKeyboard.active and virtualKeyboard.caption) or
-    listManager.currentList.caption or
-    generalCaptions[currentScreen]
-  local x = (_G.currentTheme.caption and _G.currentTheme.caption.x) or
-    listManager.listBounds.x
-  local y = (_G.currentTheme.caption and _G.currentTheme.caption.y) or
-    (listManager.listBounds.y + listManager.listBounds.h)
+  local caption = (virtualKeyboard.active and virtualKeyboard.getCaption()) or
+    (listManager.currentList.getCaption and listManager.currentList.getCaption()) or
+    getGeneralCaption(currentScreen)
+  local x = _G.currentTheme.caption.x or listManager.listBounds.x
+  local y = _G.currentTheme.caption.y or (listManager.listBounds.y + listManager.listBounds.h)
 
-  utils.pp(caption, x, y, { shadow = _G.currentTheme.shadow })
+  utils.pp(caption, x, y, _G.getPrintingParameters({ fontColor = colors.white }))
 end
 
 local function drawJoystickMapping()
@@ -197,7 +203,7 @@ local function drawJoystickMapping()
     colors.green, joystickManager:getInputBeingMapped(),
     colors.white, '...'
   }
-  utils.pp(text, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
+  utils.pp(text, 0, 0, _G.getPrintingParameters({centered = true }))
 end
 
 local function drawMessagesForAsyncTaks()
@@ -205,21 +211,21 @@ local function drawMessagesForAsyncTaks()
     utils.pp({
       colors.white, 'Loading games',
       colors.white, '...'
-    }, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
+    }, 0, 0, _G.getPrintingParameters({centered = true }))
   end
 
   if _G.shuttingDown then
     utils.pp({
       colors.white, 'Shutting down',
       colors.white, '...'
-    }, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
+    }, 0, 0, _G.getPrintingParameters({ centered = true }))
   end
 
   if _G.restarting then
     utils.pp({
       colors.white, 'Restarting',
       colors.white, '...'
-    }, 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
+    }, 0, 0, _G.getPrintingParameters({ centered = true }))
   end
 end
 
@@ -252,7 +258,7 @@ local function drawGamePreviewBanner()
 
   local core = constants.cores[indexVideoModePreview]
   local label = constants.coreAssociations[core]
-  utils.pp('< ' .. label .. ' >', 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
+  utils.pp('< ' .. label .. ' >', 0, 0, _G.getPrintingParameters({ centered = true }))
 end
 
 local function drawVideoModePreviews()
@@ -279,21 +285,6 @@ local function initFontsAndStuff()
   love.graphics.setBackgroundColor(colors.purple)
 end
 
-local function initCaptions()
-  generalCaptions = {
-    [1] = utils.getCaption({
-      { 'A', 'OK' },
-      { 'B', 'Back' },
-      { 'Start', 'Options' }
-    }),
-    [2] = utils.getCaption({
-      { 'A', 'OK' },
-      { 'B', 'Back' },
-      { 'Start', 'Systems' }
-    })
-  }
-end
-
 local function needsToUpdateScales()
   local w = love.graphics.getWidth()
   local h = love.graphics.getHeight()
@@ -306,6 +297,22 @@ end
 -- Global functions:
 ---------------------------------------------
 ---------------------------------------------
+_G.getPrintingParameters = function (extra)
+  extra = extra or {}
+  local params = {
+    fontColor = _G.currentTheme.fontColor,
+    shadow = _G.currentTheme.shadow,
+    shadowColor = _G.currentTheme.shadowColor,
+    fontOpacity = _G.currentTheme.fontOpacity,
+    shadowOpacity = _G.currentTheme.shadowOpacity,
+  }
+
+  for k, v in pairs(extra) do
+    params[k] = v
+  end
+  return params
+end
+
 
 _G.calculateResolutionsAndVideoModePreviews = function (forceUpdate)
   local coresToUpdate = {}
@@ -349,7 +356,6 @@ end
 
 function love.load()
   initFontsAndStuff()
-  initCaptions()
   _G.screens = {
     systems = 1,
     options = 2
@@ -392,7 +398,7 @@ function love.draw()
     drawCurrentCaption()
   end
 
-  utils.pp(_G.connected or '', 0, 0, { shadow = _G.currentTheme.shadow, centered = true })
+  utils.pp(_G.connected or '', 0, 0, _G.getPrintingParameters({ centered = true }))
 
   love.graphics.setCanvas()
   love.graphics.setColor(colors.white)
@@ -482,7 +488,7 @@ function handleAction(item)
       osBridge.runGame(_G.systemSelected, constants.ROMS_DIR .. romPath)
     end, currentScreen)
     if listManager.currentList.internalLabel == 'Themes' then
-      listManager:setBounds(_G.currentTheme.listBounds or {})
+      listManager:setBounds(_G.currentTheme.listBounds)
     end
   end
 end

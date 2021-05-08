@@ -43,15 +43,10 @@ local clippedLineCharIndex = 1
 
 function listManager:setBounds(bounds)
   self.pageSize = _G.currentTheme.pageSize or constants.PAGE_SIZE
-  self.listBounds = {
-    x = bounds.x or 24,
-    y = bounds.y or 24,
-    w = bounds.w or constants.CANVAS_WIDTH - 120,
-    h = bounds.h or constants.CANVAS_HEIGHT - 48
-  }
+  self.listBounds = { x = bounds.x, y = bounds.y, w = bounds.w, h = bounds.h }
 end
 
-listManager:setBounds(_G.currentTheme.listBounds or {})
+listManager:setBounds(_G.currentTheme.listBounds)
 
 function listManager:resetClippedLine()
   -- local item = self:getSelectedItem()
@@ -118,8 +113,8 @@ end
 function listManager:printItemText(item, x, y, iconOffset, printOffset)
   local list, _, _, _ = self:getListingCommons()
   local label = constants.systemsLabels[item.internalLabel] or item.displayLabel
-  local color = _G.currentTheme.fontColor or (item.isDir and colors.blue) or
-    (item.color or list.color or colors.white)
+  local color = item.color or list.color or _G.currentTheme.fontColor or
+    (item.isDir and colors.blue) or colors.white
   label = label or '<label not set>'
 
   local offset_0 = printOffset or 1
@@ -134,17 +129,13 @@ function listManager:printItemText(item, x, y, iconOffset, printOffset)
   utils.pp(text,
     self.listBounds.x + iconOffset + x,
     self.listBounds.y + y * self.lineHeight,
-    {
-      fontColor = color,
-      shadow = _G.currentTheme.shadow,
-      shadowColor = _G.currentTheme.shadowColor or colors.black
-    }
+    _G.getPrintingParameters({ fontColor = color })
   )
 end
 
 function listManager:drawListCursor()
   local list, _, _, _ = self:getListingCommons()
-  local cursor = _G.currentTheme.cursor or images.cursor
+  local cursor = _G.currentTheme.images['cursor.png'] or images.cursor
   local y = ((self.currentList.page.indexAtCurrentPage - 1) * self.lineHeight)
   love.graphics.setColor(colors.white)
   utils.draw(cursor,
@@ -154,44 +145,51 @@ function listManager:drawListCursor()
   )
 end
 
+function listManager:drawCheckBox(item, x, y)
+  local icon = images.icons['checkbox-off.png']
+  if item.value then icon = images.icons['checkbox-on.png'] end
+
+  utils.draw(icon, x,
+    self.listBounds.y + y * self.lineHeight,
+    { shadow = _G.currentTheme.shadow }
+  )
+end
+
+function listManager:drawTextField(item, x, y)
+  local label = (#item.value > 0 and item.value) or '<not set>'
+  if item.type == 'password' and #item.value > 0 then
+    label = '*****'
+  end
+  utils.pp(label, x,
+    self.listBounds.y + y * self.lineHeight,
+    getPrintingParameters()
+  )
+end
+
+function listManager:drawHorizontalList(item, x, y)
+  local arrowLeft = _G.currentTheme.images['arrow-left.png'] or images.icons['arrow-left.png']
+  local label = ' ' .. item.list[item.index] .. ' '
+  local arrowRight = _G.currentTheme.images['arrow-right.png'] or images.icons['arrow-right.png']
+  local iconY = self.listBounds.y + (y * self.lineHeight) + self.lineHeight / 2
+  
+  utils.draw(arrowLeft, x, iconY, { shadow = _G.currentTheme.shadow, centeredY = true })
+  utils.pp(label, x + arrowLeft:getWidth(), self.listBounds.y + y * self.lineHeight,
+    _G.getPrintingParameters()
+  )
+  utils.draw(arrowRight, x + arrowLeft:getWidth() + _G.font:getWidth(label), iconY,
+    _G.getPrintingParameters({ centeredY = true })
+  )
+end
+
 function listManager:drawLineExtras(item, y)
-  local x = (_G.currentTheme.listBounds and _G.currentTheme.listBounds.rightSideX) or
-    listManager.listBounds.x + listManager.listBounds.w
+  local x = listManager.listBounds.x + listManager.listBounds.w + 5
 
   if item.checkbox then
-    local icon = images.icons['checkbox-off.png']
-    if item.value then icon = images.icons['checkbox-on.png'] end
-
-    utils.draw(icon, x,
-      self.listBounds.y + y * self.lineHeight,
-      { shadow = _G.currentTheme.shadow }
-    )
+    self:drawCheckBox(item, x, y)
   elseif item.text then
-    local label = (#item.value > 0 and item.value) or '<not set>'
-    if item.type == 'password' and #item.value > 0 then
-      label = '*****'
-    end
-    utils.pp(label, x,
-      self.listBounds.y + y * self.lineHeight,
-      { shadow = _G.currentTheme.shadow }
-    )
+    self:drawTextField(item, x, y)
   elseif item.list then
-    local arrowLeft = images.icons['arrow-left.png']
-    local label = item.list[item.index]
-    local arrowRight = images.icons['arrow-right.png']
-    
-    utils.draw(arrowLeft, x,
-      self.listBounds.y + y * self.lineHeight,
-      { shadow = _G.currentTheme.shadow }
-    )
-    utils.pp(label, x + arrowLeft:getWidth(),
-      self.listBounds.y + y * self.lineHeight,
-      { shadow = _G.currentTheme.shadow, fontColor = _G.currentTheme.fontColor or colors.white }
-    )
-    utils.draw(arrowRight, x + arrowLeft:getWidth() + _G.font:getWidth(label),
-      self.listBounds.y + y * self.lineHeight,
-      { shadow = _G.currentTheme.shadow }
-    )
+    self:drawHorizontalList(item, x, y)
   end
 end
 
@@ -318,7 +316,9 @@ function listManager:draw()
     --
 
     local color = item.color or list.color or colors.white
-    if item.isDir then icon = images.icons['folder.png'] end
+    if item.isDir then
+      icon = _G.currentTheme.images['folder.png'] or images.icons['folder.png']
+    end
     local iconOffset = self:drawIconAndGetOffset(icon, x, y)
     self:printItemText(item, x, y, iconOffset, printOffset)
     self:drawLineExtras(item, y)

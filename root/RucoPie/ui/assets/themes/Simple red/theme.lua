@@ -1,5 +1,5 @@
 return {
-  background = 'simple-blue.png',
+  background = 'simple-red.png',
   shadow = false,
   opacity = 0,
   title = {
