@@ -25,7 +25,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * Audio equalizer with 17 presets
 * Vertical mode
 * 180° mode
-* WiFi setup screen (non-terminal based)
+* Easy WiFi setup
 
 ## Some screenshots
 
