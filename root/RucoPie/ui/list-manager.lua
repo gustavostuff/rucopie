@@ -113,8 +113,11 @@ end
 function listManager:printItemText(item, x, y, iconOffset, printOffset)
   local list, _, _, _ = self:getListingCommons()
   local label = constants.systemsLabels[item.internalLabel] or item.displayLabel
-  local color = item.color or list.color or _G.currentTheme.fontColor or
-    (item.isDir and colors.blue) or colors.white
+  local color = (_G.currentTheme.palette[item.color] or colors[item.color]) or 
+  (_G.currentTheme.palette[list.color] or colors[list.color]) or
+    _G.currentTheme.fontColor or
+    (item.isDir and colors.blue) or
+    colors.white
   label = label or '<label not set>'
 
   local offset_0 = printOffset or 1
@@ -146,8 +149,10 @@ function listManager:drawListCursor()
 end
 
 function listManager:drawCheckBox(item, x, y)
-  local icon = images.icons['checkbox-off.png']
-  if item.value then icon = images.icons['checkbox-on.png'] end
+  local icon = _G.currentTheme.images['checkbox-off.png'] or images.icons['checkbox-off.png']
+  if item.value then
+    icon = _G.currentTheme.images['checkbox-on.png'] or images.icons['checkbox-on.png']
+  end
 
   utils.draw(icon, x,
     self.listBounds.y + y * self.lineHeight,
@@ -315,7 +320,6 @@ function listManager:draw()
     ) or 1
     --
 
-    local color = item.color or list.color or colors.white
     if item.isDir then
       icon = _G.currentTheme.images['folder.png'] or images.icons['folder.png']
     end

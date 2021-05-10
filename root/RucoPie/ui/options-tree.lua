@@ -207,12 +207,12 @@ optionsTree = {
     {
       displayLabel = utils.getDisplayLabel('Restart'),
       internalLabel = 'Restart',
-      color = colors.yellow,
+      color = 'yellow',
       action = restartAction
     }, {
       displayLabel = utils.getDisplayLabel('Shutdown'),
       internalLabel = 'Shutdown',
-      color = colors.red,
+      color = 'red',
       action = shutdownAction
     }, {
       displayLabel = utils.getDisplayLabel('Advanced'),
@@ -221,7 +221,7 @@ optionsTree = {
         {
           displayLabel = utils.getDisplayLabel('Show debug info'),
           internalLabel = 'Show debug info',
-          color = colors.orange,
+          color = 'orange',
           action = toggleDebug
         }, {
           -- debug

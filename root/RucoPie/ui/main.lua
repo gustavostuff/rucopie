@@ -78,7 +78,7 @@ local function printDebug()
 
     love.graphics.setColor(colors.white)
     local x = love.graphics.getWidth() - _G.debugFont:getWidth(text)
-    utils.pp(text, x, 0, _G.getPrintingParameters())
+    utils.pp(text, x, 0, { fontColor = colors.white })
   end
 
   love.graphics.setFont(_G.font)

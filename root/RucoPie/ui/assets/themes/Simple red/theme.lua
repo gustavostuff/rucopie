@@ -2,7 +2,7 @@ return {
   background = 'simple-red.png',
   shadow = false,
   opacity = 0,
-  title = {
-    y = 10
+  palette = {
+    red = {0.42, 0.15, 0.19}
   }
 }
