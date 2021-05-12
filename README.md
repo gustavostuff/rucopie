@@ -16,6 +16,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
   * Per-theme icons
   * Other tweaks for opacity, shadows and sizing
 * Heavy operations (file I/O, large data processing) are asynchronous
+* UI built with [LÖVE](https://love2d.org/) (basically OpenGL, so it's pretty fast)
 * Pixel-perfect UI in any resolution that is a multiple of 640x360, such as:  
   * Standard HD (1280x720)
   * Full HD (1920x1080)
