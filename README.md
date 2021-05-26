@@ -1,10 +1,10 @@
-[![rucopie-logo.png](https://i.postimg.cc/MTH5RYVR/rucopie-logo.png)](https://postimg.cc/xJrLVMsT)
-
 ---
 
 :warning: This is in early development stages
 
 ---
+
+[![rucopie-logo.png](https://i.postimg.cc/MTH5RYVR/rucopie-logo.png)](https://postimg.cc/xJrLVMsT)
 
 RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://retropie.org.uk/), [Lakka](https://www.lakka.tv/) or [Recalbox](https://www.recalbox.com/). It targets Raspberry Pi 3 and 4 to be used via HDMI.
 
