@@ -1,7 +1,4 @@
----
-
 :warning: This is in early development stages
-
 ---
 
 [![rucopie-logo.png](https://i.postimg.cc/MTH5RYVR/rucopie-logo.png)](https://postimg.cc/xJrLVMsT)
