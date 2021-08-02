@@ -7,7 +7,6 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 
 ## Features
 
-* Open Source
 * Automatically scaled, pixel-perfect games in any resolution
 * Automatically scaled, pixel-perfect UI in standard resolutions:
   * HD (1280x720)
@@ -31,6 +30,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 * Audio equalizer with 17 presets (Winamp-based)
 * Screen Spin for 90°, 180° and 270°
 * Easy WiFi setup
+* MIT Licensed (for everything inside root/RucoPie, other stuff may have a different License)
 
 ## Some screenshots
 
