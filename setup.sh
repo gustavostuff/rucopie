@@ -12,7 +12,7 @@ echo ''
 echo "Executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
 echo ''
 
-/usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
+/usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup/tree/5d2bbbebec3c9b341a5e594d63b67930753b5a56
 cd RetroPie-Setup
 ./retropie_setup.sh
 
