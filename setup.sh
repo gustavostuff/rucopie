@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export __has_kms=1 __has_dispmanx=1 # for the opengl fkms driver setup
+#export __has_kms=1 __has_dispmanx=1 # for the opengl fkms driver setup
 
 separator="********************************************"
 cd ~
