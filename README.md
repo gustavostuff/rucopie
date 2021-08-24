@@ -8,7 +8,7 @@ RucoPie is a sweet, easy to use alternative to systems like [RetroPie](https://r
 ## Features
 
 * Automatically scaled, pixel-perfect games in any resolution
-* Automatically scaled, pixel-perfect UI in any resolution, with some overscan if your screen is not any of:
+* Automatically scaled, pixel-perfect UI in any resolution, with some _underscan_ if your screen is not any of:
   * HD (1280x720)
   * Full HD (1920x1080)
   * WQHD (2560x1440)
