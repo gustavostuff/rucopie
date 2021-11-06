@@ -5,13 +5,18 @@
 separator="********************************************"
 cd ~
 
+echo ''
 echo "$separator"
 echo "Installing RetroPie dependencies..."
-/boot/dietpi/dietpi-software install 5 6 16 17
-
 echo "$separator"
 echo ''
+
+/boot/dietpi/dietpi-software install 5 6 16 17
+
+echo ''
+echo "$separator"
 echo "Executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
+echo "$separator"
 echo ''
 
 /usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
@@ -66,8 +71,10 @@ luarocks install luafilesystem
 echo "Enabling RucoPie splashscreen..."
 systemctl enable asplashscreen.service
 
+echo ''
 echo "$separator"
 echo "Done! Restarting now..."
 echo "$separator"
+echo ''
 
 reboot
