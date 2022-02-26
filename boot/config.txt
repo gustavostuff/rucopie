@@ -39,6 +39,7 @@ hdmi_drive=2
 
 # Set to "1" if your display has a black border of unused pixels visible.
 disable_overscan=1
+overscan_scale=1
 
 # Uncomment the following to adjust overscan. Use positive numbers if console goes off screen, and negative if there is too much border.
 #overscan_left=16
@@ -92,4 +93,4 @@ initial_turbo=20
 #core_freq_min=250
 #sdram_freq_min=400
 
-dtoverlay=vc4-kms-v3d,noaudio
+dtoverlay=vc4-fkms-v3d
