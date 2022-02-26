@@ -5,6 +5,9 @@ cd ~
 
 #/boot/dietpi/dietpi-software install 5 6 16 17
 
+echo "Installing Raspberry Pi firmware headers..."
+apt install --assume-yes libraspberrypi-dev
+
 echo ''
 echo "$separator"
 echo "Installing and executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
