@@ -1,5 +1,7 @@
 :warning: This is in early development stages
----
+
+[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+
 
 [![rucopie-logo.png](https://i.postimg.cc/MTH5RYVR/rucopie-logo.png)](https://postimg.cc/xJrLVMsT)
 
