@@ -1,21 +1,13 @@
 #!/bin/bash
 
-#export __has_kms=1 __has_dispmanx=1 # for the opengl fkms driver setup
-
 separator="********************************************"
 cd ~
 
-echo ''
-echo "$separator"
-echo "Installing RetroPie dependencies..."
-echo "$separator"
-echo ''
-
-/boot/dietpi/dietpi-software install 5 6 16 17
+#/boot/dietpi/dietpi-software install 5 6 16 17
 
 echo ''
 echo "$separator"
-echo "Executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
+echo "Installing and executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
 echo "$separator"
 echo ''
 
