@@ -91,3 +91,5 @@ initial_turbo=20
 #arm_freq_min=300
 #core_freq_min=250
 #sdram_freq_min=400
+
+dtoverlay=vc4-kms-v3d,noaudio
