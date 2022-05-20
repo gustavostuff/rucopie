@@ -3,7 +3,7 @@
 separator="********************************************"
 cd ~
 
-#/boot/dietpi/dietpi-software install 5 6 16 17
+/boot/dietpi/dietpi-software install 5 6 16 17
 
 echo "Installing Raspberry Pi firmware headers..."
 apt install --assume-yes libraspberrypi-dev
