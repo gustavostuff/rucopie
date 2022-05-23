@@ -20,6 +20,7 @@ cd RetroPie-Setup
 
 echo 'Tweaking SDL versioning...'
 sed -i 's/2.0.10/2.0.20/' scriptmodules/supplementary/sdl2.sh
+sed -i 's/depends=(libasound2-dev/depends=(libsamplerate0-dev libasound2-dev/' scriptmodules/supplementary/sdl2.sh
 
 echo 'Starting RetroPie setup...'
 ./retropie_setup.sh
