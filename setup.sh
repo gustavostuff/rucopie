@@ -3,22 +3,26 @@
 separator="********************************************"
 cd ~
 
-#/boot/dietpi/dietpi-software install 5 6 16 17
+/boot/dietpi/dietpi-software install 5 6 16 17
 
 echo "Installing Raspberry Pi firmware headers..."
 apt install --assume-yes libraspberrypi-dev
 
 echo ''
-#echo "$separator"
-#echo "Installing and executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
-#echo "$separator"
+echo "$separator"
+echo "Installing and executing RetroPie Setup (ANSWER YES to user ownership messages and THEN EXIT)..."
+echo "$separator"
 echo ''
 
-#/usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
-#echo 'Entering folder RetroPie-Setup...'
-#cd RetroPie-Setup
-#echo 'Starting RetroPie setup...'
-#./retropie_setup.sh
+/usr/bin/git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
+echo 'Entering folder RetroPie-Setup...'
+cd RetroPie-Setup
+
+echo 'Tweaking SDL versioning...'
+sed -i 's/2.0.10/2.0.20/' scriptmodules/supplementary/sdl2.sh
+
+echo 'Starting RetroPie setup...'
+./retropie_setup.sh
 
 cd ~
 declare -a pkgs=(
